@@ -11,7 +11,7 @@ export default async function handler(req, res) {
 
   const playerExist = async (req, res) => {
     try {
-        connection.query('SELECT * FROM player WHERE name = ?', [req.body.username], (error, results) => {
+        connection.query('SELECT * FROM player WHERE username = ?', [req.body.username], (error, results) => {
             if (error) throw error;
             console.log(results)
             return res.status(200).json(results);
