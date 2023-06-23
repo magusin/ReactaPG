@@ -23,12 +23,15 @@ const getPlayers = async (req, res) => {
 };
 
 const createPlayer = async (req, res) => {
-  try {
-    connection.query('INSERT INTO player SET ?', [req.body], (error, results) => {
-      if (error) throw error;
-      return res.status(200).json(results);
-    });
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
+  connection.query('INSERT INTO player SET ?', [req.body], (error, results) => {
+    if (error) {
+      if (error.code === 'ER_DUP_ENTRY') {
+        const isUsername = error.message.includes('username');
+        const isEmail = error.message.includes('email');
+        return res.status(409).json({ usernameTaken: isUsername, emailTaken: isEmail });
+      }
+      return res.status(500).json({ message: error.message });
+    }
+    return res.status(200).json(results);
+  });
 };
