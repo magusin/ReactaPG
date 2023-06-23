@@ -26,11 +26,12 @@ const Login = () => {
   const [usernameTaken, setUsernameTaken] = useState(false)
   const [emailTaken, setEmailTaken] = useState(false)
 
+  //login user
   const handleLogin = () => {
     console.log('Email:', email)
     console.log('Password:', password)
   }
-
+  // schéma validation du formulaire
   const validationSchema = Yup.object().shape({
     password: Yup.string()
       .required('Password is required')
@@ -42,16 +43,22 @@ const Login = () => {
       .email('Invalid email address')
       .required('Email is required')
   })
-
+  // interface formulaire
+  interface FormInputs {
+    username: string;
+    email: string;
+    password: string;
+  }
+  // hook form
   const {
     register,
     handleSubmit,
     formState: { errors }
-  } = useForm({
+  } = useForm<FormInputs>({
     resolver: yupResolver(validationSchema)
   })
-
-  const handleRegister = async () => {
+  // register user
+  const handleRegister = async (data: FormInputs) => {
     try {
       const response = await axios.post('http://localhost:3000/api/user', {
         username,
@@ -61,7 +68,7 @@ const Login = () => {
 
       setUsernameTaken(response.data.usernameTaken)
       setEmailTaken(response.data.emailTaken)
-
+      // si username et email non pris, valide le formulaire
       if (!response.data.usernameTaken && !response.data.emailTaken) {
         const isValid = await validationSchema.validate({
           username,
@@ -83,8 +90,8 @@ const Login = () => {
       }
     }
   }
-
-  const handleClose = (event: any, reason: string) => {
+  // ferme l'alerte
+  const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
       return;
     }

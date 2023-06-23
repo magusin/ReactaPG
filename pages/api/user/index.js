@@ -10,7 +10,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ message: "bad request" });
   }
 }
-
+// liste des joueurs
 const getPlayers = async (req, res) => {
   try {
     connection.query('SELECT * FROM player', (error, results) => {
@@ -22,6 +22,7 @@ const getPlayers = async (req, res) => {
   }
 };
 
+// création d'un joueur
 const createPlayer = async (req, res) => {
   connection.query('INSERT INTO player SET ?', [req.body], (error, results) => {
     if (error) {
