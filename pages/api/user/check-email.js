@@ -11,13 +11,17 @@ export default async function handler(req, res) {
 
   const emailExist = async (req, res) => {
     try {
-        connection.query('SELECT * FROM player WHERE email = ?', [req.body.email], (error, results) => {
-            if (error) throw error;
-            console.log(results)
-            return res.status(200).json(results);
-        })
-        
-      } catch (error) {
-        return res.status(500).json({ message: error.message });
-      }
-    };
+      connection.query('SELECT * FROM player WHERE email = ?', [req.body.email], (error, results) => {
+        if (error) throw error;
+        console.log(results);
+  
+        if (results.length > 0) {
+          return res.status(200).json({ taken: true });
+        } else {
+          return res.status(200).json({ taken: false });
+        }
+      });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  };
