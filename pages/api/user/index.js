@@ -1,4 +1,5 @@
 import connection from '#/db';
+import bcrypt from 'bcrypt';
 
 export default async function handler(req, res) {
   switch (req.method) {
@@ -24,7 +25,17 @@ const getPlayers = async (req, res) => {
 
 // création d'un joueur
 const createPlayer = async (req, res) => {
-  connection.query('INSERT INTO player SET ?', [req.body], (error, results) => {
+  try {
+    // Hachage du mot de passe
+    const hashedPassword = await bcrypt.hash(req.body.password, 10); // '10' est le nombre de tours de hachage
+
+    // Remplacement du mot de passe en clair par le mot de passe haché
+    const player = {
+      ...req.body,
+      password: hashedPassword,
+    };
+
+  connection.query('INSERT INTO player SET ?', [player], (error, results) => {
     if (error) {
       if (error.code === 'ER_DUP_ENTRY') {
         const isUsername = error.message.includes('username');
@@ -35,4 +46,7 @@ const createPlayer = async (req, res) => {
     }
     return res.status(200).json(results);
   });
+} catch (error) {
+  return res.status(500).json({ message: error.message });
+}
 };
