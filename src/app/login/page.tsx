@@ -60,7 +60,7 @@ const Login = () => {
   // register user
   const handleRegister = async (data: FormInputs) => {
     try {
-      const response = await axios.post('http://localhost:3000/api/user', {
+      const response = await axios.post('api/user', {
         username,
         email,
         password

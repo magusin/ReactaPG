@@ -21,7 +21,8 @@
     ],
     "paths": {
       "@/*": ["./src*"],
-      "#/*": ["./*"]
+      "#/*": ["./*"],
+      "api": ["./pages/api/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/utils.js", "pages/api/user/index.js"],
