@@ -15,6 +15,7 @@ import {
 import MuiAlert from '@mui/material/Alert'
 import { yupResolver } from '@hookform/resolvers/yup'
 import axios from 'axios'
+import Header from '../../components/header'
 
 const Login = () => {
   const [open, setOpen] = useState(false)
@@ -99,17 +100,19 @@ const Login = () => {
 
   return (
     <>
+    <Header />
+
       {log ? (
         <Container maxWidth="xs">
           <form action="">
             <Box
+            className="boxGlobalStyles"
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '16px',
                 width: '300px',
                 margin: '0 auto',
-                marginTop: '200px'
               }}
             >
               <Typography component="h1" variant="h5">
@@ -142,25 +145,15 @@ const Login = () => {
         </Container>
       ) : (
         <Container maxWidth="sm">
-          <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-            <MuiAlert
-              
-              severity="success"
-              elevation={6}
-              variant="filled"
-            >
-              Registration successful!
-            </MuiAlert>
-          </Snackbar>
           <form onSubmit={handleSubmit(handleRegister)}>
             <Box
+            className="boxGlobalStyles"
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '16px',
                 width: '300px',
                 margin: '0 auto',
-                marginTop: '200px'
               }}
             >
               <Typography component="h1" variant="h5">
@@ -214,6 +207,16 @@ const Login = () => {
           </form>
         </Container>
       )}
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+            <MuiAlert
+              
+              severity="success"
+              elevation={6}
+              variant="filled"
+            >
+              Registration successful!
+            </MuiAlert>
+          </Snackbar>
     </>
   )
 }

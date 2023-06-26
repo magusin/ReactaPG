@@ -28,12 +28,14 @@ export default async function handler(req, res) {
       return res.status(400).json({ message: "bad request" });
   }
 }
+
 // login
 const login = async (req, res) => {
   try {
     connection.query('SELECT * FROM player WHERE username = ?', [req.body.username], async (error, results) => {
       if (error) throw error;
       if (results.length === 0) return res.status(401).json({ message: 'username or password incorrect' });
+      // déchiffrer le mot de passe haché
       const isPasswordCorrect = await bcrypt.compare(req.body.password, results[0].password);
       if (!isPasswordCorrect) return res.status(401).json({ message: 'username or password incorrect' });
       return res.status(200).json(results[0]);

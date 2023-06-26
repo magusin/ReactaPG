@@ -8,3 +8,26 @@
 .inputField {
   margin-top: auto;
 }
+
+body {
+  margin: 0px;
+  color: rgba(0, 0, 0, 0.87);
+  font-family: Roboto, Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.5;
+  letter-spacing: 0.00938em;
+  min-height: 100%;
+  background: linear-gradient(rgb(247, 225, 183) 0%, rgb(235, 173, 112) 160px);
+}
+
+html {
+  min-height: 100%;
+}
+
+.boxGlobalStyles {
+  box-shadow: rgb(222, 195, 127) 0px 0px 0px 1px, rgb(246, 238, 144) 0px 0px 1px 4.5px, rgb(114, 82, 84) 0px 0px 0px 6px, rgb(188, 123, 74) 3px 3px 0px 6px;
+  border-radius: 5px 5px 5px 5px;
+  padding: 16px;
+  background-color: rgb(251, 247, 192);
+}
