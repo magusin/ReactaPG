@@ -1,11 +1,14 @@
 import connection from '#/db';
 import bcrypt from 'bcrypt';
 import Cors from 'cors'
+import { PrismaClient } from '@prisma/client';
 
 // Initialiser le middleware CORS
 let cors = Cors({
   methods: ['POST', 'HEAD'],
 })
+
+const prisma = new PrismaClient();
 
 function runMiddleware(req, res, fn) {
   return new Promise((resolve, reject) => {
@@ -54,22 +57,43 @@ const createPlayer = async (req, res) => {
       password: hashedPassword,
     };
 
-    connection.query('INSERT INTO player(username, email, password) VALUES(?,?,?)', [player.username, player.email, player.password], (error, results) => {    
-      if (error) {
-      if (error.code === 'ER_DUP_ENTRY') {
-        const isUsername = error.message.includes('username');
-        const isEmail = error.message.includes('email');
-        return res.status(409).json({ usernameTaken: isUsername, emailTaken: isEmail });
-      }
-      console.log('Error in INSERT query:', error);
-      return res.status(500).json({ message: error.message });
-      
-    }
-    return res.status(200).json(results);
-  });
+    const createdPlayer = await prisma.player.create({
+      data: {
+        username: player.username,
+        email: player.email,
+        password: player.password,
+      },
+    });
 
-} catch (error) {
-  console.log('Error in createPlayer function:', error);
-  return res.status(500).json({ message: error.message });
-}
+    return res.status(200).json(createdPlayer);
+  } catch (error) {
+    if (error.code === 'P2002') {
+      const isUsername = error.meta.target.includes('username');
+      const isEmail = error.meta.target.includes('email');
+      return res.status(409).json({ usernameTaken: isUsername, emailTaken: isEmail });
+    }
+
+    console.log('Error in createPlayer function:', error);
+    return res.status(500).json({ message: error.message });
+  }
 };
+
+//     connection.query('INSERT INTO player(username, email, password) VALUES(?,?,?)', [player.username, player.email, player.password], (error, results) => {    
+//       if (error) {
+//       if (error.code === 'ER_DUP_ENTRY') {
+//         const isUsername = error.message.includes('username');
+//         const isEmail = error.message.includes('email');
+//         return res.status(409).json({ usernameTaken: isUsername, emailTaken: isEmail });
+//       }
+//       console.log('Error in INSERT query:', error);
+//       return res.status(500).json({ message: error.message });
+      
+//     }
+//     return res.status(200).json(results);
+//   });
+
+// } catch (error) {
+//   console.log('Error in createPlayer function:', error);
+//   return res.status(500).json({ message: error.message });
+// }
+// };

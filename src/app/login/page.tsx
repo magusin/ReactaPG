@@ -10,8 +10,10 @@ import {
   Box,
   Container,
   Typography,
-  Snackbar
+  Snackbar,
+  IconButton
 } from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close'
 import MuiAlert from '@mui/material/Alert'
 import { yupResolver } from '@hookform/resolvers/yup'
 import axios from 'axios'
@@ -46,9 +48,9 @@ const Login = () => {
   })
   // interface formulaire
   interface FormInputs {
-    username: string;
-    email: string;
-    password: string;
+    username: string
+    email: string
+    password: string
   }
   // hook form
   const {
@@ -79,7 +81,7 @@ const Login = () => {
         // si valide affiche alert et redirige l'utilisateur vers le login
         if (isValid) {
           setOpen(true)
-          window.location.reload()
+          setLog(!log)
         }
       }
     } catch (error: any) {
@@ -91,28 +93,22 @@ const Login = () => {
       }
     }
   }
-  // ferme l'alerte
-  const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-  }
 
   return (
     <>
-    <Header />
+      <Header />
 
       {log ? (
         <Container maxWidth="xs">
           <form action="">
             <Box
-            className="boxGlobalStyles"
+              className="boxGlobalStyles"
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '16px',
                 width: '300px',
-                margin: '0 auto',
+                margin: '0 auto'
               }}
             >
               <Typography component="h1" variant="h5">
@@ -147,13 +143,13 @@ const Login = () => {
         <Container maxWidth="sm">
           <form onSubmit={handleSubmit(handleRegister)}>
             <Box
-            className="boxGlobalStyles"
+              className="boxGlobalStyles"
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '16px',
                 width: '300px',
-                margin: '0 auto',
+                margin: '0 auto'
               }}
             >
               <Typography component="h1" variant="h5">
@@ -207,16 +203,28 @@ const Login = () => {
           </form>
         </Container>
       )}
-      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-            <MuiAlert
-              
-              severity="success"
-              elevation={6}
-              variant="filled"
+      <Snackbar open={open} autoHideDuration={6000} onClose={() => {setOpen(false)}}>
+        <MuiAlert
+          severity="success"
+          elevation={6}
+          variant="filled"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={() => {
+                setOpen(false)
+              }}
             >
-              Registration successful!
-            </MuiAlert>
-          </Snackbar>
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          Registration successful!
+        </MuiAlert>
+      </Snackbar>
     </>
   )
 }

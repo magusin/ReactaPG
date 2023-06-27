@@ -6,12 +6,11 @@ const Header = styled('header')({
  
   backgroundPosition: 'top center',
   backgroundRepeat: 'no-repeat',
-  backgroundAttachment: 'fixed',
-  height: '300px',
+  backgroundAttachment: 'relative',
+  height: '150px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  maxWidth: '1500px',
   minWidth: '600px',
 });
 

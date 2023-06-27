@@ -1,6 +1,9 @@
 import connection from '#/db';
 import bcrypt from 'bcrypt';
 import Cors from 'cors'
+const { PrismaClient } = require("@prisma/client");
+
+const prisma = new PrismaClient();
 
 // Initialiser le middleware CORS
 let cors = Cors({
@@ -32,14 +35,20 @@ export default async function handler(req, res) {
 // login
 const login = async (req, res) => {
   try {
-    connection.query('SELECT * FROM player WHERE username = ?', [req.body.username], async (error, results) => {
-      if (error) throw error;
-      if (results.length === 0) return res.status(401).json({ message: 'username or password incorrect' });
-      // déchiffrer le mot de passe haché
-      const isPasswordCorrect = await bcrypt.compare(req.body.password, results[0].password);
-      if (!isPasswordCorrect) return res.status(401).json({ message: 'username or password incorrect' });
-      return res.status(200).json(results[0]);
+    const player = await prisma.player.findUnique({
+      where: { username: req.body.username },
     });
+    
+    if (!player) {
+      return res.status(401).json({ message: 'Username or password incorrect' });
+    }
+    
+    const isPasswordCorrect = await bcrypt.compare(req.body.password, player.password);
+    if (!isPasswordCorrect) {
+      return res.status(401).json({ message: 'Username or password incorrect' });
+    }
+    
+    return res.status(200).json(player);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
