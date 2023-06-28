@@ -129,7 +129,7 @@ const Login = () => {
       } catch (error: any) {
         console.error(error)
   
-        if (error.response && error.response.status === 409) {
+        if (error.response && error.response.status === 401) {
           setUsernameIncorrect(error.response.data.usernameIncorrect)
           setPasswordIncorrect(error.response.data.passwordIncorrect)
         }
