@@ -1,7 +1,6 @@
-import connection from '#/db';
 import bcrypt from 'bcrypt';
 import Cors from 'cors'
-const { PrismaClient } = require("@prisma/client");
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -16,7 +15,6 @@ function runMiddleware(req, res, fn) {
       if (result instanceof Error) {
         return reject(result)
       }
-
       return resolve(result)
     })
   })
@@ -40,12 +38,12 @@ const login = async (req, res) => {
     });
     
     if (!player) {
-      return res.status(401).json({ message: 'Username or password incorrect' });
+      return res.status(401).json({ usernameIncorrect: 'Username incorrect' });
     }
     
     const isPasswordCorrect = await bcrypt.compare(req.body.password, player.password);
     if (!isPasswordCorrect) {
-      return res.status(401).json({ message: 'Username or password incorrect' });
+      return res.status(401).json({ passwordIncorrect: 'Username incorrect' });
     }
     
     return res.status(200).json(player);

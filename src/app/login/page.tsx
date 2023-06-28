@@ -21,6 +21,7 @@ import Header from '../../components/header'
 
 const Login = () => {
   const [open, setOpen] = useState(false)
+  const [openLogin, setOpenLogin] = useState(false)
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -28,40 +29,56 @@ const Login = () => {
   const [log, setLog] = useState(true)
   const [usernameTaken, setUsernameTaken] = useState(false)
   const [emailTaken, setEmailTaken] = useState(false)
+  const [usernameIncorrect, setUsernameIncorrect] = useState(false)
+  const [passwordIncorrect, setPasswordIncorrect] = useState(false)
 
-  //login user
-  const handleLogin = () => {
-    console.log('Email:', email)
-    console.log('Password:', password)
-  }
-  // schéma validation du formulaire
-  const validationSchema = Yup.object().shape({
+  // Schéma de validation du formulaire de connexion
+  const loginValidationSchema = Yup.object().shape({
     password: Yup.string()
       .required('Password is required')
       .min(7, 'Password must be at least 7 characters'),
     username: Yup.string()
       .required('Username is required')
       .min(6, 'Username must be at least 6 characters'),
+  })
+
+  // Schéma de validation du formulaire d'inscription
+  const registerValidationSchema = Yup.object().shape({
+    password: Yup.string()
+    .required('Password is required')
+    .min(7, 'Password must be at least 7 characters'),
+  username: Yup.string()
+    .required('Username is required')
+    .min(6, 'Username must be at least 6 characters'),
     email: Yup.string()
       .email('Invalid email address')
-      .required('Email is required')
+      .required('Email is required'),
   })
-  // interface formulaire
-  interface FormInputs {
+
+  // Interface du formulaire
+  interface RegisterFormInputs {
     username: string
     email: string
     password: string
   }
-  // hook form
-  const {
-    register,
-    handleSubmit,
-    formState: { errors }
-  } = useForm<FormInputs>({
-    resolver: yupResolver(validationSchema)
+
+  interface LoginFormInputs {
+    username: string
+    password: string
+  }
+
+  // Hook form pour le formulaire de connexion
+  const loginForm = useForm<LoginFormInputs>({
+    resolver: yupResolver(loginValidationSchema)
   })
-  // register user
-  const handleRegister = async (data: FormInputs) => {
+
+  // Hook form pour le formulaire d'inscription
+  const registerForm = useForm<RegisterFormInputs>({
+    resolver: yupResolver(registerValidationSchema)
+  })
+
+  // Fonction de soumission du formulaire d'inscription
+  const handleRegister = async (data: RegisterFormInputs) => {
     try {
       const response = await axios.post('api/user', {
         username,
@@ -71,14 +88,10 @@ const Login = () => {
 
       setUsernameTaken(response.data.usernameTaken)
       setEmailTaken(response.data.emailTaken)
-      // si username et email non pris, valide le formulaire
+      // Si le nom d'utilisateur et l'email ne sont pas déjà pris, valide le formulaire
       if (!response.data.usernameTaken && !response.data.emailTaken) {
-        const isValid = await validationSchema.validate({
-          username,
-          email,
-          password
-        })
-        // si valide affiche alert et redirige l'utilisateur vers le login
+        const isValid = await registerForm.trigger()
+        // Si valide, affiche une alerte
         if (isValid) {
           setOpen(true)
           setLog(!log)
@@ -94,13 +107,42 @@ const Login = () => {
     }
   }
 
+    // Login user
+    const handleLogin = async (data: LoginFormInputs) => {
+      try {
+        const response = await axios.post('api/user/login', {
+          username,
+          password
+        })
+  
+        setUsernameIncorrect(response.data.usernameIncorrect)
+        setPasswordIncorrect(response.data.passwordIncorrect)
+        // Si le nom d'utilisateur et le mot de passe sont corrects, valide le formulaire
+        if (!response.data.usernameIncorrect && !response.data.passwordIncorrect) {
+          const isValid = await loginForm.trigger()
+          // Si valide, affiche une alerte et redirige l'utilisateur vers la page d'accueil
+          if (isValid) {
+            setOpenLogin(true)
+            router.push('/')
+          }
+        }
+      } catch (error: any) {
+        console.error(error)
+  
+        if (error.response && error.response.status === 409) {
+          setUsernameIncorrect(error.response.data.usernameIncorrect)
+          setPasswordIncorrect(error.response.data.passwordIncorrect)
+        }
+      }
+    }
+
   return (
     <>
       <Header />
 
       {log ? (
         <Container maxWidth="xs">
-          <form action="">
+          <form onSubmit={loginForm.handleSubmit(handleLogin)}>
             <Box
               className="boxGlobalStyles"
               sx={{
@@ -115,22 +157,26 @@ const Login = () => {
                 Log in
               </Typography>
               <TextField
-                label="Email"
-                type="email"
-                value={email}
-                autoComplete="email"
-                onChange={(e) => setEmail(e.target.value)}
-                error={Boolean(errors.email)}
-                helperText={errors.email ? errors.email.message : ''}
+                label="Username"
+                type="text"
+                value={username}
+                autoComplete="username"
+                {...loginForm.register('username')}
+                onChange={(e) => setUsername(e.target.value)}
+                error={usernameIncorrect || Boolean(loginForm.formState.errors.username)}
+                helperText={usernameIncorrect ? 'Username incorrect' : loginForm.formState.errors.username?.message || ''}
               />
               <TextField
                 label="Password"
                 type="password"
                 value={password}
+                {...loginForm.register('password')}
                 autoComplete="current-password"
                 onChange={(e) => setPassword(e.target.value)}
+                error={passwordIncorrect || Boolean(loginForm.formState.errors.password)}
+                helperText={passwordIncorrect ? 'Password incorrect' : loginForm.formState.errors.password?.message || ''}
               />
-              <Button variant="contained" onClick={handleLogin}>
+              <Button variant="contained" type="submit">
                 Login
               </Button>
               <Button variant="text" onClick={() => setLog(!log)}>
@@ -141,7 +187,7 @@ const Login = () => {
         </Container>
       ) : (
         <Container maxWidth="sm">
-          <form onSubmit={handleSubmit(handleRegister)}>
+          <form onSubmit={registerForm.handleSubmit(handleRegister)}>
             <Box
               className="boxGlobalStyles"
               sx={{
@@ -159,39 +205,39 @@ const Login = () => {
                 label="Username"
                 type="text"
                 value={username}
-                {...register('username')}
+                {...registerForm.register('username')}
                 autoComplete="username"
                 onChange={(e) => setUsername(e.target.value)}
-                error={usernameTaken || Boolean(errors.username)}
+                error={usernameTaken || Boolean(registerForm.formState.errors.username)}
                 helperText={
                   usernameTaken
                     ? 'Username already taken'
-                    : errors.username?.message || ''
+                    : registerForm.formState.errors.username?.message || ''
                 }
               />
               <TextField
                 label="Email"
                 type="email"
                 value={email}
-                {...register('email')}
+                {...registerForm.register('email')}
                 autoComplete="email"
                 onChange={(e) => setEmail(e.target.value)}
-                error={emailTaken || Boolean(errors.email)}
+                error={emailTaken || Boolean(registerForm.formState.errors.email)}
                 helperText={
                   emailTaken
                     ? 'Email already taken'
-                    : errors.email?.message || ''
+                    : registerForm.formState.errors.email?.message || ''
                 }
               />
               <TextField
                 label="Password"
                 type="password"
                 value={password}
-                {...register('password')}
+                {...registerForm.register('password')}
                 autoComplete="new-password"
                 onChange={(e) => setPassword(e.target.value)}
-                error={Boolean(errors.password)}
-                helperText={errors.password?.message || ''}
+                error={Boolean(registerForm.formState.errors.password)}
+                helperText={registerForm.formState.errors.password?.message || ''}
               />
               <Button variant="contained" type="submit">
                 Register
@@ -203,7 +249,13 @@ const Login = () => {
           </form>
         </Container>
       )}
-      <Snackbar open={open} autoHideDuration={6000} onClose={() => {setOpen(false)}}>
+      <Snackbar
+        open={open}
+        autoHideDuration={6000}
+        onClose={() => {
+          setOpen(false)
+        }}
+      >
         <MuiAlert
           severity="success"
           elevation={6}
@@ -223,6 +275,34 @@ const Login = () => {
           sx={{ mb: 2 }}
         >
           Registration successful!
+        </MuiAlert>
+      </Snackbar>
+      <Snackbar
+        open={openLogin}
+        autoHideDuration={6000}
+        onClose={() => {
+          setOpenLogin(false)
+        }}
+      >
+        <MuiAlert
+          severity="success"
+          elevation={6}
+          variant="filled"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={() => {
+                setOpenLogin(false)
+              }}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          Login complete
         </MuiAlert>
       </Snackbar>
     </>
