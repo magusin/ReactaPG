@@ -12,6 +12,7 @@ const Header = styled('header')({
   alignItems: 'center',
   justifyContent: 'center',
   minWidth: '600px',
+  marginBottom: '50px'
 });
 
 export default Header;

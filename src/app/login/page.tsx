@@ -39,20 +39,20 @@ const Login = () => {
       .min(7, 'Password must be at least 7 characters'),
     username: Yup.string()
       .required('Username is required')
-      .min(6, 'Username must be at least 6 characters'),
+      .min(6, 'Username must be at least 6 characters')
   })
 
   // Schéma de validation du formulaire d'inscription
   const registerValidationSchema = Yup.object().shape({
     password: Yup.string()
-    .required('Password is required')
-    .min(7, 'Password must be at least 7 characters'),
-  username: Yup.string()
-    .required('Username is required')
-    .min(6, 'Username must be at least 6 characters'),
+      .required('Password is required')
+      .min(7, 'Password must be at least 7 characters'),
+    username: Yup.string()
+      .required('Username is required')
+      .min(6, 'Username must be at least 6 characters'),
     email: Yup.string()
       .email('Invalid email address')
-      .required('Email is required'),
+      .required('Email is required')
   })
 
   // Interface du formulaire
@@ -107,34 +107,43 @@ const Login = () => {
     }
   }
 
-    // Login user
-    const handleLogin = async (data: LoginFormInputs) => {
-      try {
-        const response = await axios.post('api/user/login', {
-          username,
-          password
-        })
-  
-        setUsernameIncorrect(response.data.usernameIncorrect)
-        setPasswordIncorrect(response.data.passwordIncorrect)
-        // Si le nom d'utilisateur et le mot de passe sont corrects, valide le formulaire
-        if (!response.data.usernameIncorrect && !response.data.passwordIncorrect) {
-          const isValid = await loginForm.trigger()
-          // Si valide, affiche une alerte et redirige l'utilisateur vers la page d'accueil
-          if (isValid) {
-            setOpenLogin(true)
-            router.push('/')
-          }
-        }
-      } catch (error: any) {
-        console.error(error)
-  
-        if (error.response && error.response.status === 401) {
-          setUsernameIncorrect(error.response.data.usernameIncorrect)
-          setPasswordIncorrect(error.response.data.passwordIncorrect)
+  // Login user
+  const handleLogin = async (data: LoginFormInputs) => {
+    try {
+      const response = await axios.post('api/user/login', {
+        username,
+        password
+      })
+
+      setUsernameIncorrect(response.data.usernameIncorrect)
+      setPasswordIncorrect(response.data.passwordIncorrect)
+      // Si le nom d'utilisateur et le mot de passe sont corrects, valide le formulaire
+      if (
+        !response.data.usernameIncorrect &&
+        !response.data.passwordIncorrect
+      ) {
+        const isValid = await loginForm.trigger()
+        // Si valide, affiche une alerte et redirige l'utilisateur vers la page d'accueil
+        if (isValid) {
+          setOpenLogin(true)
+          // Stocke les informations de l'utilisateur dans le localStorage
+          const { id, username } = response.data;
+          const userData = { id, username };
+          localStorage.clear();
+          localStorage.setItem('user', JSON.stringify(userData));
+          router.push('/');
+          console.log(userData)
         }
       }
+    } catch (error: any) {
+      console.error(error)
+
+      if (error.response && error.response.status === 401) {
+        setUsernameIncorrect(error.response.data.usernameIncorrect)
+        setPasswordIncorrect(error.response.data.passwordIncorrect)
+      }
     }
+  }
 
   return (
     <>
@@ -163,8 +172,15 @@ const Login = () => {
                 autoComplete="username"
                 {...loginForm.register('username')}
                 onChange={(e) => setUsername(e.target.value)}
-                error={usernameIncorrect || Boolean(loginForm.formState.errors.username)}
-                helperText={usernameIncorrect ? 'Username incorrect' : loginForm.formState.errors.username?.message || ''}
+                error={
+                  usernameIncorrect ||
+                  Boolean(loginForm.formState.errors.username)
+                }
+                helperText={
+                  usernameIncorrect
+                    ? 'Username incorrect'
+                    : loginForm.formState.errors.username?.message || ''
+                }
               />
               <TextField
                 label="Password"
@@ -173,8 +189,15 @@ const Login = () => {
                 {...loginForm.register('password')}
                 autoComplete="current-password"
                 onChange={(e) => setPassword(e.target.value)}
-                error={passwordIncorrect || Boolean(loginForm.formState.errors.password)}
-                helperText={passwordIncorrect ? 'Password incorrect' : loginForm.formState.errors.password?.message || ''}
+                error={
+                  passwordIncorrect ||
+                  Boolean(loginForm.formState.errors.password)
+                }
+                helperText={
+                  passwordIncorrect
+                    ? 'Password incorrect'
+                    : loginForm.formState.errors.password?.message || ''
+                }
               />
               <Button variant="contained" type="submit">
                 Login
@@ -208,7 +231,10 @@ const Login = () => {
                 {...registerForm.register('username')}
                 autoComplete="username"
                 onChange={(e) => setUsername(e.target.value)}
-                error={usernameTaken || Boolean(registerForm.formState.errors.username)}
+                error={
+                  usernameTaken ||
+                  Boolean(registerForm.formState.errors.username)
+                }
                 helperText={
                   usernameTaken
                     ? 'Username already taken'
@@ -222,7 +248,9 @@ const Login = () => {
                 {...registerForm.register('email')}
                 autoComplete="email"
                 onChange={(e) => setEmail(e.target.value)}
-                error={emailTaken || Boolean(registerForm.formState.errors.email)}
+                error={
+                  emailTaken || Boolean(registerForm.formState.errors.email)
+                }
                 helperText={
                   emailTaken
                     ? 'Email already taken'
@@ -237,7 +265,9 @@ const Login = () => {
                 autoComplete="new-password"
                 onChange={(e) => setPassword(e.target.value)}
                 error={Boolean(registerForm.formState.errors.password)}
-                helperText={registerForm.formState.errors.password?.message || ''}
+                helperText={
+                  registerForm.formState.errors.password?.message || ''
+                }
               />
               <Button variant="contained" type="submit">
                 Register

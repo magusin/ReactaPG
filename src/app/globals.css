@@ -30,4 +30,9 @@ html {
   border-radius: 5px 5px 5px 5px;
   padding: 16px;
   background-color: rgb(251, 247, 192);
+  margin: 8px auto;
+}
+
+.main {
+  margin: auto 80px;
 }
