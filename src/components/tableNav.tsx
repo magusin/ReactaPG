@@ -2,72 +2,106 @@ import React from 'react';
 import { Container, Typography } from '@mui/material';
 import tableWood from '../../public/tableWood.png';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const PixiCanvas = () => {
   return (
     <Container
-      maxWidth="md"
+      maxWidth="lg"
       sx={{
-        height: '500px',
+        width: { xs: '300px', md: '500px' },
+          height: { xs: '300px', md: '500px' },
         position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
         alignItems: 'center',
         color: 'black',
         textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)',
-        width: '500px',
-        marginRight: 'auto',
-        marginLeft: 0,
       }}
     >
-      <Image 
-        src={tableWood.src}
-        alt="table en bois"
-        width={500}
-        height={500}
-      />
+      <div
+        sx={{
+          width: { xs: '300px', md: '500px' },
+          height: { xs: '300px', md: '500px' },
+          position: 'relative',
+        }}
+      >
+        <Image 
+          src={tableWood.src}
+          alt="table en bois"
+          layout="fill"
+          
+        />
+      </div>
 
-      <Typography
-        variant="h4"
+<Typography
+        variant={{ xs: 'h6', md: 'h4' }}
         sx={{
           position: 'absolute',
           top: '20%',
-          left: '120px',
           transition: 'transform 0.3s ease-in-out',
           '&:hover': {
             transform: 'scale(1.1)',
-          }
+          },
+          '& a': {
+            color: 'inherit',
+            textDecoration: 'none',
+            '&:hover': {
+              color: 'inherit',
+            }
+          },
+          fontSize: '2rem',
+          fontWeight: 'bold',
         }}
       >
-        Aventure
+        <Link href="/">Aventure</Link>
       </Typography>
 
       <Typography
-        variant="h4"
+        variant={{ xs: 'h6', md: 'h4' }}
         sx={{
           position: 'absolute',
-          top: '40%',
-          left: '120px',
+          top: '40%' ,
           transition: 'transform 0.3s ease-in-out',
           '&:hover': {
             transform: 'scale(1.1)',
-          }
+          },
+          '& a': {
+            color: 'inherit',
+            textDecoration: 'none',
+            '&:hover': {
+              color: 'inherit',
+            }
+          },
+          fontSize: '2rem',
+          fontWeight: 'bold',
         }}
       >
-        Duel
+        <Link href="/">Duel</Link>
       </Typography>
 
       <Typography
-        variant="h4"
+        variant={{ xs: 'h6', md: 'h4' }}
         sx={{
           position: 'absolute',
-          top: '60%',
-          left: '120px',
+          top:'60%',
           transition: 'transform 0.3s ease-in-out',
           '&:hover': {
             transform: 'scale(1.1)',
-          }
+          },
+          '& a': {
+            color: 'inherit',
+            textDecoration: 'none',
+            '&:hover': {
+              color: 'inherit',
+            }
+          },
+          fontSize: '2rem',
+          fontWeight: 'bold',
         }}
       >
-        Arêne
+        <Link href="/">Arêne</Link>
       </Typography>
     </Container>
   );
