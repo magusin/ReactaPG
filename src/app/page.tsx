@@ -3,8 +3,8 @@
 import { Box, Container, Typography, useMediaQuery, Link, CircularProgress } from '@mui/material'
 import { useRouter } from 'next/navigation'
 import { useTheme } from '@mui/material/styles'
-import Header from '../components/header'
-import { UserLogin } from '../utils'
+import Header from 'src/components/header'
+import { UserLogin } from 'src/utils'
 import { useEffect, useState } from 'react'
 
 export default function Home() {

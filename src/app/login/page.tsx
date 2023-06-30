@@ -17,7 +17,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import MuiAlert from '@mui/material/Alert'
 import { yupResolver } from '@hookform/resolvers/yup'
 import axios from 'axios'
-import Header from '../../components/header'
+import Header from 'src/components/header'
 
 const Login = () => {
   const [open, setOpen] = useState(false)
