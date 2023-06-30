@@ -27,6 +27,7 @@
     "eslint-config-next": "13.4.7",
     "mysql2": "^3.3.5",
     "next": "13.4.7",
+    "pixi.js": "^7.2.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "typescript": "5.1.3",

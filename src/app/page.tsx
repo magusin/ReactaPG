@@ -6,6 +6,7 @@ import { useTheme } from '@mui/material/styles'
 import Header from 'src/components/header'
 import { UserLogin } from 'src/utils'
 import { useEffect, useState } from 'react'
+import TableNav from 'src/components/tableNav';
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true)
@@ -40,7 +41,12 @@ export default function Home() {
   
   return ( 
     <>
-      {isLoggedIn ? null : (
+      {isLoggedIn ? (
+        <>
+        <Header />
+        <TableNav />
+        </>
+      ) : (
         <>
           <Header />
           <Container maxWidth={isMobile ? 'xs' : 'md'}>
