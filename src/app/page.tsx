@@ -1,12 +1,20 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client'
-import { Box, Container, Typography, useMediaQuery, Link, CircularProgress } from '@mui/material'
+import {
+  Box,
+  Container,
+  Typography,
+  useMediaQuery,
+  Link,
+  CircularProgress,
+  Grid
+} from '@mui/material'
 import { useRouter } from 'next/navigation'
 import { useTheme } from '@mui/material/styles'
 import Header from 'src/components/header'
 import { UserLogin } from 'src/utils'
 import { useEffect, useState } from 'react'
-import TableNav from 'src/components/tableNav';
+import TableNav from 'src/components/tableNav'
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true)
@@ -20,31 +28,57 @@ export default function Home() {
 
   useEffect(() => {
     const delay = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
+      setIsLoading(false)
+    }, 2000)
 
-    return () => clearTimeout(delay);
-  }, []);
+    return () => clearTimeout(delay)
+  }, [])
 
   if (isLoading) {
     return (
-      <Box sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh'
-      }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh'
+        }}
+      >
         <CircularProgress />
       </Box>
-    );
+    )
   }
-  
-  return ( 
+
+  return (
     <>
       {isLoggedIn ? (
         <>
-        <Header />
-        <TableNav />
+          <Header />
+          <Grid container spacing={3}>
+           
+              <Container >
+              
+                <Box
+                  className="boxGlobalStyles"
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    gap: '16px',
+                    margin: '0 auto'
+                  }}
+                >
+                  <Grid item xs={12} md={6}>
+                  <TableNav />
+                
+              
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              {/* The other content here */}
+            </Grid>
+            </Box>
+            </Container>
+          </Grid>
         </>
       ) : (
         <>
@@ -56,7 +90,7 @@ export default function Home() {
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '16px',
-                width: '100%',
+                
                 margin: '0 auto'
               }}
             >
@@ -74,7 +108,7 @@ export default function Home() {
               </Typography>
             </Box>
           </Container>
-          </>
+        </>
       )}
     </>
   )

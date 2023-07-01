@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import * as Yup from 'yup'
 import { useRouter } from 'next/navigation'
+import { useTheme } from '@mui/material/styles'
 import {
   TextField,
   Button,
@@ -11,7 +12,8 @@ import {
   Container,
   Typography,
   Snackbar,
-  IconButton
+  IconButton,
+  useMediaQuery
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import MuiAlert from '@mui/material/Alert'
@@ -20,6 +22,8 @@ import axios from 'axios'
 import Header from 'src/components/header'
 
 const Login = () => {
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [open, setOpen] = useState(false)
   const [openLogin, setOpenLogin] = useState(false)
   const router = useRouter()
@@ -150,7 +154,7 @@ const Login = () => {
       <Header />
 
       {log ? (
-        <Container maxWidth="xs">
+        <Container maxWidth={isMobile ? 'xs' : 'md'}>
           <form onSubmit={loginForm.handleSubmit(handleLogin)}>
             <Box
               className="boxGlobalStyles"
