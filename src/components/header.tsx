@@ -1,5 +1,6 @@
+'use client'
 import { styled } from '@mui/material/styles';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation'
 
 const StyledHeader = styled('header')({
   backgroundImage: `url("https://brute.eternaltwin.org/images/fr/header/head.jpg")`,
@@ -21,10 +22,14 @@ const HeaderImage = styled('img')({
 });
 
 const Header = () => {
+
+  const router = useRouter()
+  const home = () => {
+    router.push('/')
+  }
+  
   return (
-    <Link href="/">
-      <StyledHeader />
-    </Link>
+      <StyledHeader onClick={home}/>
   );
 };
 
