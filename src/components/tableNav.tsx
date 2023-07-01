@@ -1,7 +1,7 @@
 import React from 'react'
 import { Container, Typography, Box } from '@mui/material'
 import tableWood from '../../public/tableWood.png'
-import Image from 'next/image'
+import Image from 'next/legacy/image'
 import Link from 'next/link'
 
 const TableNav = () => {
@@ -22,39 +22,47 @@ const TableNav = () => {
     >
       <Box
         sx={{
-          width: { xs: '300px', md: '500px' },
+          width: { xs: '400px', md: '500px' },
           height: { xs: '400px', md: '500px' },
           position: 'relative'
         }}
       >
-        <Image src={tableWood.src} alt="table en bois" layout="fill" />
+        <Image 
+        priority
+        src={tableWood.src} 
+        alt="panneau d'action" 
+        layout="responsive" 
+        sizes="(max-width: 300px) 100vw, 300px"
+        width={300}
+        height={300}
+        />
       </Box>
 
       <Typography
-  variant={{ xs: 'h6', md: 'h4' }}
-  sx={{
-    position: 'absolute',
-    top: '20%',
-    fontSize: { xs: '1.5rem', sm: '1.5rem', md: '2rem' },
-    transition: 'transform 0.3s ease-in-out',
-    '&:hover': {
-      transform: 'scale(1.1)',
-    },
-    '& a': {
-      color: 'inherit',
-      textDecoration: 'none',
-      '&:hover': {
-        color: 'inherit',
-      },
-    },
-    fontWeight: 'bold',
-  }}
->
-  <Link href="/">Aventure</Link>
-</Typography>
+        variant="h4"
+        sx={{
+          position: 'absolute',
+          top: '20%',
+          fontSize: { xs: '1.5rem', sm: '1.5rem', md: '2rem' },
+          transition: 'transform 0.3s ease-in-out',
+          '&:hover': {
+            transform: 'scale(1.1)'
+          },
+          '& a': {
+            color: 'inherit',
+            textDecoration: 'none',
+            '&:hover': {
+              color: 'inherit'
+            }
+          },
+          fontWeight: 'bold'
+        }}
+      >
+        <Link href="/">Aventure</Link>
+      </Typography>
 
       <Typography
-        variant={{ xs: 'h6', md: 'h4' }}
+        variant="h4"
         sx={{
           position: 'absolute',
           top: '40%',
@@ -77,7 +85,7 @@ const TableNav = () => {
       </Typography>
 
       <Typography
-        variant={{ xs: 'h6', md: 'h4' }}
+        variant="h4"
         sx={{
           position: 'absolute',
           top: '60%',

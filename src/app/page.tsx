@@ -55,28 +55,24 @@ export default function Home() {
         <>
           <Header />
           <Grid container spacing={3}>
-           
-              <Container >
-              
-                <Box
-                  className="boxGlobalStyles"
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    gap: '16px',
-                    margin: '0 auto'
-                  }}
-                >
-                  <Grid item xs={12} md={6}>
+            <Container>
+              <Box
+                className="boxGlobalStyles"
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  gap: '16px',
+                  margin: '0 auto'
+                }}
+              >
+                <Grid item xs={12} md={6}>
                   <TableNav />
-                
-              
-            </Grid>
+                </Grid>
 
-            <Grid item xs={12} md={6}>
-              {/* The other content here */}
-            </Grid>
-            </Box>
+                <Grid item xs={12} md={6}>
+                  {/* The other content here */}
+                </Grid>
+              </Box>
             </Container>
           </Grid>
         </>
@@ -90,11 +86,13 @@ export default function Home() {
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '16px',
-                
                 margin: '0 auto'
               }}
             >
-              <Typography component="p">
+              <Typography variant="p">
+                sx={{
+                  fontSize: { xs: '1rem', sm: '1rem', md: '1rem' },
+                }}
                 Rentre dans l'aventure, terrasse des monstres, monte en
                 puissance et montre aux autres joueurs qui est le plus fort !{' '}
                 <Link
