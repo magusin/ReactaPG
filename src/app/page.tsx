@@ -15,9 +15,11 @@ import Header from 'src/components/header'
 import { UserLogin } from 'src/utils'
 import { useEffect, useState } from 'react'
 import TableNav from 'src/components/tableNav'
+import StatsCard from 'src/components/statsCard'
+import axios from 'axios'
 
 export default function Home() {
-
+  const [player, setPlayer] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const isLoggedIn = UserLogin()
   const handleConnectClick = () => {
@@ -27,6 +29,7 @@ export default function Home() {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
 
+  // loading screen
   useEffect(() => {
     const delay = setTimeout(() => {
       setIsLoading(false)
@@ -34,6 +37,17 @@ export default function Home() {
 
     return () => clearTimeout(delay)
   }, [])
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      const user = localStorage.getItem('user')
+      const userId = JSON.parse(user).id
+      axios.get(`/api/user/${userId}`)
+      .then((res) => {
+        setPlayer(res.data)
+      })
+
+}})
 
   if (isLoading) {
     return (
@@ -50,6 +64,7 @@ export default function Home() {
     )
   }
 
+  
   return (
     <>
       {isLoggedIn ? (
@@ -71,7 +86,7 @@ export default function Home() {
                 </Grid>
 
                 <Grid item xs={12} md={6}>
-                  {/* The other content here */}
+                <StatsCard player={player} />
                 </Grid>
               </Box>
             </Container>

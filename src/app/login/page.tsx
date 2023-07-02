@@ -136,7 +136,6 @@ const Login = () => {
           localStorage.clear();
           localStorage.setItem('user', JSON.stringify(userData));
           router.push('/');
-          console.log(userData)
         }
       }
     } catch (error: any) {

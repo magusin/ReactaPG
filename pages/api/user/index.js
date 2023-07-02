@@ -1,4 +1,3 @@
-import connection from '#/db';
 import bcrypt from 'bcrypt';
 import Cors from 'cors'
 import { PrismaClient } from '@prisma/client';
@@ -26,11 +25,7 @@ export default async function handler(req, res) {
   await runMiddleware(req, res, cors)
   switch (req.method) {
     case "GET":
-      if (req.query.id) {
-        return await getPlayer(req, res);
-      } else {
         return await getPlayers(req, res);
-      }
     case "POST":
       return await createPlayer(req, res);
     default:
@@ -39,25 +34,25 @@ export default async function handler(req, res) {
 }
 
 // Obtenir un joueur spécifique en utilisant le nom d'utilisateur
-const getPlayer = async (req, res) => {
-  try {
-    const { username } = req.query;
+// const getPlayer = async (req, res) => {
+//   try {
+//     const { username } = req.query;
 
-    const player = await prisma.player.findUnique({
-      where: {
-        username: username,
-      },
-    });
+//     const player = await prisma.player.findUnique({
+//       where: {
+//         username: username,
+//       },
+//     });
 
-    if (player) {
-      return res.status(200).json(player);
-    } else {
-      return res.status(404).json({ message: "Player not found" });
-    }
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
-};
+//     if (player) {
+//       return res.status(200).json(player);
+//     } else {
+//       return res.status(404).json({ message: "Player not found" });
+//     }
+//   } catch (error) {
+//     return res.status(500).json({ message: error.message });
+//   }
+// };
 
 // Obtenir tous les joueurs
 const getPlayers = async (req, res) => {

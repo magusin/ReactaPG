@@ -1,6 +1,6 @@
 import React from 'react'
 import { Container, Typography, Box } from '@mui/material'
-import tableWood from '../../public/tableWood.png'
+import tableWood from '#/public/tableWood.png'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 import { UserLogout } from 'src/utils'

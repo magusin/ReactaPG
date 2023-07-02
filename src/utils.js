@@ -11,10 +11,5 @@ export const UserLogin = () => {
 
   return user;
 };
-
-export const UserLogout = () => {
-    // Supprimer les informations de l'utilisateur du localStorage
-    localStorage.removeItem('user');
-};
     
 
