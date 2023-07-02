@@ -1,13 +1,13 @@
-const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+const moduleAlias = require('module-alias')
+
+moduleAlias.addAliases({
+  'src': __dirname + '/src',
+  '#': __dirname,
+  'api': __dirname + '/src/pages/api',
+})
 
 module.exports = {
-  webpack: (config) => {
-    if (config.resolve.plugins) {
-      config.resolve.plugins.push(new TsconfigPathsPlugin());
-    } else {
-      config.resolve.plugins = [new TsconfigPathsPlugin()];
-    }
-
-    return config;
-  },
-};
+  webpack: (config, options) => {
+    return config
+  }
+}
