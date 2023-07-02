@@ -1,4 +1,13 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {}
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
-module.exports = nextConfig
+module.exports = {
+  webpack: (config) => {
+    if (config.resolve.plugins) {
+      config.resolve.plugins.push(new TsconfigPathsPlugin());
+    } else {
+      config.resolve.plugins = [new TsconfigPathsPlugin()];
+    }
+
+    return config;
+  },
+};
