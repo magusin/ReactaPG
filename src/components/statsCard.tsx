@@ -1,9 +1,13 @@
-import React from 'react'
+
 import { Box, Typography } from '@mui/material'
 import Image from 'next/image'
 import hp from '#/public/hp.png'
+import React, { useEffect } from 'react';
 
 const Stats = ({ player }) => {
+
+ console.log(player)
+
   return (
     <Box sx={{ width: '100%', marginTop: '20px' }}>
       <Typography

@@ -1,5 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client'
+import React from 'react'
 import {
   Box,
   Container,
@@ -22,32 +23,41 @@ export default function Home() {
   const [player, setPlayer] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const isLoggedIn = UserLogin()
-  const handleConnectClick = () => {
-    router.push('/login')
-  }
   const router = useRouter()
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
 
-  // loading screen
-  useEffect(() => {
-    const delay = setTimeout(() => {
-      setIsLoading(false)
-    }, 2000)
-
-    return () => clearTimeout(delay)
-  }, [])
+  const handleConnectClick = () => {
+    router.push('/login')
+  }
 
   useEffect(() => {
     if (isLoggedIn) {
       const user = localStorage.getItem('user')
       const userId = JSON.parse(user).id
-      axios.get(`/api/user/${userId}`)
-      .then((res) => {
-        setPlayer(res.data)
-      })
+      axios
+        .get(`/api/user/${userId}`)
+        .then((res) => {
+          setPlayer(res.data)
+        })
+        .finally(() => {
+          setIsLoading(false)
+        })
+    } else {
+      const delay = setTimeout(() => {
+        setIsLoading(false)
+      }, 2000)
 
-}})
+      return () => clearTimeout(delay)
+    }
+  }, [isLoggedIn])
+
+  // if (process.env.NODE_ENV !== 'production') {
+  //   const whyDidYouRender = require('@welldone-software/why-did-you-render')
+  //   whyDidYouRender(React, {
+  //     trackAllPureComponents: true
+  //   })
+  // }
 
   if (isLoading) {
     return (
@@ -64,7 +74,6 @@ export default function Home() {
     )
   }
 
-  
   return (
     <>
       {isLoggedIn ? (
@@ -86,7 +95,7 @@ export default function Home() {
                 </Grid>
 
                 <Grid item xs={12} md={6}>
-                <StatsCard player={player} />
+                  <StatsCard player={player} />
                 </Grid>
               </Box>
             </Container>
@@ -105,11 +114,12 @@ export default function Home() {
                 margin: '0 auto'
               }}
             >
-              <Typography variant="p"
+              <Typography
+                variant="p"
                 sx={{
-                  fontSize: { xs: '1rem', sm: '1rem', md: '1rem' },
+                  fontSize: { xs: '1rem', sm: '1rem', md: '1rem' }
                 }}
-                >
+              >
                 Rentre dans l'aventure, terrasse des monstres, monte en
                 puissance et montre aux autres joueurs qui est le plus fort !{' '}
                 <Link

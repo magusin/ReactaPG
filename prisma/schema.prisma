@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,22 +7,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Player {
-  id       Int      @id @default(autoincrement())
-  username String   @unique
-  password String   @db.VarChar(255)
-  email    String   @unique
-  str     Int      @default(1)
-  hp      Int      @default(50)
-  hpMax   Int      @default(50)
-  dex     Int      @default(1)
-  pa      Int      @default(20)
-  paMax   Int      @default(20)
-  xp      Int      @default(0)
-  level   Int      @default(1)
-  init    Int      @default(1)
-  dmgMin  Int      @default(1)
-  dmgMax  Int      @default(5)
-  def     Int      @default(1)
-  type    String   @default("player")
+model player {
+  id       Int    @id @default(autoincrement())
+  username String @unique
+  password String @db.VarChar(255)
+  email    String @unique
+  def      Int    @default(1)
+  dex      Int    @default(1)
+  dmgMax   Int    @default(5)
+  dmgMin   Int    @default(1)
+  hp       Int    @default(50)
+  hpMax    Int    @default(50)
+  init     Int    @default(1)
+  level    Int    @default(1)
+  pa       Int    @default(20)
+  paMax    Int    @default(20)
+  str      Int    @default(1)
+  type     String @default("player")
+  xp       Int    @default(0)
 }
