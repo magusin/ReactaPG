@@ -79,27 +79,23 @@ export default function Home() {
       {isLoggedIn ? (
         <>
           <Header />
-          <Grid container spacing={3}>
-            <Container>
-              <Box
-                className="boxGlobalStyles"
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  gap: '16px',
-                  margin: '0 auto'
-                }}
-              >
-                <Grid item xs={12} md={6}>
-                  <TableNav />
-                </Grid>
-
-                <Grid item xs={12} md={6}>
-                  <StatsCard player={player} />
-                </Grid>
-              </Box>
-            </Container>
-          </Grid>
+          <Container>
+            <Grid
+              container
+              spacing={3}
+              className="boxGlobalStyles"
+              sx={{
+                margin: '0 auto'
+              }}
+            >
+              <Grid item xs={12} md={6}>
+                <TableNav />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <StatsCard player={player} />
+              </Grid>
+            </Grid>
+          </Container>
         </>
       ) : (
         <>

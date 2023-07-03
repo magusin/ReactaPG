@@ -1,54 +1,78 @@
-
-import { Box, Typography } from '@mui/material'
-import Image from 'next/image'
+import { Box, Typography, Container } from '@mui/material'
+import Image from 'next/legacy/image'
 import hp from '#/public/hp.png'
-import React, { useEffect } from 'react';
+import React, { useEffect } from 'react'
 
 const Stats = ({ player }) => {
-
- console.log(player)
+  console.log(player)
 
   return (
-    <Box sx={{ width: '100%', marginTop: '20px' }}>
+    <Container sx={{ width: '100%', marginLeft: {xs:'20px', md:'50px'}, marginRight: {xs:'20px', md:'50px'}}}>
       <Typography
-        variant="h2"
-        component="h2"
+        variant="h3"
+        component="h3"
         sx={{ flexGrow: 1, fontFamily: 'fantasy' }}
       >
         {player.username.toUpperCase()}
       </Typography>
-      <Box position="relative" width={100} height={100}>
-        <Image priority src={hp.src} alt="pv" layout="fill" objectFit="cover" />
-        <Box
-          position="absolute"
-          top={0}
-          left={0}
-          width="100%"
-          height="100%"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <Typography
-            variant="h6"
-            sx={{
-              cursor: 'default',
-              color: 'white',
-              fontFamily: 'fantasy'
-            }}
+      <Box display="flex" alignItems="center">
+        <Box position="relative" width={100} height={100}>
+          <Image
+            priority
+            src={hp.src}
+            alt="pv"
+            layout="responsive"
+            objectFit="cover"
+            width={100}
+            height={100}
+          />
+          <Box
+            position="absolute"
+            top={0}
+            left={0}
+            width="100%"
+            height="100%"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
           >
-            {player.hpMax}
-          </Typography>
+            <Typography
+              variant="h6"
+              sx={{
+                cursor: 'default',
+                color: 'white',
+                fontFamily: 'fantasy',
+                fontSize: '1.5rem'
+              }}
+            >
+              {player.hpMax}
+            </Typography>
+          </Box>
         </Box>
+        <Typography
+          variant="h6"
+          sx={{
+            marginLeft: '10px',
+            color: 'red',
+            fontFamily: 'fantasy',
+            fontSize: '1.5rem'
+          }}
+        >
+          Health
+        </Typography>
       </Box>
-
       <Box display="flex" alignItems="center" marginTop="20px">
         <Typography
           variant="h6"
           component="div"
-          sx={{ flexGrow: 1, fontFamily: 'fantasy', fontSize: '1.5rem', color: 'brown' }}
+          sx={{
+            flexGrow: 1,
+            fontFamily: 'fantasy',
+            fontSize: '1.5rem',
+            color: 'brown'
+          }}
         >
-          Strength: {player.str}
+          Strength : {player.str}
         </Typography>
       </Box>
 
@@ -56,12 +80,45 @@ const Stats = ({ player }) => {
         <Typography
           variant="h6"
           component="div"
-          sx={{ flexGrow: 1, fontFamily: 'fantasy', fontSize: '1.5rem', color: 'green' }}
+          sx={{
+            flexGrow: 1,
+            fontFamily: 'fantasy',
+            fontSize: '1.5rem',
+            color: 'green'
+          }}
         >
-          Dexterity: {player.dex}
+          Dexterity : {player.dex}
         </Typography>
       </Box>
-    </Box>
+      <Box display="flex" alignItems="center" marginTop="20px">
+        <Typography
+          variant="h6"
+          component="div"
+          sx={{
+            flexGrow: 1,
+            fontFamily: 'fantasy',
+            fontSize: '1.5rem',
+            color: 'darkblue'
+          }}
+        >
+          Damage : {player.dmgMin} - {player.dmgMax}
+        </Typography>
+      </Box>
+      <Box display="flex" alignItems="center" marginTop="20px">
+        <Typography
+          variant="h6"
+          component="div"
+          sx={{
+            flexGrow: 1,
+            fontFamily: 'fantasy',
+            fontSize: '1.5rem',
+            color: 'dark'
+          }}
+        >
+          Action : {player.pa}
+        </Typography>
+      </Box>
+    </Container>
   )
 }
 

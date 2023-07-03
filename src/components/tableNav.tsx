@@ -10,7 +10,6 @@ const TableNav = () => {
   const router = useRouter()
 
   const handleLogout = async (e) => {
-    console.log('logout')
     await localStorage.removeItem('user')
     await window.location.reload()
   }
@@ -19,7 +18,7 @@ const TableNav = () => {
     <Container
       maxWidth="lg"
       sx={{
-        width: { xs: '400px', md: '600px' },
+        width: { xs: '500px', md: '500px' },
         height: { xs: '100%', md: '100%' },
         position: 'relative',
         display: 'flex',
@@ -27,12 +26,12 @@ const TableNav = () => {
         justifyContent: 'center',
         alignItems: 'center',
         color: 'black',
-        textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)'
+        textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)',
       }}
     >
       <Box
         sx={{
-          width: { xs: '500px', md: '500px' },
+          width: { xs: '400px', md: '500px' },
           height: { xs: '600px', md: '600px' },
           position: 'relative'
         }}
@@ -44,7 +43,7 @@ const TableNav = () => {
           layout="responsive"
           sizes="(max-width: 300px) 100vw, 300px"
           width={300}
-          height={360}
+          height={400}
         />
       </Box>
 
@@ -52,7 +51,7 @@ const TableNav = () => {
         variant="h4"
         sx={{
           position: 'absolute',
-          top: '20%',
+          top: {xs:'15%', md: '20%'},
           fontSize: { xs: '1.5rem', sm: '1.5rem', md: '2rem' },
           transition: 'transform 0.3s ease-in-out',
           '&:hover': {
@@ -69,14 +68,14 @@ const TableNav = () => {
           color: '#674106'
         }}
       >
-        <Link href="/">Aventure</Link>
+        <Link href="/">Adventure</Link>
       </Typography>
 
       <Typography
         variant="h4"
         sx={{
           position: 'absolute',
-          top: '35%',
+          top: {xs:'30%', md: '35%'},
           fontSize: { xs: '1.5rem', sm: '1.5rem', md: '2rem' },
           transition: 'transform 0.3s ease-in-out',
           '&:hover': {
@@ -100,7 +99,7 @@ const TableNav = () => {
         variant="h4"
         sx={{
           position: 'absolute',
-          top: '50%',
+          top: {xs:'45%', md: '50%'},
           fontSize: { xs: '1.5rem', sm: '1.5rem', md: '2rem' },
           transition: 'transform 0.3s ease-in-out',
           '&:hover': {
@@ -123,7 +122,7 @@ const TableNav = () => {
         variant="h4"
         sx={{
           position: 'absolute',
-          top: '65%',
+          top: {xs:'60%', md: '65%'},
           fontSize: { xs: '1.5rem', sm: '1.5rem', md: '2rem' },
           transition: 'transform 0.3s ease-in-out',
           '&:hover': {
@@ -140,7 +139,7 @@ const TableNav = () => {
         }}
       >
         <Link href="/" onClick={handleLogout}>
-          Se déconnecter
+          LogOut
         </Link>
       </Typography>
     </Container>
