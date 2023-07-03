@@ -211,7 +211,7 @@ const Login = () => {
               />
               <ReCAPTCHA
                 sitekey="6LfWD3UmAAAAAPWY2TwheHMotBLzS9SCPSNujjsC"
-                onChange={(value) => setCaptchaValue(value)}
+                onChange={(value) => value && setCaptchaValue(value)}
               />
               <Button variant="contained" type="submit">
                 Login
