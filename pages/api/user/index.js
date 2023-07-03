@@ -33,31 +33,29 @@ export default async function handler(req, res) {
   }
 }
 
-// Obtenir un joueur spécifique en utilisant le nom d'utilisateur
-// const getPlayer = async (req, res) => {
-//   try {
-//     const { username } = req.query;
-
-//     const player = await prisma.player.findUnique({
-//       where: {
-//         username: username,
-//       },
-//     });
-
-//     if (player) {
-//       return res.status(200).json(player);
-//     } else {
-//       return res.status(404).json({ message: "Player not found" });
-//     }
-//   } catch (error) {
-//     return res.status(500).json({ message: error.message });
-//   }
-// };
-
 // Obtenir tous les joueurs
 const getPlayers = async (req, res) => {
   try {
-    const players = await prisma.player.findMany();
+    const players = await prisma.player.findMany(
+      {select: {
+        id: true,
+        username: true,
+        def: true,
+        dex: true,
+        dmgMax: true,
+        dmgMin: true,
+        hp: true,
+        hpMax: true,
+        init: true,
+        level: true,
+        pa: true,
+        paMax: true,
+        str: true,
+        type: true,
+        xp: true,
+      },
+    }
+  );
 
     return res.status(200).json(players);
   } catch (error) {
