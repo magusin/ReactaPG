@@ -1,46 +1,103 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client'
-import { Box, Container, Typography, useMediaQuery, Link, CircularProgress } from '@mui/material'
+import React from 'react'
+import {
+  Box,
+  Container,
+  Typography,
+  useMediaQuery,
+  Link,
+  CircularProgress,
+  Grid
+} from '@mui/material'
 import { useRouter } from 'next/navigation'
 import { useTheme } from '@mui/material/styles'
 import Header from 'src/components/header'
 import { UserLogin } from 'src/utils'
 import { useEffect, useState } from 'react'
+import TableNav from 'src/components/tableNav'
+import StatsCard from 'src/components/statsCard'
+import axios from 'axios'
 
 export default function Home() {
+  const [player, setPlayer] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const isLoggedIn = UserLogin()
-  const handleConnectClick = () => {
-    router.push('/login')
-  }
   const router = useRouter()
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
 
-  useEffect(() => {
-    const delay = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
+  const handleConnectClick = () => {
+    router.push('/login')
+  }
 
-    return () => clearTimeout(delay);
-  }, []);
+  useEffect(() => {
+    if (isLoggedIn) {
+      const user = localStorage.getItem('user')
+      const userId = JSON.parse(user).id
+      axios
+        .get(`/api/user/${userId}`)
+        .then((res) => {
+          setPlayer(res.data)
+        })
+        .finally(() => {
+          setIsLoading(false)
+        })
+    } else {
+      const delay = setTimeout(() => {
+        setIsLoading(false)
+      }, 2000)
+
+      return () => clearTimeout(delay)
+    }
+  }, [isLoggedIn])
+
+  // if (process.env.NODE_ENV !== 'production') {
+  //   const whyDidYouRender = require('@welldone-software/why-did-you-render')
+  //   whyDidYouRender(React, {
+  //     trackAllPureComponents: true
+  //   })
+  // }
 
   if (isLoading) {
     return (
-      <Box sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh'
-      }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh'
+        }}
+      >
         <CircularProgress />
       </Box>
-    );
+    )
   }
-  
-  return ( 
+
+  return (
     <>
-      {isLoggedIn ? null : (
+      {isLoggedIn ? (
+        <>
+          <Header />
+          <Container>
+            <Grid
+              container
+              spacing={3}
+              className="boxGlobalStyles"
+              sx={{
+                margin: '0 auto'
+              }}
+            >
+              <Grid item xs={12} md={6}>
+                <TableNav />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <StatsCard player={player} />
+              </Grid>
+            </Grid>
+          </Container>
+        </>
+      ) : (
         <>
           <Header />
           <Container maxWidth={isMobile ? 'xs' : 'md'}>
@@ -50,11 +107,15 @@ export default function Home() {
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '16px',
-                width: '100%',
                 margin: '0 auto'
               }}
             >
-              <Typography component="p">
+              <Typography
+                variant="p"
+                sx={{
+                  fontSize: { xs: '1rem', sm: '1rem', md: '1rem' }
+                }}
+              >
                 Rentre dans l'aventure, terrasse des monstres, monte en
                 puissance et montre aux autres joueurs qui est le plus fort !{' '}
                 <Link
@@ -68,7 +129,7 @@ export default function Home() {
               </Typography>
             </Box>
           </Container>
-          </>
+        </>
       )}
     </>
   )
