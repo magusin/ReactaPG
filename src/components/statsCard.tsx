@@ -4,8 +4,14 @@ import hp from '#/public/hp.png'
 import React, { useEffect } from 'react'
 import { Player } from 'src/types/Player'
 
-const Stats = ({ player } : {player: Player}) => {
+const Stats = ({ player } : {player: Player | null}) => {
+
   console.log(player)
+  
+  if (player === null) {
+    // Render something appropriate when there is no player.
+    return <div>No player</div>;
+  }
 
   return (
     <Container sx={{ width: '100%', marginLeft: {xs:'20px', md:'50px'}, marginRight: {xs:'20px', md:'50px'}}}>
