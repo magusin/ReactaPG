@@ -20,8 +20,8 @@ import StatsCard from 'src/components/statsCard'
 import axios from 'axios'
 
 export default function Home() {
-  const [player, setPlayer] = useState(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [player, setPlayer] = useState<Player | null>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
   const isLoggedIn = UserLogin()
   const router = useRouter()
   const theme = useTheme()
@@ -34,6 +34,7 @@ export default function Home() {
   useEffect(() => {
     if (isLoggedIn) {
       const user = localStorage.getItem('user')
+      if (user) {
       const userId = JSON.parse(user).id
       axios
         .get(`/api/user/${userId}`)
@@ -50,14 +51,8 @@ export default function Home() {
 
       return () => clearTimeout(delay)
     }
+  }
   }, [isLoggedIn])
-
-  // if (process.env.NODE_ENV !== 'production') {
-  //   const whyDidYouRender = require('@welldone-software/why-did-you-render')
-  //   whyDidYouRender(React, {
-  //     trackAllPureComponents: true
-  //   })
-  // }
 
   if (isLoading) {
     return (

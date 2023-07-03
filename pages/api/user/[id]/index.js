@@ -40,9 +40,26 @@ const getPlayer = async (req, res) => {
         const player = await prisma.player.findUnique({
         where: {
             id: parseInt(id)
-        }
-        })
-    
+        },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        def: true,
+        dex: true,
+        dmgMax: true,
+        dmgMin: true,
+        hp: true,
+        hpMax: true,
+        init: true,
+        level: true,
+        pa: true,
+        paMax: true,
+        str: true,
+        type: true,
+        xp: true,
+      },
+    })
         if (player) {
         return res.status(200).json(player)
         } else {
