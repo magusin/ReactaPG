@@ -43,6 +43,7 @@
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
+    "@types/react-google-recaptcha": "^2.1.5",
     "prisma": "^4.16.2"
   }
 }
