@@ -20,12 +20,14 @@ import MuiAlert from '@mui/material/Alert'
 import { yupResolver } from '@hookform/resolvers/yup'
 import axios from 'axios'
 import Header from 'src/components/header'
+import ReCAPTCHA from 'react-google-recaptcha'
 
 const Login = () => {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [open, setOpen] = useState(false)
   const [openLogin, setOpenLogin] = useState(false)
+  const [openFalse, setOpenFalse] = useState(false)
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -35,6 +37,7 @@ const Login = () => {
   const [emailTaken, setEmailTaken] = useState(false)
   const [usernameIncorrect, setUsernameIncorrect] = useState(false)
   const [passwordIncorrect, setPasswordIncorrect] = useState(false)
+  const [captchaValue, setCaptchaValue] = useState('')
 
   // Schéma de validation du formulaire de connexion
   const loginValidationSchema = Yup.object().shape({
@@ -113,6 +116,7 @@ const Login = () => {
 
   // Login user
   const handleLogin = async (data: LoginFormInputs) => {
+    if (captchaValue !== '') {
     try {
       const response = await axios.post('api/user/login', {
         username,
@@ -131,11 +135,11 @@ const Login = () => {
         if (isValid) {
           setOpenLogin(true)
           // Stocke les informations de l'utilisateur dans le localStorage
-          const { id, username } = response.data;
-          const userData = { id, username };
-          localStorage.clear();
-          localStorage.setItem('user', JSON.stringify(userData));
-          router.push('/');
+          const { id, username } = response.data
+          const userData = { id, username }
+          localStorage.clear()
+          localStorage.setItem('user', JSON.stringify(userData))
+          router.push('/')
         }
       }
     } catch (error: any) {
@@ -146,6 +150,9 @@ const Login = () => {
         setPasswordIncorrect(error.response.data.passwordIncorrect)
       }
     }
+  } else{
+    setOpenFalse(true)
+  }
   }
 
   return (
@@ -201,6 +208,10 @@ const Login = () => {
                     ? 'Password incorrect'
                     : loginForm.formState.errors.password?.message || ''
                 }
+              />
+              <ReCAPTCHA
+                sitekey="6LfWD3UmAAAAAPWY2TwheHMotBLzS9SCPSNujjsC"
+                onChange={(value) => setCaptchaValue(value)}
               />
               <Button variant="contained" type="submit">
                 Login
@@ -336,6 +347,34 @@ const Login = () => {
           sx={{ mb: 2 }}
         >
           Login complete
+        </MuiAlert>
+      </Snackbar>
+      <Snackbar
+        open={openFalse}
+        autoHideDuration={6000}
+        onClose={() => {
+          setOpenFalse(false)
+        }}
+      >
+      <MuiAlert
+          severity="error"
+          elevation={6}
+          variant="filled"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={() => {
+                setOpenFalse(false)
+              }}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          Complete the captcha please
         </MuiAlert>
       </Snackbar>
     </>
