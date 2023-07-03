@@ -45,13 +45,11 @@ export default function Home() {
           .finally(() => {
             setIsLoading(false)
           })
-      } else {
-        const delay = setTimeout(() => {
-          setIsLoading(false)
-        }, 2000)
-
-        return () => clearTimeout(delay)
       }
+    } else {
+      // L'utilisateur n'est pas connecté ou vient de se déconnecter
+      setPlayer(null)
+      setIsLoading(false)
     }
   }, [isLoggedIn])
 
