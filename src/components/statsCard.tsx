@@ -2,8 +2,9 @@ import { Box, Typography, Container } from '@mui/material'
 import Image from 'next/legacy/image'
 import hp from '#/public/hp.png'
 import React, { useEffect } from 'react'
+import { Player } from 'src/types/Player'
 
-const Stats = ({ player }) => {
+const Stats = ({ player } : {player: Player}) => {
   console.log(player)
 
   return (

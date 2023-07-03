@@ -18,25 +18,7 @@ import { useEffect, useState } from 'react'
 import TableNav from 'src/components/tableNav'
 import StatsCard from 'src/components/statsCard'
 import axios from 'axios'
-
-interface Player {
-  id: number
-  username: string
-  email: string
-  def: number
-  dex: number
-  dmgMax: number
-  dmgMin: number
-  hp: number
-  hpMax: number
-  init: number
-  level: number
-  pa: number
-  paMax: number
-  str: number
-  type: string
-  xp: number
-}
+import { Player } from 'src/types/Player'
 
 export default function Home() {
   const [player, setPlayer] = useState<Player | null>(null)
