@@ -125,7 +125,7 @@ export default function Home() {
               }}
             >
               <Typography
-                variant="p"
+                variant="body1"
                 sx={{
                   fontSize: { xs: '1rem', sm: '1rem', md: '1rem' }
                 }}
