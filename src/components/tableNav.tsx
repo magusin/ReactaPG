@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation'
 const TableNav = () => {
   const router = useRouter()
 
-  const handleLogout = async (e) => {
+  const handleLogout = async (e : React.MouseEvent) => {
     await localStorage.removeItem('user')
     await window.location.reload()
   }
