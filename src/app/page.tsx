@@ -19,6 +19,25 @@ import TableNav from 'src/components/tableNav'
 import StatsCard from 'src/components/statsCard'
 import axios from 'axios'
 
+interface Player {
+  id: number
+  username: string
+  email: string
+  def: number
+  dex: number
+  dmgMax: number
+  dmgMin: number
+  hp: number
+  hpMax: number
+  init: number
+  level: number
+  pa: number
+  paMax: number
+  str: number
+  type: string
+  xp: number
+}
+
 export default function Home() {
   const [player, setPlayer] = useState<Player | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
@@ -35,23 +54,23 @@ export default function Home() {
     if (isLoggedIn) {
       const user = localStorage.getItem('user')
       if (user) {
-      const userId = JSON.parse(user).id
-      axios
-        .get(`/api/user/${userId}`)
-        .then((res) => {
-          setPlayer(res.data)
-        })
-        .finally(() => {
+        const userId = JSON.parse(user).id
+        axios
+          .get(`/api/user/${userId}`)
+          .then((res) => {
+            setPlayer(res.data)
+          })
+          .finally(() => {
+            setIsLoading(false)
+          })
+      } else {
+        const delay = setTimeout(() => {
           setIsLoading(false)
-        })
-    } else {
-      const delay = setTimeout(() => {
-        setIsLoading(false)
-      }, 2000)
+        }, 2000)
 
-      return () => clearTimeout(delay)
+        return () => clearTimeout(delay)
+      }
     }
-  }
   }, [isLoggedIn])
 
   if (isLoading) {
