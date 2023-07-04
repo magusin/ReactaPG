@@ -23,8 +23,8 @@ export default function Duel() {
   const [user, setUser] = useState<any>(null)
 
   useEffect(() => {
-    const user = localStorage.getItem('user')
-    setUser(user)
+    const currentUser = localStorage.getItem('user')
+    setUser(currentUser)
     if (user != null) {
       const userId = JSON.parse(user).id
 
