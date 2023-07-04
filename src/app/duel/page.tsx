@@ -24,8 +24,9 @@ export default function Duel() {
 
   useEffect(() => {
     const user = localStorage.getItem('user')
-    setUser(user)
+    
     if (user != null) {
+      setUser(user)
       const userId = JSON.parse(user).id
 
       const fetchData = async () => {
