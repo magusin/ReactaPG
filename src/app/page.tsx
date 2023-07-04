@@ -34,8 +34,9 @@ export default function Home() {
   useEffect(() => {
     const currentUser = localStorage.getItem('user');
     setUser(currentUser);
-    if (user != null) {
-        const userId = JSON.parse(user).id
+    
+    if (currentUser != null) {
+        const userId = JSON.parse(currentUser).id
         const fetchData = async () => {
           try {
             // call api allPlayers

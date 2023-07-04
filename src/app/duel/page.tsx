@@ -25,8 +25,9 @@ export default function Duel() {
   useEffect(() => {
     const currentUser = localStorage.getItem('user')
     setUser(currentUser)
-    if (user != null) {
-      const userId = JSON.parse(user).id
+ 
+    if (currentUser != null) {
+      const userId = JSON.parse(currentUser).id
 
       const fetchData = async () => {
         try {
@@ -44,7 +45,6 @@ export default function Duel() {
             let playersOfCurrentLevel = allPlayers.filter(
               (player: Player) => player.level === currentLevel
             )
-            console.log('playersOfCurrentLevel', playersOfCurrentLevel)
             // Shuffle the array
             for (let i = playersOfCurrentLevel.length - 1; i > 0; i--) {
               const j = Math.floor(Math.random() * (i + 1))
@@ -59,10 +59,8 @@ export default function Duel() {
               ...filteredPlayers,
               ...playersOfCurrentLevel
             ].slice(0, 6)
-            console.log('filteredPlayers:', filteredPlayers)
             currentLevel++
           }
-          console.log(filteredPlayers)
           setPlayers(filteredPlayers)
           setIsLoading(false)
         } catch (err) {
