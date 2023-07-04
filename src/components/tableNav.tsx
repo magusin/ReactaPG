@@ -91,7 +91,7 @@ const TableNav = () => {
           color: '#674106'
         }}
       >
-        <Link href="/">Duel</Link>
+        <Link href="/duel">Duel</Link>
       </Typography>
 
       <Typography

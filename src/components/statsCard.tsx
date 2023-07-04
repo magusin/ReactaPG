@@ -6,8 +6,6 @@ import { Player } from 'src/types/Player'
 
 const Stats = ({ player } : {player: Player | null}) => {
 
-  console.log(player)
-  
   if (player === null) {
     // Render something appropriate when there is no player.
     return <div>No player</div>;
@@ -123,6 +121,20 @@ const Stats = ({ player } : {player: Player | null}) => {
           }}
         >
           Action : {player.pa}
+        </Typography>
+      </Box>
+      <Box display="flex" alignItems="center" marginTop="20px">
+        <Typography
+          variant="h6"
+          component="div"
+          sx={{
+            flexGrow: 1,
+            fontFamily: 'fantasy',
+            fontSize: '1.5rem',
+            color: 'grey'
+          }}
+        >
+          Initiative : {player.init}
         </Typography>
       </Box>
     </Container>

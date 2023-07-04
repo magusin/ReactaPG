@@ -13,7 +13,6 @@ import {
 import { useRouter } from 'next/navigation'
 import { useTheme } from '@mui/material/styles'
 import Header from 'src/components/header'
-import { UserLogin } from 'src/utils'
 import { useEffect, useState } from 'react'
 import TableNav from 'src/components/tableNav'
 import StatsCard from 'src/components/statsCard'
@@ -23,35 +22,42 @@ import { Player } from 'src/types/Player'
 export default function Home() {
   const [player, setPlayer] = useState<Player | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
-  const isLoggedIn = UserLogin()
   const router = useRouter()
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+  const [user, setUser] = useState(null);
 
   const handleConnectClick = () => {
     router.push('/login')
   }
 
   useEffect(() => {
-    if (isLoggedIn) {
-      const user = localStorage.getItem('user')
-      if (user) {
+    const user = localStorage.getItem('user');
+    setUser(user);
+    if (user != null) {
         const userId = JSON.parse(user).id
-        axios
-          .get(`/api/user/${userId}`)
-          .then((res) => {
-            setPlayer(res.data)
-          })
-          .finally(() => {
-            setIsLoading(false)
-          })
-      }
+        const fetchData = async () => {
+          try {
+            // call api allPlayers
+            await axios
+              .get(`/api/user/${userId}`)
+              .then((res) => {
+                setPlayer(res.data)
+              })
+              .finally(() => {
+                setIsLoading(false)
+              })
+          } catch (err) {
+            console.error(err)
+          }
+        }
+        fetchData()
     } else {
       // L'utilisateur n'est pas connecté ou vient de se déconnecter
       setPlayer(null)
       setIsLoading(false)
     }
-  }, [isLoggedIn])
+  }, [user])
 
   if (isLoading) {
     return (
@@ -70,7 +76,7 @@ export default function Home() {
 
   return (
     <>
-      {isLoggedIn ? (
+      {user != null ? (
         <>
           <Header />
           <Container>
