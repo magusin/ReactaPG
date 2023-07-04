@@ -31,11 +31,11 @@ export default function Duel() {
       const fetchData = async () => {
         try {
           const res = await axios.get('/api/user')
-          let currentPlayer = res.data.filter(
-            (player) => player.id === userId
+          let currentPlayer = (res.data as Player[]).filter(
+            (player: Player) => player.id === userId
           )[0]
+          let allPlayers = (res.data as Player[]).filter((player: Player) => player.id !== userId)
           const userLevel = currentPlayer.level
-          let allPlayers = res.data.filter((player) => player.id !== userId) // Exclude current user
           let filteredPlayers: Player[] = []
           let currentLevel = userLevel
 
