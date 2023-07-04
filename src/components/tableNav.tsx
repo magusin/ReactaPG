@@ -120,7 +120,7 @@ const TableNav = () => {
       <Typography
         variant="h4"
         sx={{
-          position: 'absolute',
+           position: 'absolute',
           top: {xs:'60%', md: '65%'},
           fontSize: { xs: '1.5rem', sm: '1.5rem', md: '2rem' },
           transition: 'transform 0.3s ease-in-out',
