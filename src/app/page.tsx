@@ -25,15 +25,15 @@ export default function Home() {
   const router = useRouter()
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<any>(null);
 
   const handleConnectClick = () => {
     router.push('/login')
   }
 
   useEffect(() => {
-    const user = localStorage.getItem('user');
-    setUser(user);
+    const currentUser = localStorage.getItem('user');
+    setUser(currentUser);
     if (user != null) {
         const userId = JSON.parse(user).id
         const fetchData = async () => {
