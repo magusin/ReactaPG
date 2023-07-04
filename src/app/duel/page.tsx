@@ -95,10 +95,18 @@ export default function Duel() {
     <>
       <Header />
       <Container>
+        <Box
+        className="boxTitleStyles"
+        display="flex"
+        flexDirection="column"
+        >
         <Typography variant="h4" gutterBottom>
           Choose your opponent
         </Typography>
-
+        <Typography variant="body1" >
+          (One Duel cost 4 Actions Points)
+        </Typography>
+        </Box>
         <Grid container spacing={3}>
           {players.map((player) => (
             <Grid item xs={12} sm={6} key={player.id}>
@@ -109,8 +117,8 @@ export default function Duel() {
                 sx={{
                   display: 'flex',
                   flexDirection: 'column',
-                  alignItems: 'center', // to center align items
-                  justifyContent: 'center' // to center justify items
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }}
               >
                 <Typography fontFamily="fantasy" variant="h6">

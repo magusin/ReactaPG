@@ -123,6 +123,20 @@ const Stats = ({ player } : {player: Player | null}) => {
           Action : {player.pa}
         </Typography>
       </Box>
+      <Box display="flex" alignItems="center" marginTop="20px">
+        <Typography
+          variant="h6"
+          component="div"
+          sx={{
+            flexGrow: 1,
+            fontFamily: 'fantasy',
+            fontSize: '1.5rem',
+            color: 'grey'
+          }}
+        >
+          Initiative : {player.init}
+        </Typography>
+      </Box>
     </Container>
   )
 }
