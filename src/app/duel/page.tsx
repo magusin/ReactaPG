@@ -72,7 +72,7 @@ export default function Duel() {
       // Redirect to login page if user is not logged in
       router.push('/login')
     }
-  }, [user, router])
+  }, [router])
 
   if (isLoading) {
     return (

@@ -58,7 +58,7 @@ export default function Home() {
       setPlayer(null)
       setIsLoading(false)
     }
-  }, [user])
+  }, [])
 
   if (isLoading) {
     return (
