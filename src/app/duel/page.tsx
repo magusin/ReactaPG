@@ -20,7 +20,7 @@ export default function Duel() {
   const [players, setPlayers] = useState<Player[]>([])
   const router = useRouter()
   const [isLoading, setIsLoading] = useState<boolean>(true)
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState<any>(null)
 
   useEffect(() => {
     const user = localStorage.getItem('user')
