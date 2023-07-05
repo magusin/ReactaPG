@@ -15,6 +15,7 @@ import { Player } from 'src/types/Player'
 import { useRouter } from 'next/navigation'
 import hp from '#/public/hp.png'
 import Image from 'next/legacy/image'
+import { v4 as uuidv4 } from 'uuid';
 
 export default function Duel() {
   const [players, setPlayers] = useState<Player[]>([])
@@ -25,7 +26,7 @@ export default function Duel() {
   useEffect(() => {
     const currentUser = localStorage.getItem('user')
     setUser(currentUser)
- 
+
     if (currentUser != null) {
       const userId = JSON.parse(currentUser).id
 
@@ -35,7 +36,9 @@ export default function Duel() {
           let currentPlayer = (res.data as Player[]).filter(
             (player: Player) => player.id === userId
           )[0]
-          let allPlayers = (res.data as Player[]).filter((player: Player) => player.id !== userId)
+          let allPlayers = (res.data as Player[]).filter(
+            (player: Player) => player.id !== userId
+          )
           const userLevel = currentPlayer.level
           let filteredPlayers: Player[] = []
           let currentLevel = userLevel
@@ -93,17 +96,13 @@ export default function Duel() {
     <>
       <Header />
       <Container>
-        <Box
-        className="boxTitleStyles"
-        display="flex"
-        flexDirection="column"
-        >
-        <Typography variant="h4" gutterBottom>
-          Choose your opponent
-        </Typography>
-        <Typography variant="body1" >
-          (One Duel cost 4 Actions Points)
-        </Typography>
+        <Box className="boxTitleStyles" display="flex" flexDirection="column">
+          <Typography variant="h4" gutterBottom>
+            Choose your opponent
+          </Typography>
+          <Typography variant="body1">
+            (One Duel cost 4 Actions Points)
+          </Typography>
         </Box>
         <Grid container spacing={3}>
           {players.map((player) => (
@@ -119,8 +118,11 @@ export default function Duel() {
                   justifyContent: 'center'
                 }}
               >
-                <Typography fontFamily="fantasy" variant="h6">
+                <Typography fontFamily="fantasy" variant="h4">
                   {player.username.toUpperCase()}
+                </Typography>
+                <Typography color="teal" fontFamily="fantasy" variant="h5">
+                  Level : {player.level}
                 </Typography>
                 <Box display="flex" alignItems="center">
                   <Box position="relative" width={100} height={100}>
@@ -158,12 +160,20 @@ export default function Duel() {
                   </Box>
                 </Box>{' '}
                 <Typography color="brown" fontFamily="fantasy" variant="body1">
-                  Strength: {player.str}
+                  Strength : {player.str}
                 </Typography>
                 <Typography color="green" fontFamily="fantasy" variant="body1">
-                  Dexterity: {player.dex}
+                  Dexterity : {player.dex}
                 </Typography>
-                <Button variant="contained" color="primary">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => {
+                    const uuid = uuidv4()
+
+                    router.push(`/duel/${uuid}`)
+                  }}
+                >
                   Duel
                 </Button>
               </Box>
