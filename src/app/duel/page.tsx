@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import {
   Box,
   Container,
@@ -16,26 +16,26 @@ import { useRouter } from 'next/navigation'
 import hp from '#/public/hp.png'
 import Image from 'next/legacy/image'
 import { v4 as uuidv4 } from 'uuid';
+import PlayerContext from 'src/PlayerContext';
 
 export default function Duel() {
   const [players, setPlayers] = useState<Player[]>([])
   const router = useRouter()
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [user, setUser] = useState<any>(null)
+  const { setCurrentPlayer, setChallengingPlayer } = useContext(PlayerContext);
 
   useEffect(() => {
     const currentUser = localStorage.getItem('user')
-    setUser(currentUser)
-
     if (currentUser != null) {
       const userId = JSON.parse(currentUser).id
-
       const fetchData = async () => {
         try {
           const res = await axios.get('/api/user')
           let currentPlayer = (res.data as Player[]).filter(
             (player: Player) => player.id === userId
           )[0]
+          setUser(currentPlayer)
           let allPlayers = (res.data as Player[]).filter(
             (player: Player) => player.id !== userId
           )
@@ -170,7 +170,8 @@ export default function Duel() {
                   color="primary"
                   onClick={() => {
                     const uuid = uuidv4()
-
+                    setCurrentPlayer(user);
+                    setChallengingPlayer(player);
                     router.push(`/duel/${uuid}`)
                   }}
                 >
