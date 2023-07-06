@@ -9,9 +9,9 @@ datasource db {
 
 model player {
   id       Int    @id @default(autoincrement())
-  username String @unique
+  username String @unique(map: "Player_username_key")
   password String @db.VarChar(255)
-  email    String @unique
+  email    String @unique(map: "Player_email_key")
   def      Int    @default(1)
   dex      Int    @default(1)
   dmgMax   Int    @default(5)
@@ -25,4 +25,5 @@ model player {
   str      Int    @default(1)
   type     String @default("player")
   xp       Int    @default(0)
+  speed    Int    @default(1)
 }

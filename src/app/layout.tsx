@@ -2,8 +2,8 @@
 import React, { useState } from 'react'
 import './globals.css'
 import { Inter } from 'next/font/google'
-import PlayerContext from 'src/PlayerContext';
-import metaData from 'src/MetaData';
+import PlayerContext from 'src/utils/PlayerContext';
+import metaData from 'src/utils/MetaData';
 
 const inter = Inter({ subsets: ['latin'] })
 

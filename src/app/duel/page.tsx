@@ -13,17 +13,19 @@ import Header from 'src/components/header'
 import axios from 'axios'
 import { Player } from 'src/types/Player'
 import { useRouter } from 'next/navigation'
+import str from '#/public/biceps.png'
 import hp from '#/public/hp.png'
 import Image from 'next/legacy/image'
-import { v4 as uuidv4 } from 'uuid';
-import PlayerContext from 'src/PlayerContext';
+import { v4 as uuidv4 } from 'uuid'
+import PlayerContext from 'src/utils/PlayerContext'
+import Tooltip from '@mui/material/Tooltip'
 
 export default function Duel() {
   const [players, setPlayers] = useState<Player[]>([])
   const router = useRouter()
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [user, setUser] = useState<any>(null)
-  const { setCurrentPlayer, setChallengingPlayer } = useContext(PlayerContext);
+  const { setCurrentPlayer, setChallengingPlayer } = useContext(PlayerContext)
 
   useEffect(() => {
     const currentUser = localStorage.getItem('user')
@@ -125,16 +127,18 @@ export default function Duel() {
                   Level : {player.level}
                 </Typography>
                 <Box display="flex" alignItems="center">
+                    <Tooltip title="Health" placement="top">
                   <Box position="relative" width={100} height={100}>
-                    <Image
-                      priority
-                      src={hp.src}
-                      alt="pv"
-                      layout="responsive"
-                      objectFit="cover"
-                      width={100}
-                      height={100}
-                    />
+                      <Image
+                        priority
+                        src={hp.src}
+                        alt="health"
+                        layout="responsive"
+                        objectFit="cover"
+                        width={100}
+                        height={100}
+                      />
+                    
                     <Box
                       position="absolute"
                       top={0}
@@ -158,6 +162,7 @@ export default function Duel() {
                       </Typography>
                     </Box>
                   </Box>
+                  </Tooltip>
                 </Box>{' '}
                 <Typography color="brown" fontFamily="fantasy" variant="body1">
                   Strength : {player.str}
@@ -165,13 +170,19 @@ export default function Duel() {
                 <Typography color="green" fontFamily="fantasy" variant="body1">
                   Dexterity : {player.dex}
                 </Typography>
+                <Typography color="green" fontFamily="fantasy" variant="body1">
+                  Initiative : {player.init}
+                </Typography>
+                <Typography color="green" fontFamily="fantasy" variant="body1">
+                  Speed : {player.speed}
+                </Typography>
                 <Button
                   variant="contained"
                   color="primary"
                   onClick={() => {
                     const uuid = uuidv4()
-                    setCurrentPlayer(user);
-                    setChallengingPlayer(player);
+                    setCurrentPlayer(user)
+                    setChallengingPlayer(player)
                     router.push(`/duel/${uuid}`)
                   }}
                 >
