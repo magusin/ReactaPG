@@ -1,4 +1,4 @@
-function calculateDamage(attacker, defender) {
+export default function calculateDamage(attacker, defender) {
     let dodge = (Math.floor((defender.dex - defender.level) / 3) - Math.floor((attacker.dex - attacker.level) / 3));
     if (dodge < 5) {
         dodge = 5
