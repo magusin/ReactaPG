@@ -49,6 +49,19 @@ html {
   flex-wrap: wrap;
 }
 
+.boxHistoryFightStyles {
+  width: 50%;
+  overflow-y: auto;
+  margin: auto;
+  box-shadow: rgb(222, 195, 127) 0px 0px 0px 1px, rgb(246, 238, 144) 0px 0px 1px 4.5px, rgb(114, 82, 84) 0px 0px 0px 6px, rgb(188, 123, 74) 3px 3px 0px 6px;
+  background-color: rgb(251, 242, 175);
+  padding: 20px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 .main {
   margin: auto 80px;
 }

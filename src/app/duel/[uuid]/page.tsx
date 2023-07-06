@@ -1,16 +1,14 @@
 'use client'
 import PlayerContext from 'src/utils/PlayerContext'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Typography, Box } from '@mui/material'
 import BattleOrder from 'src/utils/BattleOrder'
 import CalculateDamage from 'src/utils/CalculateDamage'
-import { Element, scroller } from 'react-scroll'
 
 const MotionTypography = motion(Typography)
 
-const AnimatedText = ({ text }) => {
-  const letters = text.split('')
+const AnimatedText = ({ letters }) => {
   const variants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1 }
@@ -19,19 +17,35 @@ const AnimatedText = ({ text }) => {
 
   return (
     <Box display="flex" flexDirection="row" flexWrap="wrap">
-      {letters.map((letter, index) => (
+      {letters.map(({ letter, color }, index) => (
         <motion.span
           key={index}
           variants={variants}
           initial="hidden"
           animate="visible"
           transition={{ ...transition, delay: 0.03 * index }}
+          style={{ color }}
         >
           {letter === ' ' ? '\u00A0' : letter}
         </motion.span>
       ))}
     </Box>
   )
+}
+
+function splitWithUsernames(text, username1, username2) {
+  const parts = text.split(new RegExp(`(${username1}|${username2}|\\[\\d+\\])`));
+  return parts.map(part => {
+    if (part === username1) {
+      return { text: part, color: 'blue' };
+    } else if (part === username2) {
+      return { text: part, color: 'red' };
+    } else if (part.startsWith('[') && part.endsWith(']')) {
+      return { text: part.slice(1, -1), color: 'brown' };
+    } else {
+      return { text: part, color: 'black' };
+    }
+  });
 }
 
 export default function DuelFight() {
@@ -46,51 +60,51 @@ export default function DuelFight() {
   const [currentHp1, setCurrentHp1] = useState(currentPlayer.hpMax)
   const [currentHp2, setCurrentHp2] = useState(challengingPlayer.hpMax)
   const [isBattleFinished, setIsBattleFinished] = useState(false)
+  const lastMessageRef = useRef(null)
 
   useEffect(() => {
     if (currentPlayer && challengingPlayer && !isBattleFinished) {
-      const order = BattleOrder({ players: [currentPlayer, challengingPlayer] });
-      console.log('Order:', order);
-  
-      let currentHp1 = currentPlayer.hpMax;
-      let currentHp2 = challengingPlayer.hpMax;
-      
+      const order = BattleOrder({ players: [currentPlayer, challengingPlayer] })
+
+      let currentHp1 = currentPlayer.hpMax
+      let currentHp2 = challengingPlayer.hpMax
+
       const fightInterval = setInterval(() => {
         if (currentHp1 <= 0 || currentHp2 <= 0) {
           // The battle is over, display the result only once
           const result =
-            currentHp1 <= 0 ? `${currentPlayer.username} a perdu` : `${currentPlayer.username} a gagné`;
-          setBattleHistory((oldArray) => [...oldArray, result]);
-          setIsBattleFinished(true);
-          clearInterval(fightInterval);
+            currentHp1 <= 0
+              ? `${currentPlayer.username} a perdu`
+              : `${currentPlayer.username} a gagné`
+          setBattleHistory((oldArray) => [...oldArray, result])
+          setIsBattleFinished(true)
+          clearInterval(fightInterval)
         } else {
-          const player = order.shift();
+          const player = order.shift()
           if (player === currentPlayer.username) {
-            const damage = CalculateDamage(currentPlayer, challengingPlayer);
-            currentHp2 = Math.max(currentHp2 - damage, 0);
-            const message = `${player} attaque pour ${damage} de dégâts. Il reste ${currentHp2} PV à ${challengingPlayer.username}`;
-            setBattleHistory((oldArray) => [...oldArray, message]);
-            setCurrentHp2(currentHp2);
+            const damage = CalculateDamage(currentPlayer, challengingPlayer)
+            currentHp2 = Math.max(currentHp2 - damage, 0)
+            const message = `${player} attaque pour [${damage}] de dégâts. Il reste ${currentHp2} PV à ${challengingPlayer.username}`
+            setBattleHistory((oldArray) => [...oldArray, message])
+            setCurrentHp2(currentHp2)
           } else {
-            const damage = CalculateDamage(challengingPlayer, currentPlayer);
-            currentHp1 = Math.max(currentHp1 - damage, 0);
-            const message = `${player} attaque pour ${damage} de dégâts. Il reste ${currentHp1} PV à ${currentPlayer.username}`;
-            setBattleHistory((oldArray) => [...oldArray, message]);
-            setCurrentHp1(currentHp1);
+            const damage = CalculateDamage(challengingPlayer, currentPlayer)
+            currentHp1 = Math.max(currentHp1 - damage, 0)
+            const message = `${player} attaque pour [${damage}] de dégâts. Il reste ${currentHp1} PV à ${currentPlayer.username}`
+            setBattleHistory((oldArray) => [...oldArray, message])
+            setCurrentHp1(currentHp1)
           }
         }
-      }, 2000);
-      
-      return () => clearInterval(fightInterval); // Clean up on unmount
+      }, 2000)
+
+      return () => clearInterval(fightInterval) // Clean up on unmount
     }
-  }, [currentPlayer, challengingPlayer, isBattleFinished]);
+  }, [currentPlayer, challengingPlayer, isBattleFinished])
 
   useEffect(() => {
-    scroller.scrollTo(`message_${battleHistory.length - 1}`, {
-      duration: 800,
-      delay: 0,
-      smooth: 'easeInOutQuart'
-    })
+    if (lastMessageRef.current) {
+      lastMessageRef.current.scrollIntoView({ behavior: 'smooth' })
+    }
   }, [battleHistory])
 
   return (
@@ -101,41 +115,67 @@ export default function DuelFight() {
       alignItems="center"
       height="100vh"
     >
-      <Box position="fixed" left={16}>
-        <Typography variant="h5" color="primary">
-          {`${currentPlayer.username.toUpperCase()} HP: ${currentHp1}`}
+      <Box position="fixed" left={16} display="flex" flexDirection="column">
+        <Typography variant="h2" color="blue">
+          {`${currentPlayer.username.toUpperCase()}`}
+        </Typography>
+        <Typography variant="h5" color="blue">
+          {`HP: ${currentHp1}`}
         </Typography>
       </Box>
       <Box position="fixed" right={16}>
-        <Typography variant="h5" color="secondary">
-          {`${challengingPlayer.username.toUpperCase()} HP: ${currentHp2}`}
+        <Typography variant="h2" color="red">
+          {`${challengingPlayer.username.toUpperCase()}`}
+        </Typography>
+        <Typography variant="h5" color="red">
+          {`HP: ${currentHp2}`}
         </Typography>
       </Box>
       <Box
+        className="boxHistoryFightStyles"
         display="flex"
         flexDirection="column"
         justifyContent="center"
         alignItems="center"
-        height="100%"
-        width="50%" // control the width of the battle history box
-        mx="auto" // center the battle history box
+        height="500px"
+        maxHeight="500px"
+        width="50%"
+        mx="auto"
+        bgcolor="white"
+        p={2}
+        fontSize="1.5rem"
+        fontWeight="normal"
       >
         <AnimatePresence initial={false}>
-          {battleHistory.map((event, index) => (
-            <Element name={`message_${index}`} key={index}>
+          {battleHistory.map((event, index) => {
+            const parts = splitWithUsernames(
+              event,
+              currentPlayer.username,
+              challengingPlayer.username
+            )
+            const letters = parts.flatMap(({ text, color }) =>
+              text.split('').map((letter) => ({ letter, color }))
+            )
+
+            return (
               <motion.div
+                ref={index === battleHistory.length - 1 ? lastMessageRef : null}
                 key={index}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3 }}
-                style={{ marginBottom: '0.5rem' }}
+                style={{
+                  marginBottom: '0.5rem',
+                  fontWeight:
+                    index === battleHistory.length - 1 ? 'bold' : 'normal'
+                }}
               >
-                <AnimatedText text={event} />
+                <AnimatedText letters={letters} />
               </motion.div>
-            </Element>
-          ))}
+            )
+          })}
         </AnimatePresence>
       </Box>
     </Box>
-  );
+  )
 }

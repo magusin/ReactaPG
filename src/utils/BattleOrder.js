@@ -10,7 +10,6 @@ function BattleOrder({players}) {
   // Calcule les valeurs de vitesse
   player1.battleSpeed = calculateSpeed(player1.speed);
   player2.battleSpeed = calculateSpeed(player2.speed);
-console.log(`player1.battleSpeed: ${player1.battleSpeed}, player2.battleSpeed: ${player2.battleSpeed}`)
   // Détermine le premier joueur basé sur l'initiative ou aléatoirement si égalité
   let firstPlayer, secondPlayer;
   if (player1.ini > player2.ini) {
@@ -41,13 +40,11 @@ console.log(`player1.battleSpeed: ${player1.battleSpeed}, player2.battleSpeed: $
     secondPlayerActionTime += secondPlayer.battleSpeed;
 
     while (firstPlayerActionTime >= ACTION_THRESHOLD) {
-      console.log(`firstPlayerActionTime: ${firstPlayerActionTime}, ACTION_THRESHOLD: ${ACTION_THRESHOLD}, battleOrder length: ${battleOrder.length}`);
       battleOrder.push(firstPlayer.username);
       firstPlayerActionTime -= ACTION_THRESHOLD;
     }
 
     while (secondPlayerActionTime >= ACTION_THRESHOLD) {
-      console.log(`secondPlayerActionTime: ${secondPlayerActionTime}, ACTION_THRESHOLD: ${ACTION_THRESHOLD}, battleOrder length: ${battleOrder.length}`);
       battleOrder.push(secondPlayer.username);
       secondPlayerActionTime -= ACTION_THRESHOLD;
     }
