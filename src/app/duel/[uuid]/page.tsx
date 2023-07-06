@@ -5,10 +5,22 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Typography, Box } from '@mui/material'
 import BattleOrder from 'src/utils/BattleOrder'
 import CalculateDamage from 'src/utils/CalculateDamage'
+import GenerateMessage from 'src/utils/GenerateMessage'
 
+// types
+interface Letter {
+  letter: string;
+  color: string;
+}
+
+interface AnimatedTextProps {
+  letters: Letter[];
+}
+
+// animation variants
 const MotionTypography = motion(Typography)
 
-const AnimatedText = ({ letters }) => {
+const AnimatedText = ({ letters } : AnimatedTextProps) => {
   const variants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1 }
@@ -33,6 +45,7 @@ const AnimatedText = ({ letters }) => {
   )
 }
 
+// assign color
 function splitWithUsernames(text, username1, username2) {
   const parts = text.split(new RegExp(`(${username1}|${username2}|\\[\\d+\\])`));
   return parts.map(part => {
@@ -47,7 +60,7 @@ function splitWithUsernames(text, username1, username2) {
     }
   });
 }
-
+// DuelFight component
 export default function DuelFight() {
   const {
     currentPlayer,
@@ -84,13 +97,13 @@ export default function DuelFight() {
           if (player === currentPlayer.username) {
             const damage = CalculateDamage(currentPlayer, challengingPlayer)
             currentHp2 = Math.max(currentHp2 - damage, 0)
-            const message = `${player} attaque pour [${damage}] de dégâts. Il reste ${currentHp2} PV à ${challengingPlayer.username}`
+            const message = GenerateMessage(currentPlayer, challengingPlayer, damage)
             setBattleHistory((oldArray) => [...oldArray, message])
             setCurrentHp2(currentHp2)
           } else {
             const damage = CalculateDamage(challengingPlayer, currentPlayer)
             currentHp1 = Math.max(currentHp1 - damage, 0)
-            const message = `${player} attaque pour [${damage}] de dégâts. Il reste ${currentHp1} PV à ${currentPlayer.username}`
+            const message = GenerateMessage(challengingPlayer, currentPlayer, damage)
             setBattleHistory((oldArray) => [...oldArray, message])
             setCurrentHp1(currentHp1)
           }
@@ -100,7 +113,7 @@ export default function DuelFight() {
       return () => clearInterval(fightInterval) // Clean up on unmount
     }
   }, [currentPlayer, challengingPlayer, isBattleFinished])
-
+// Scroll to bottom of the hystoric
   useEffect(() => {
     if (lastMessageRef.current) {
       lastMessageRef.current.scrollIntoView({ behavior: 'smooth' })
@@ -146,7 +159,9 @@ export default function DuelFight() {
         fontSize="1.5rem"
         fontWeight="normal"
       >
-        <AnimatePresence initial={false}>
+        <AnimatePresence initial={false}
+        height="400px"
+        maxHeight="400px">
           {battleHistory.map((event, index) => {
             const parts = splitWithUsernames(
               event,
