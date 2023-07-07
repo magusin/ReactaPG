@@ -2,19 +2,19 @@
 import PlayerContext from 'src/utils/PlayerContext'
 import React, { useContext, useEffect, useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Typography, Box, Tooltip, LinearProgress } from '@mui/material'
+import { Typography, Box, Tooltip, LinearProgress, Grid } from '@mui/material'
 import BattleOrder from 'src/utils/BattleOrder'
 import CalculateDamage from 'src/utils/CalculateDamage'
 import GenerateMessage from 'src/utils/GenerateMessage'
-import { createTheme, ThemeProvider } from '@mui/system';
+import { createTheme, ThemeProvider } from '@mui/system'
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#ff0000', // Change this to any color you want
-    },
-  },
-});
+      main: '#ff0000'
+    }
+  }
+})
 
 // types
 interface Letter {
@@ -25,6 +25,37 @@ interface Letter {
 interface AnimatedTextProps {
   letters: Letter[]
 }
+
+// Player component
+const PlayerInfo = ({ player, hp, hpMax, color }) => (
+  <Box style={{ maxWidth: '100%' }}>
+    <Typography
+      variant="h3"
+      color={color}
+      style={{
+        wordBreak: 'break-all', textAlign: 'center'
+      }}
+    >
+      {player.toUpperCase()}
+    </Typography>
+    <Tooltip title={`${hp} / ${hpMax} Health`}>
+      <div>
+        <ThemeProvider theme={theme}>
+          <LinearProgress
+            variant="determinate"
+            value={(hp / hpMax) * 100}
+            color="primary"
+            style={{
+              height: '10px',
+              marginTop: '20px',
+              borderStyle: 'solid'
+            }}
+          />
+        </ThemeProvider>
+      </div>
+    </Tooltip>
+  </Box>
+)
 
 // animation variants
 const MotionTypography = motion(Typography)
@@ -60,7 +91,6 @@ function splitWithUsernames(
   username1: string,
   username2: string
 ) {
-
   const parts = text.split(new RegExp(`(${username1}|${username2}|\\[\\d+\\])`))
   return parts.map((part) => {
     if (part === username1) {
@@ -84,8 +114,8 @@ export default function DuelFight() {
   } = useContext(PlayerContext)
 
   const [battleHistory, setBattleHistory] = useState([])
-  const [currentHp1, setCurrentHp1] = useState<int>(currentPlayer.hpMax)
-  const [currentHp2, setCurrentHp2] = useState<int>(challengingPlayer.hpMax)
+  const [currentHp1, setCurrentHp1] = useState<number>(currentPlayer.hpMax)
+  const [currentHp2, setCurrentHp2] = useState<number>(challengingPlayer.hpMax)
   const [isBattleFinished, setIsBattleFinished] = useState<boolean>(false)
   const lastMessageRef = useRef<any>(null)
 
@@ -143,92 +173,100 @@ export default function DuelFight() {
   }, [battleHistory])
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      justifyContent="center"
+    <Grid
+      container
+      direction="column"
       alignItems="center"
-      height="100vh"
+      style={{ height: '100vh' }}
     >
-      <Box position="fixed" left={16} display="flex" flexDirection="column">
-        <Typography variant="h2" color="blue">
-          {`${currentPlayer.username.toUpperCase()}`}
-        </Typography>
-        <Tooltip title={`${currentHp1} / ${currentPlayer.hpMax} Health`}>
-          <div>
-        <ThemeProvider theme={theme}>
-          <LinearProgress
-            variant="determinate"
-            value={(currentHp1 / currentPlayer.hpMax) * 100} // calculate percentage
-            color="primary"
-            style={{ height: '10px', marginTop: '20px', borderStyle: 'solid' }}
-          />
-          </ThemeProvider>
-          </div>
-        </Tooltip>
-      </Box>
-      <Box position="fixed" right={16}>
-        <Typography variant="h2" color="red">
-          {`${challengingPlayer.username.toUpperCase()}`}
-        </Typography>
-        <Tooltip title={`${currentHp2} / ${challengingPlayer.hpMax} Health`}>
-  <div>
-    <ThemeProvider theme={theme}>
-      <LinearProgress
-        variant="determinate"
-        value={(currentHp2 / challengingPlayer.hpMax) * 100} // calculate percentage
-        color="primary"
-        style={{ height: '10px', marginTop: '20px', borderStyle: 'solid' }}
-      />
-    </ThemeProvider>
-  </div>
-</Tooltip>
-      </Box>
-      <Box
-        className="boxHistoryFightStyles"
-        display="flex"
-        flexDirection="column"
+      <Typography
+  variant="h2"
+  align="center"
+  style={{ marginTop: '10px', wordBreak: 'break-all' }}
+>
+  <span style={{ color: 'blue' }}>{currentPlayer.username}</span>
+  {' VS '}
+  <span style={{ color: 'red' }}>{challengingPlayer.username}</span>
+</Typography>
+      <Grid
+        item
+        container
+        direction="row"
         justifyContent="center"
         alignItems="center"
-        height="500px"
-        maxHeight="500px"
-        width="50%"
-        mx="auto"
-        bgcolor="white"
-        p={2}
-        fontSize="1.5rem"
-        fontWeight="normal"
+        style={{ flex: 1, overflow: 'auto', padding: '10px', gap: '10px' }}
+        wrap="nowrap"
       >
-        <AnimatePresence initial={false}>
-          {battleHistory.map((event, index) => {
-            const parts = splitWithUsernames(
-              event,
-              currentPlayer.username,
-              challengingPlayer.username
-            )
-            const letters = parts.flatMap(({ text, color }) =>
-              text.split('').map((letter) => ({ letter, color }))
-            )
+        <Grid item xs={12} sm={3}>
+          <PlayerInfo
+            player={currentPlayer.username}
+            hp={currentHp1}
+            hpMax={currentPlayer.hpMax}
+            color="blue"
+          />
+        </Grid>
 
-            return (
-              <motion.div
-                ref={index === battleHistory.length - 1 ? lastMessageRef : null}
-                key={index}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.3 }}
-                style={{
-                  marginBottom: '0.5rem',
-                  fontWeight:
-                    index === battleHistory.length - 1 ? 'bold' : 'normal'
-                }}
-              >
-                <AnimatedText letters={letters} />
-              </motion.div>
-            )
-          })}
-        </AnimatePresence>
-      </Box>
-    </Box>
+        <Grid
+          item
+          xs={12}
+          sm={6}
+          className="boxHistoryFightStyles"
+          display="flex"
+          flexDirection="column"
+          justifyContent="flex-start"
+          alignItems="center"
+          minHeight="200px"
+          maxHeight="500px"
+          width="100%"
+          mx="auto"
+          bgcolor="white"
+          p={2}
+          fontSize="1.5rem"
+          fontWeight="normal"
+          height="100%"
+        >
+          <AnimatePresence initial={false}>
+            {battleHistory.map((event, index) => {
+              const parts = splitWithUsernames(
+                event,
+                currentPlayer.username,
+                challengingPlayer.username
+              )
+              const letters = parts.flatMap(({ text, color }) =>
+                text.split('').map((letter) => ({ letter, color }))
+              )
+
+              return (
+                <motion.div
+                  ref={
+                    index === battleHistory.length - 1 ? lastMessageRef : null
+                  }
+                  key={index}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                  style={{
+                    marginBottom: '0.5rem',
+                    fontWeight:
+                      index === battleHistory.length - 1 ? 'bold' : 'normal'
+                  }}
+                >
+                  <AnimatedText letters={letters} />
+                </motion.div>
+              )
+            })}
+          </AnimatePresence>
+        </Grid>
+
+        <Grid item xs={12} sm={3}>
+          <PlayerInfo
+            player={challengingPlayer.username}
+            hp={currentHp2}
+            hpMax={challengingPlayer.hpMax}
+            color="red"
+          />
+        </Grid>
+      </Grid>
+    </Grid>
   )
 }
