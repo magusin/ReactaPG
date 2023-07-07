@@ -2,25 +2,34 @@
 import PlayerContext from 'src/utils/PlayerContext'
 import React, { useContext, useEffect, useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Typography, Box } from '@mui/material'
+import { Typography, Box, Tooltip, LinearProgress } from '@mui/material'
 import BattleOrder from 'src/utils/BattleOrder'
 import CalculateDamage from 'src/utils/CalculateDamage'
 import GenerateMessage from 'src/utils/GenerateMessage'
+import { createTheme, ThemeProvider } from '@mui/system';
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#ff0000', // Change this to any color you want
+    },
+  },
+});
 
 // types
 interface Letter {
-  letter: string;
-  color: string;
+  letter: string
+  color: string
 }
 
 interface AnimatedTextProps {
-  letters: Letter[];
+  letters: Letter[]
 }
 
 // animation variants
 const MotionTypography = motion(Typography)
 
-const AnimatedText = ({ letters } : AnimatedTextProps) => {
+const AnimatedText = ({ letters }: AnimatedTextProps) => {
   const variants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1 }
@@ -46,19 +55,24 @@ const AnimatedText = ({ letters } : AnimatedTextProps) => {
 }
 
 // assign color
-function splitWithUsernames(text, username1, username2) {
-  const parts = text.split(new RegExp(`(${username1}|${username2}|\\[\\d+\\])`));
-  return parts.map(part => {
+function splitWithUsernames(
+  text: string,
+  username1: string,
+  username2: string
+) {
+
+  const parts = text.split(new RegExp(`(${username1}|${username2}|\\[\\d+\\])`))
+  return parts.map((part) => {
     if (part === username1) {
-      return { text: part, color: 'blue' };
+      return { text: part, color: 'blue' }
     } else if (part === username2) {
-      return { text: part, color: 'red' };
+      return { text: part, color: 'red' }
     } else if (part.startsWith('[') && part.endsWith(']')) {
-      return { text: part.slice(1, -1), color: 'brown' };
+      return { text: part.slice(1, -1), color: 'brown' }
     } else {
-      return { text: part, color: 'black' };
+      return { text: part, color: 'black' }
     }
-  });
+  })
 }
 // DuelFight component
 export default function DuelFight() {
@@ -70,10 +84,10 @@ export default function DuelFight() {
   } = useContext(PlayerContext)
 
   const [battleHistory, setBattleHistory] = useState([])
-  const [currentHp1, setCurrentHp1] = useState(currentPlayer.hpMax)
-  const [currentHp2, setCurrentHp2] = useState(challengingPlayer.hpMax)
-  const [isBattleFinished, setIsBattleFinished] = useState(false)
-  const lastMessageRef = useRef(null)
+  const [currentHp1, setCurrentHp1] = useState<int>(currentPlayer.hpMax)
+  const [currentHp2, setCurrentHp2] = useState<int>(challengingPlayer.hpMax)
+  const [isBattleFinished, setIsBattleFinished] = useState<boolean>(false)
+  const lastMessageRef = useRef<any>(null)
 
   useEffect(() => {
     if (currentPlayer && challengingPlayer && !isBattleFinished) {
@@ -97,13 +111,21 @@ export default function DuelFight() {
           if (player === currentPlayer.username) {
             const damage = CalculateDamage(currentPlayer, challengingPlayer)
             currentHp2 = Math.max(currentHp2 - damage, 0)
-            const message = GenerateMessage(currentPlayer, challengingPlayer, damage)
+            const message = GenerateMessage(
+              currentPlayer,
+              challengingPlayer,
+              damage
+            )
             setBattleHistory((oldArray) => [...oldArray, message])
             setCurrentHp2(currentHp2)
           } else {
             const damage = CalculateDamage(challengingPlayer, currentPlayer)
             currentHp1 = Math.max(currentHp1 - damage, 0)
-            const message = GenerateMessage(challengingPlayer, currentPlayer, damage)
+            const message = GenerateMessage(
+              challengingPlayer,
+              currentPlayer,
+              damage
+            )
             setBattleHistory((oldArray) => [...oldArray, message])
             setCurrentHp1(currentHp1)
           }
@@ -113,7 +135,7 @@ export default function DuelFight() {
       return () => clearInterval(fightInterval) // Clean up on unmount
     }
   }, [currentPlayer, challengingPlayer, isBattleFinished])
-// Scroll to bottom of the hystoric
+  // Scroll to bottom of the hystoric
   useEffect(() => {
     if (lastMessageRef.current) {
       lastMessageRef.current.scrollIntoView({ behavior: 'smooth' })
@@ -132,17 +154,35 @@ export default function DuelFight() {
         <Typography variant="h2" color="blue">
           {`${currentPlayer.username.toUpperCase()}`}
         </Typography>
-        <Typography variant="h5" color="blue">
-          {`HP: ${currentHp1}`}
-        </Typography>
+        <Tooltip title={`${currentHp1} / ${currentPlayer.hpMax} Health`}>
+          <div>
+        <ThemeProvider theme={theme}>
+          <LinearProgress
+            variant="determinate"
+            value={(currentHp1 / currentPlayer.hpMax) * 100} // calculate percentage
+            color="primary"
+            style={{ height: '10px', marginTop: '20px', borderStyle: 'solid' }}
+          />
+          </ThemeProvider>
+          </div>
+        </Tooltip>
       </Box>
       <Box position="fixed" right={16}>
         <Typography variant="h2" color="red">
           {`${challengingPlayer.username.toUpperCase()}`}
         </Typography>
-        <Typography variant="h5" color="red">
-          {`HP: ${currentHp2}`}
-        </Typography>
+        <Tooltip title={`${currentHp2} / ${challengingPlayer.hpMax} Health`}>
+  <div>
+    <ThemeProvider theme={theme}>
+      <LinearProgress
+        variant="determinate"
+        value={(currentHp2 / challengingPlayer.hpMax) * 100} // calculate percentage
+        color="primary"
+        style={{ height: '10px', marginTop: '20px', borderStyle: 'solid' }}
+      />
+    </ThemeProvider>
+  </div>
+</Tooltip>
       </Box>
       <Box
         className="boxHistoryFightStyles"
@@ -159,9 +199,7 @@ export default function DuelFight() {
         fontSize="1.5rem"
         fontWeight="normal"
       >
-        <AnimatePresence initial={false}
-        height="400px"
-        maxHeight="400px">
+        <AnimatePresence initial={false}>
           {battleHistory.map((event, index) => {
             const parts = splitWithUsernames(
               event,
