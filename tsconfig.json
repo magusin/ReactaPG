@@ -41,7 +41,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/utils.js",
+    "src/utils/*.tsx",
     "pages/api/user/index.js",
     "pages/**/*.tsx",
     "src/**/*.tsx",
