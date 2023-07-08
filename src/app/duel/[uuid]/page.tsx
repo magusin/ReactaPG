@@ -173,15 +173,24 @@ export default function DuelFight() {
     challengingPlayer ? challengingPlayer.hpMax : 0
   )
   const [isBattleFinished, setIsBattleFinished] = useState<boolean>(false)
-  const lastMessageRef = useRef<any>(null)
+  const lastMessageRef = useRef<HTMLDivElement>(null)
   const [message, setMessage] = useState<string>('')
   const [open, setOpen] = useState<boolean>(false)
 
   // Function to open the snackbar with a specific message
-  const openSnackbar = (newMessage) => {
+  const openSnackbar = (newMessage : string) => {
     setMessage(newMessage)
     setOpen(true)
   }
+
+  useEffect(() => {
+    if (currentPlayer) {
+      setCurrentHp1(currentPlayer.hpMax)
+    }
+    if (challengingPlayer) {
+      setCurrentHp2(challengingPlayer.hpMax)
+    }
+  }, [currentPlayer, challengingPlayer])
 
   useEffect(() => {
     if (!currentPlayer || !challengingPlayer) {
