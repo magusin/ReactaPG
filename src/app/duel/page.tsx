@@ -127,8 +127,8 @@ export default function Duel() {
                   Level : {player.level}
                 </Typography>
                 <Box display="flex" alignItems="center">
-                    <Tooltip title="Health" placement="top">
-                  <Box position="relative" width={100} height={100}>
+                  <Tooltip title="Health" placement="top">
+                    <Box position="relative" width={100} height={100}>
                       <Image
                         priority
                         src={hp.src}
@@ -138,30 +138,30 @@ export default function Duel() {
                         width={100}
                         height={100}
                       />
-                    
-                    <Box
-                      position="absolute"
-                      top={0}
-                      left={0}
-                      width="100%"
-                      height="100%"
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <Typography
-                        variant="h6"
-                        sx={{
-                          cursor: 'default',
-                          color: 'white',
-                          fontFamily: 'fantasy',
-                          fontSize: '1.5rem'
-                        }}
+
+                      <Box
+                        position="absolute"
+                        top={0}
+                        left={0}
+                        width="100%"
+                        height="100%"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
                       >
-                        {player.hpMax}
-                      </Typography>
+                        <Typography
+                          variant="h6"
+                          sx={{
+                            cursor: 'default',
+                            color: 'white',
+                            fontFamily: 'fantasy',
+                            fontSize: '1.5rem'
+                          }}
+                        >
+                          {player.hpMax}
+                        </Typography>
+                      </Box>
                     </Box>
-                  </Box>
                   </Tooltip>
                 </Box>{' '}
                 <Typography color="brown" fontFamily="fantasy" variant="body1">
@@ -179,11 +179,40 @@ export default function Duel() {
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={() => {
-                    const uuid = uuidv4()
-                    setCurrentPlayer(user)
-                    setChallengingPlayer(player)
-                    router.push(`/duel/${uuid}`)
+                  onClick={async () => {
+                    if (user.pa < 4) {
+                      alert('Not enough Action Points')
+                      return
+                    }
+
+                    // Decrement action points
+                    const newPa = user.pa - 4
+
+                    try {
+                      const response = await fetch(`/api/user/${user.id}`, {
+                        method: 'PUT',
+                        headers: {
+                          'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ pa: newPa })
+                      })
+
+                      if (!response.ok) {
+                        throw new Error(
+                          `HTTP error! status: ${response.status}`
+                        )
+                      }
+
+                      const updatedPlayer = await response.json()
+
+                      const uuid = uuidv4()
+                      setCurrentPlayer(user)
+                      setChallengingPlayer(player)
+                      router.push(`/duel/${uuid}`)
+                    } catch (error) {
+                      console.error(`Failed to update player PA: ${error}`)
+                      alert('Failed to update player PA')
+                    }
                   }}
                 >
                   Duel

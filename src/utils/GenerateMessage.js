@@ -1,8 +1,8 @@
 const failMessages = [
-    (attacker, defender) => `${attacker.username} tente une attaque mais ${defender.username} a esquivé`,
-    (attacker, defender) => `${attacker.username} attaque mais ${defender.username} esquive de justesse`,
-    (attacker, defender) => `${attacker.username} frappe mais ${defender.username} esquive rapidement`,
-    (attacker, defender) => `${attacker.username} attaque furieusement, ${defender.username} l'esquive`
+    (attacker, defender) => `${attacker.username} tente une attaque mais ${defender.username} a {esquivé}`,
+    (attacker, defender) => `${attacker.username} attaque mais ${defender.username} {esquive} de justesse`,
+    (attacker, defender) => `${attacker.username} frappe mais ${defender.username} {esquive} rapidement`,
+    (attacker, defender) => `${attacker.username} attaque furieusement, ${defender.username} {l'esquive}`
   ];
   
   const successMessages = [

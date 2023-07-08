@@ -17,8 +17,9 @@ body {
   font-size: 1rem;
   line-height: 1.5;
   letter-spacing: 0.00938em;
-  min-height: 100%;
+  max-height: 100%;
   background: linear-gradient(rgb(247, 225, 183) 0%, rgb(235, 173, 112) 160px);
+  
 }
 
 html {

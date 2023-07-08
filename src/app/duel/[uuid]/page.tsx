@@ -7,6 +7,8 @@ import BattleOrder from 'src/utils/BattleOrder'
 import CalculateDamage from 'src/utils/CalculateDamage'
 import GenerateMessage from 'src/utils/GenerateMessage'
 import { createTheme, ThemeProvider } from '@mui/system'
+import Image from 'next/legacy/image'
+import vs from '#/public/vs.png'
 
 const theme = createTheme({
   palette: {
@@ -26,14 +28,43 @@ interface AnimatedTextProps {
   letters: Letter[]
 }
 
+interface PlayerComponent {
+  player: string
+  hp: number
+  hpMax: number
+  color: string
+}
+// call add xp function
+const updatePlayerXP = async (playerId, newXP) => {
+  try {
+    const response = await fetch(`/api/user/${playerId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ xp: newXP }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const updatedPlayer = await response.json();
+    return updatedPlayer;
+  } catch (error) {
+    console.error(`Failed to update player XP: ${error}`);
+  }
+};
+
 // Player component
-const PlayerInfo = ({ player, hp, hpMax, color }) => (
+const PlayerInfo = ({ player, hp, hpMax, color }: PlayerComponent) => (
   <Box style={{ maxWidth: '100%' }}>
     <Typography
       variant="h3"
       color={color}
       style={{
-        wordBreak: 'break-all', textAlign: 'center'
+        wordBreak: 'break-all',
+        textAlign: 'center'
       }}
     >
       {player.toUpperCase()}
@@ -60,6 +91,14 @@ const PlayerInfo = ({ player, hp, hpMax, color }) => (
 // animation variants
 const MotionTypography = motion(Typography)
 
+// animated title
+const titleVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { delay: 0.5 } },
+  exit: { opacity: 0, transition: { ease: 'easeInOut' } }
+}
+
+// animated history
 const AnimatedText = ({ letters }: AnimatedTextProps) => {
   const variants = {
     hidden: { opacity: 0 },
@@ -91,7 +130,7 @@ function splitWithUsernames(
   username1: string,
   username2: string
 ) {
-  const parts = text.split(new RegExp(`(${username1}|${username2}|\\[\\d+\\])`))
+  const parts = text.split(new RegExp(`(${username1}|${username2}|\\[\\d+\\]|{[^}]+})`, 'g'));
   return parts.map((part) => {
     if (part === username1) {
       return { text: part, color: 'blue' }
@@ -99,6 +138,8 @@ function splitWithUsernames(
       return { text: part, color: 'red' }
     } else if (part.startsWith('[') && part.endsWith(']')) {
       return { text: part.slice(1, -1), color: 'brown' }
+    } else if (part.startsWith('{') && part.endsWith('}')) {
+      return { text: part.slice(1, -1), color: 'green' }
     } else {
       return { text: part, color: 'black' }
     }
@@ -136,6 +177,11 @@ export default function DuelFight() {
           setBattleHistory((oldArray) => [...oldArray, result])
           setIsBattleFinished(true)
           clearInterval(fightInterval)
+          if (currentHp1 <= 0) {
+            updatePlayerXP(currentPlayer.id, currentPlayer.xp + 1);
+          } else {
+            updatePlayerXP(currentPlayer.id, currentPlayer.xp + 2);
+          }
         } else {
           const player = order.shift()
           if (player === currentPlayer.username) {
@@ -165,7 +211,7 @@ export default function DuelFight() {
       return () => clearInterval(fightInterval) // Clean up on unmount
     }
   }, [currentPlayer, challengingPlayer, isBattleFinished])
-  // Scroll to bottom of the hystoric
+  // Scroll to bottom of the historic
   useEffect(() => {
     if (lastMessageRef.current) {
       lastMessageRef.current.scrollIntoView({ behavior: 'smooth' })
@@ -179,15 +225,28 @@ export default function DuelFight() {
       alignItems="center"
       style={{ height: '100vh' }}
     >
-      <Typography
-  variant="h2"
-  align="center"
-  style={{ marginTop: '10px', wordBreak: 'break-all' }}
->
-  <span style={{ color: 'blue' }}>{currentPlayer.username}</span>
-  {' VS '}
-  <span style={{ color: 'red' }}>{challengingPlayer.username}</span>
-</Typography>
+      <motion.div
+        variants={titleVariants}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+      >
+        <Typography
+          variant="h2"
+          align="center"
+          style={{
+            marginTop: '10px',
+            wordBreak: 'break-all',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
+        >
+          <span style={{ color: 'blue' }}>{currentPlayer.username}</span>
+          <Image src={vs.src} alt="fight" width={100} height={100}></Image>
+          <span style={{ color: 'red' }}>{challengingPlayer.username}</span>
+        </Typography>
+      </motion.div>
       <Grid
         item
         container
@@ -224,6 +283,8 @@ export default function DuelFight() {
           fontSize="1.5rem"
           fontWeight="normal"
           height="100%"
+          marginLeft="10px"
+          marginRight="10px"
         >
           <AnimatePresence initial={false}>
             {battleHistory.map((event, index) => {
