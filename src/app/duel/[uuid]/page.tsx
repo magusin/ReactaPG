@@ -1,14 +1,22 @@
 'use client'
-import PlayerContext from 'src/utils/PlayerContext'
+// react
 import React, { useContext, useEffect, useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Typography, Box, Tooltip, LinearProgress, Grid } from '@mui/material'
+// mui
+import { Typography, Box, Tooltip, LinearProgress, Grid, Snackbar, IconButton } from '@mui/material'
+import MuiAlert from '@mui/material/Alert'
+import CloseIcon from '@mui/icons-material/Close'
+import { createTheme, ThemeProvider } from '@mui/system'
+// utils
 import BattleOrder from 'src/utils/BattleOrder'
 import CalculateDamage from 'src/utils/CalculateDamage'
 import GenerateMessage from 'src/utils/GenerateMessage'
-import { createTheme, ThemeProvider } from '@mui/system'
+import PlayerContext from 'src/utils/PlayerContext'
+// img
 import Image from 'next/legacy/image'
 import vs from '#/public/vs.png'
+// router
+import { useRouter } from 'next/navigation'
 
 const theme = createTheme({
   palette: {
@@ -35,26 +43,26 @@ interface PlayerComponent {
   color: string
 }
 // call add xp function
-const updatePlayerXP = async (playerId, newXP) => {
+const updatePlayerXP = async (playerId: number, newXP: number) => {
   try {
     const response = await fetch(`/api/user/${playerId}`, {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ xp: newXP }),
-    });
+      body: JSON.stringify({ xp: newXP })
+    })
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(`HTTP error! status: ${response.status}`)
     }
 
-    const updatedPlayer = await response.json();
-    return updatedPlayer;
+    const updatedPlayer = await response.json()
+    return updatedPlayer
   } catch (error) {
-    console.error(`Failed to update player XP: ${error}`);
+    console.error(`Failed to update player XP: ${error}`)
   }
-};
+}
 
 // Player component
 const PlayerInfo = ({ player, hp, hpMax, color }: PlayerComponent) => (
@@ -130,7 +138,9 @@ function splitWithUsernames(
   username1: string,
   username2: string
 ) {
-  const parts = text.split(new RegExp(`(${username1}|${username2}|\\[\\d+\\]|{[^}]+})`, 'g'));
+  const parts = text.split(
+    new RegExp(`(${username1}|${username2}|\\[\\d+\\]|{[^}]+})`, 'g')
+  )
   return parts.map((part) => {
     if (part === username1) {
       return { text: part, color: 'blue' }
@@ -154,13 +164,29 @@ export default function DuelFight() {
     setChallengingPlayer
   } = useContext(PlayerContext)
 
+  const router = useRouter()
   const [battleHistory, setBattleHistory] = useState([])
-  const [currentHp1, setCurrentHp1] = useState<number>(currentPlayer.hpMax)
-  const [currentHp2, setCurrentHp2] = useState<number>(challengingPlayer.hpMax)
+  const [currentHp1, setCurrentHp1] = useState<number>(
+    currentPlayer ? currentPlayer.hpMax : 0
+  )
+  const [currentHp2, setCurrentHp2] = useState<number>(
+    challengingPlayer ? challengingPlayer.hpMax : 0
+  )
   const [isBattleFinished, setIsBattleFinished] = useState<boolean>(false)
   const lastMessageRef = useRef<any>(null)
+  const [message, setMessage] = useState<string>('')
+  const [open, setOpen] = useState<boolean>(false)
+
+  // Function to open the snackbar with a specific message
+  const openSnackbar = (newMessage) => {
+    setMessage(newMessage)
+    setOpen(true)
+  }
 
   useEffect(() => {
+    if (!currentPlayer || !challengingPlayer) {
+      router.push('/') // Redirects user to home page
+    }
     if (currentPlayer && challengingPlayer && !isBattleFinished) {
       const order = BattleOrder({ players: [currentPlayer, challengingPlayer] })
 
@@ -172,15 +198,17 @@ export default function DuelFight() {
           // The battle is over, display the result only once
           const result =
             currentHp1 <= 0
-              ? `${currentPlayer.username} a perdu`
+              ? `${challengingPlayer.username} a gagné`
               : `${currentPlayer.username} a gagné`
           setBattleHistory((oldArray) => [...oldArray, result])
           setIsBattleFinished(true)
           clearInterval(fightInterval)
           if (currentHp1 <= 0) {
-            updatePlayerXP(currentPlayer.id, currentPlayer.xp + 1);
+            updatePlayerXP(currentPlayer.id, currentPlayer.xp + 1)
+            openSnackbar("You win 1 XP");
           } else {
-            updatePlayerXP(currentPlayer.id, currentPlayer.xp + 2);
+            updatePlayerXP(currentPlayer.id, currentPlayer.xp + 2)
+            openSnackbar("You win 2 XP");
           }
         } else {
           const player = order.shift()
@@ -210,7 +238,7 @@ export default function DuelFight() {
 
       return () => clearInterval(fightInterval) // Clean up on unmount
     }
-  }, [currentPlayer, challengingPlayer, isBattleFinished])
+  }, [currentPlayer, challengingPlayer, isBattleFinished, router])
   // Scroll to bottom of the historic
   useEffect(() => {
     if (lastMessageRef.current) {
@@ -219,115 +247,149 @@ export default function DuelFight() {
   }, [battleHistory])
 
   return (
-    <Grid
-      container
-      direction="column"
-      alignItems="center"
-      style={{ height: '100vh' }}
-    >
-      <motion.div
-        variants={titleVariants}
-        initial="hidden"
-        animate="visible"
-        exit="exit"
-      >
-        <Typography
-          variant="h2"
-          align="center"
-          style={{
-            marginTop: '10px',
-            wordBreak: 'break-all',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}
-        >
-          <span style={{ color: 'blue' }}>{currentPlayer.username}</span>
-          <Image src={vs.src} alt="fight" width={100} height={100}></Image>
-          <span style={{ color: 'red' }}>{challengingPlayer.username}</span>
-        </Typography>
-      </motion.div>
-      <Grid
-        item
-        container
-        direction="row"
-        justifyContent="center"
-        alignItems="center"
-        style={{ flex: 1, overflow: 'auto', padding: '10px', gap: '10px' }}
-        wrap="nowrap"
-      >
-        <Grid item xs={12} sm={3}>
-          <PlayerInfo
-            player={currentPlayer.username}
-            hp={currentHp1}
-            hpMax={currentPlayer.hpMax}
-            color="blue"
-          />
-        </Grid>
-
+    <>
+      {currentPlayer && challengingPlayer ? (
         <Grid
-          item
-          xs={12}
-          sm={6}
-          className="boxHistoryFightStyles"
-          display="flex"
-          flexDirection="column"
-          justifyContent="flex-start"
+          container
+          direction="column"
           alignItems="center"
-          minHeight="200px"
-          maxHeight="500px"
-          width="100%"
-          mx="auto"
-          bgcolor="white"
-          p={2}
-          fontSize="1.5rem"
-          fontWeight="normal"
-          height="100%"
-          marginLeft="10px"
-          marginRight="10px"
+          style={{ height: '100vh' }}
         >
-          <AnimatePresence initial={false}>
-            {battleHistory.map((event, index) => {
-              const parts = splitWithUsernames(
-                event,
-                currentPlayer.username,
-                challengingPlayer.username
-              )
-              const letters = parts.flatMap(({ text, color }) =>
-                text.split('').map((letter) => ({ letter, color }))
-              )
+          <motion.div
+            variants={titleVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+          >
+            <Typography
+              variant="h2"
+              align="center"
+              style={{
+                marginTop: '10px',
+                wordBreak: 'break-all',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}
+            >
+              <span style={{ color: 'blue' }}>{currentPlayer.username}</span>
+              <Image src={vs.src} alt="fight" width={100} height={100}></Image>
+              <span style={{ color: 'red' }}>{challengingPlayer.username}</span>
+            </Typography>
+          </motion.div>
+          <Grid
+            item
+            container
+            direction="row"
+            justifyContent="center"
+            alignItems="center"
+            style={{ flex: 1, overflow: 'auto', padding: '10px', gap: '10px' }}
+            wrap="nowrap"
+          >
+            <Grid item xs={12} sm={3}>
+              <PlayerInfo
+                player={currentPlayer.username}
+                hp={currentHp1}
+                hpMax={currentPlayer.hpMax}
+                color="blue"
+              />
+            </Grid>
 
-              return (
-                <motion.div
-                  ref={
-                    index === battleHistory.length - 1 ? lastMessageRef : null
-                  }
-                  key={index}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.3 }}
-                  style={{
-                    marginBottom: '0.5rem',
-                    fontWeight:
-                      index === battleHistory.length - 1 ? 'bold' : 'normal'
-                  }}
-                >
-                  <AnimatedText letters={letters} />
-                </motion.div>
-              )
-            })}
-          </AnimatePresence>
-        </Grid>
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              className="boxHistoryFightStyles"
+              display="flex"
+              flexDirection="column"
+              justifyContent="flex-start"
+              alignItems="center"
+              minHeight="200px"
+              maxHeight="500px"
+              width="100%"
+              mx="auto"
+              bgcolor="white"
+              p={2}
+              fontSize="1.5rem"
+              fontWeight="normal"
+              height="100%"
+              marginLeft="10px"
+              marginRight="10px"
+            >
+              <AnimatePresence initial={false}>
+                {battleHistory.map((event, index) => {
+                  const parts = splitWithUsernames(
+                    event,
+                    currentPlayer.username,
+                    challengingPlayer.username
+                  )
+                  const letters = parts.flatMap(({ text, color }) =>
+                    text.split('').map((letter) => ({ letter, color }))
+                  )
 
-        <Grid item xs={12} sm={3}>
-          <PlayerInfo
-            player={challengingPlayer.username}
-            hp={currentHp2}
-            hpMax={challengingPlayer.hpMax}
-            color="red"
-          />
+                  return (
+                    <motion.div
+                      ref={
+                        index === battleHistory.length - 1
+                          ? lastMessageRef
+                          : null
+                      }
+                      key={index}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3 }}
+                      style={{
+                        marginBottom: '0.5rem',
+                        fontWeight:
+                          index === battleHistory.length - 1 ? 'bold' : 'normal'
+                      }}
+                    >
+                      <AnimatedText letters={letters} />
+                    </motion.div>
+                  )
+                })}
+              </AnimatePresence>
+            </Grid>
+
+            <Grid item xs={12} sm={3}>
+              <PlayerInfo
+                player={challengingPlayer.username}
+                hp={currentHp2}
+                hpMax={challengingPlayer.hpMax}
+                color="red"
+              />
+            </Grid>
+          </Grid>
         </Grid>
-      </Grid>
-    </Grid>
+      ) : null}
+      <Snackbar
+        open={open}
+        autoHideDuration={3000}
+        onClose={() => {
+          setOpen(false)
+        }}
+      >
+        <MuiAlert
+          severity="success"
+          elevation={6}
+          variant="filled"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={() => {
+                setOpen(false)
+              }}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {message}
+        </MuiAlert>
+      </Snackbar>
+    </>
   )
 }

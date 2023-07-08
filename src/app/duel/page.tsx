@@ -7,7 +7,9 @@ import {
   Typography,
   Button,
   CircularProgress,
-  Grid
+  Grid,
+  Snackbar,
+  IconButton
 } from '@mui/material'
 import Header from 'src/components/header'
 import axios from 'axios'
@@ -19,6 +21,8 @@ import Image from 'next/legacy/image'
 import { v4 as uuidv4 } from 'uuid'
 import PlayerContext from 'src/utils/PlayerContext'
 import Tooltip from '@mui/material/Tooltip'
+import MuiAlert from '@mui/material/Alert'
+import CloseIcon from '@mui/icons-material/Close'
 
 export default function Duel() {
   const [players, setPlayers] = useState<Player[]>([])
@@ -26,6 +30,7 @@ export default function Duel() {
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [user, setUser] = useState<any>(null)
   const { setCurrentPlayer, setChallengingPlayer } = useContext(PlayerContext)
+  const [open, setOpen] = useState<boolean>(false)
 
   useEffect(() => {
     const currentUser = localStorage.getItem('user')
@@ -138,7 +143,6 @@ export default function Duel() {
                         width={100}
                         height={100}
                       />
-
                       <Box
                         position="absolute"
                         top={0}
@@ -181,7 +185,7 @@ export default function Duel() {
                   color="primary"
                   onClick={async () => {
                     if (user.pa < 4) {
-                      alert('Not enough Action Points')
+                      setOpen(true)
                       return
                     }
 
@@ -211,7 +215,6 @@ export default function Duel() {
                       router.push(`/duel/${uuid}`)
                     } catch (error) {
                       console.error(`Failed to update player PA: ${error}`)
-                      alert('Failed to update player PA')
                     }
                   }}
                 >
@@ -222,6 +225,34 @@ export default function Duel() {
           ))}
         </Grid>
       </Container>
+      <Snackbar
+        open={open}
+        autoHideDuration={3000}
+        onClose={() => {
+          setOpen(false)
+        }}
+      >
+        <MuiAlert
+          severity="warning"
+          elevation={6}
+          variant="filled"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={() => {
+                setOpen(false)
+              }}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          Not enough PA
+        </MuiAlert>
+      </Snackbar>
     </>
   )
 }
