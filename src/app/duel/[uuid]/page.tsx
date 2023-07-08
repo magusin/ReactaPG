@@ -165,7 +165,7 @@ export default function DuelFight() {
   } = useContext(PlayerContext)
 
   const router = useRouter()
-  const [battleHistory, setBattleHistory] = useState([])
+  const [battleHistory, setBattleHistory] = useState<string[]>([])
   const [currentHp1, setCurrentHp1] = useState<number>(
     currentPlayer ? currentPlayer.hpMax : 0
   )
