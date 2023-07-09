@@ -1,9 +1,10 @@
+/* eslint-disable react/no-unescaped-entities */
 'use client'
 // react
 import React, { useContext, useEffect, useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 // mui
-import { Typography, Box, Tooltip, LinearProgress, Grid, Snackbar, IconButton } from '@mui/material'
+import { Typography, Box, Tooltip, LinearProgress, Grid, Snackbar, IconButton, Button } from '@mui/material'
 import MuiAlert from '@mui/material/Alert'
 import CloseIcon from '@mui/icons-material/Close'
 import { createTheme, ThemeProvider } from '@mui/system'
@@ -369,6 +370,23 @@ export default function DuelFight() {
               />
             </Grid>
           </Grid>
+          {isBattleFinished && (
+          <Typography
+              className="boxTitleStyles"
+              variant="h2"
+              align="center"
+              style={{
+                marginBottom:'8px',
+                wordBreak: 'break-all',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}
+            >
+              <Button style={{marginRight:"8px"}} onClick={() => router.push("/")}>Retourner à l'index</Button>
+              <Button onClick={() => router.push("/duel")}>Affronter un autres joueur</Button>
+            </Typography>
+             )}
         </Grid>
       ) : null}
       <Snackbar
