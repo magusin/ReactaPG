@@ -17,6 +17,8 @@ import { Player } from 'src/types/Player'
 import { useRouter } from 'next/navigation'
 import str from '#/public/biceps.png'
 import hp from '#/public/hp.png'
+import dex from '#/public/dex.png'
+import speed from '#/public/speed.png'
 import Image from 'next/legacy/image'
 import { v4 as uuidv4 } from 'uuid'
 import PlayerContext from 'src/utils/PlayerContext'
@@ -108,7 +110,7 @@ export default function Duel() {
             Choose your opponent
           </Typography>
           <Typography variant="body1">
-            (One Duel cost 4 Actions Points)
+            (One Fight cost 4 Actions Points)
           </Typography>
         </Box>
         <Grid container spacing={3}>
@@ -167,19 +169,120 @@ export default function Duel() {
                       </Box>
                     </Box>
                   </Tooltip>
-                </Box>{' '}
-                <Typography color="brown" fontFamily="fantasy" variant="body1">
-                  Strength : {player.str}
-                </Typography>
-                <Typography color="green" fontFamily="fantasy" variant="body1">
-                  Dexterity : {player.dex}
-                </Typography>
-                <Typography color="green" fontFamily="fantasy" variant="body1">
-                  Initiative : {player.init}
-                </Typography>
-                <Typography color="green" fontFamily="fantasy" variant="body1">
-                  Speed : {player.speed}
-                </Typography>
+                </Box>
+                <Box display="flex" alignItems="center" flexDirection="row" marginBottom="8px">
+                <Box display="flex" alignItems="center">
+                  <Tooltip title="Strength" placement="top">
+                    <Box position="relative" width={100} height={100}>
+                      <Image
+                        priority
+                        src={str.src}
+                        alt="str"
+                        layout="responsive"
+                        objectFit="cover"
+                        width={100}
+                        height={100}
+                      />
+                      <Box
+                        position="absolute"
+                        top={0}
+                        left={0}
+                        width="100%"
+                        height="100%"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                      >
+                        <Typography
+                          variant="h6"
+                          sx={{
+                            cursor: 'default',
+                            color: 'black',
+                            fontFamily: 'fantasy',
+                            fontSize: '1.5rem'
+                          }}
+                        >
+                          {player.str}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Tooltip>
+                </Box>
+                <Box display="flex" alignItems="center">
+                  <Tooltip title="Dexterity" placement="top">
+                    <Box position="relative" width={100} height={100}>
+                      <Image
+                        priority
+                        src={dex.src}
+                        alt="dex"
+                        layout="responsive"
+                        objectFit="cover"
+                        width={100}
+                        height={100}
+                      />
+                      <Box
+                        position="absolute"
+                        top={0}
+                        left={0}
+                        width="100%"
+                        height="100%"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                      >
+                        <Typography
+                          variant="h6"
+                          sx={{
+                            cursor: 'default',
+                            color: 'black',
+                            fontFamily: 'fantasy',
+                            fontSize: '1.5rem'
+                          }}
+                        >
+                          {player.dex}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Tooltip>
+                </Box>
+                <Box display="flex" alignItems="center">
+                  <Tooltip title="Speed" placement="top">
+                    <Box position="relative" width={100} height={100}>
+                      <Image
+                        priority
+                        src={speed.src}
+                        alt="speed"
+                        layout="responsive"
+                        objectFit="cover"
+                        width={100}
+                        height={100}
+                      />
+                      <Box
+                        position="absolute"
+                        top={0}
+                        left={0}
+                        width="100%"
+                        height="100%"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                      >
+                        <Typography
+                          variant="h6"
+                          sx={{
+                            cursor: 'default',
+                            color: 'black',
+                            fontFamily: 'fantasy',
+                            fontSize: '1.5rem'
+                          }}
+                        >
+                          {player.dex}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Tooltip>
+                </Box>
+                </Box>
                 <Button
                   variant="contained"
                   color="primary"
@@ -218,7 +321,7 @@ export default function Duel() {
                     }
                   }}
                 >
-                  Duel
+                  Fight
                 </Button>
               </Box>
             </Grid>
