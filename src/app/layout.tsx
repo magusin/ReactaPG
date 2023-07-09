@@ -4,6 +4,7 @@ import './globals.css'
 import { Inter } from 'next/font/google'
 import PlayerContext from 'src/utils/PlayerContext';
 import metaData from 'src/utils/MetaData';
+import { Player } from 'src/types/Player';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -12,8 +13,8 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const [currentPlayer, setCurrentPlayer] = useState(null);
-  const [challengingPlayer, setChallengingPlayer] = useState(null);
+  const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
+const [challengingPlayer, setChallengingPlayer] = useState<Player | null>(null);
 
   return (
       <html lang="en">
