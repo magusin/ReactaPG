@@ -26,6 +26,7 @@ const TableNav = () => {
         alignItems: 'center',
         color: 'black',
         textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)',
+        padding: '16px 0'
       }}
     >
       <Box
@@ -42,7 +43,7 @@ const TableNav = () => {
           layout="responsive"
           sizes="(max-width: 300px) 100vw, 300px"
           width={300}
-          height={400}
+          height={390}
         />
       </Box>
 

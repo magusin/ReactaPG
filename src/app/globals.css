@@ -29,9 +29,9 @@ html {
 .boxGlobalStyles {
   box-shadow: rgb(222, 195, 127) 0px 0px 0px 1px, rgb(246, 238, 144) 0px 0px 1px 4.5px, rgb(114, 82, 84) 0px 0px 0px 6px, rgb(188, 123, 74) 3px 3px 0px 6px;
   border-radius: 5px 5px 5px 5px;
-  padding: 16px;
+  
   background-color: rgb(251, 247, 192);
-  margin: 8px auto;
+  
 }
 
 .boxTitleStyles {

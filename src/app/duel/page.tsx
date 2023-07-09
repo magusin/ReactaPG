@@ -170,7 +170,7 @@ export default function Duel() {
                     </Box>
                   </Tooltip>
                 </Box>
-                <Box display="flex" alignItems="center" flexDirection="row" marginBottom="8px">
+                <Box display="flex" flexDirection="row" marginBottom="8px" justifyContent="space-evenly" width="100%">
                 <Box display="flex" alignItems="center">
                   <Tooltip title="Strength" placement="top">
                     <Box position="relative" width={100} height={100}>
