@@ -15,4 +15,5 @@ export interface Player {
     str: number;
     type: string;
     xp: number;
+    speed: number;
   }

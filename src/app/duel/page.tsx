@@ -1,41 +1,51 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import {
   Box,
   Container,
   Typography,
   Button,
   CircularProgress,
-  Grid
+  Grid,
+  Snackbar,
+  IconButton
 } from '@mui/material'
 import Header from 'src/components/header'
 import axios from 'axios'
 import { Player } from 'src/types/Player'
 import { useRouter } from 'next/navigation'
+import str from '#/public/biceps.png'
 import hp from '#/public/hp.png'
 import Image from 'next/legacy/image'
+import { v4 as uuidv4 } from 'uuid'
+import PlayerContext from 'src/utils/PlayerContext'
+import Tooltip from '@mui/material/Tooltip'
+import MuiAlert from '@mui/material/Alert'
+import CloseIcon from '@mui/icons-material/Close'
 
 export default function Duel() {
   const [players, setPlayers] = useState<Player[]>([])
   const router = useRouter()
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [user, setUser] = useState<any>(null)
+  const { setCurrentPlayer, setChallengingPlayer } = useContext(PlayerContext)
+  const [open, setOpen] = useState<boolean>(false)
 
   useEffect(() => {
     const currentUser = localStorage.getItem('user')
-    setUser(currentUser)
- 
     if (currentUser != null) {
       const userId = JSON.parse(currentUser).id
-
       const fetchData = async () => {
         try {
           const res = await axios.get('/api/user')
           let currentPlayer = (res.data as Player[]).filter(
             (player: Player) => player.id === userId
           )[0]
-          let allPlayers = (res.data as Player[]).filter((player: Player) => player.id !== userId)
+          setUser(currentPlayer)
+          let allPlayers = (res.data as Player[]).filter(
+            (player: Player) => player.id !== userId
+          )
           const userLevel = currentPlayer.level
           let filteredPlayers: Player[] = []
           let currentLevel = userLevel
@@ -93,17 +103,13 @@ export default function Duel() {
     <>
       <Header />
       <Container>
-        <Box
-        className="boxTitleStyles"
-        display="flex"
-        flexDirection="column"
-        >
-        <Typography variant="h4" gutterBottom>
-          Choose your opponent
-        </Typography>
-        <Typography variant="body1" >
-          (One Duel cost 4 Actions Points)
-        </Typography>
+        <Box className="boxTitleStyles" display="flex" flexDirection="column">
+          <Typography variant="h4" gutterBottom>
+            Choose your opponent
+          </Typography>
+          <Typography variant="body1">
+            (One Duel cost 4 Actions Points)
+          </Typography>
         </Box>
         <Grid container spacing={3}>
           {players.map((player) => (
@@ -119,51 +125,99 @@ export default function Duel() {
                   justifyContent: 'center'
                 }}
               >
-                <Typography fontFamily="fantasy" variant="h6">
+                <Typography fontFamily="fantasy" variant="h4">
                   {player.username.toUpperCase()}
                 </Typography>
+                <Typography color="teal" fontFamily="fantasy" variant="h5">
+                  Level : {player.level}
+                </Typography>
                 <Box display="flex" alignItems="center">
-                  <Box position="relative" width={100} height={100}>
-                    <Image
-                      priority
-                      src={hp.src}
-                      alt="pv"
-                      layout="responsive"
-                      objectFit="cover"
-                      width={100}
-                      height={100}
-                    />
-                    <Box
-                      position="absolute"
-                      top={0}
-                      left={0}
-                      width="100%"
-                      height="100%"
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <Typography
-                        variant="h6"
-                        sx={{
-                          cursor: 'default',
-                          color: 'white',
-                          fontFamily: 'fantasy',
-                          fontSize: '1.5rem'
-                        }}
+                  <Tooltip title="Health" placement="top">
+                    <Box position="relative" width={100} height={100}>
+                      <Image
+                        priority
+                        src={hp.src}
+                        alt="health"
+                        layout="responsive"
+                        objectFit="cover"
+                        width={100}
+                        height={100}
+                      />
+                      <Box
+                        position="absolute"
+                        top={0}
+                        left={0}
+                        width="100%"
+                        height="100%"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
                       >
-                        {player.hpMax}
-                      </Typography>
+                        <Typography
+                          variant="h6"
+                          sx={{
+                            cursor: 'default',
+                            color: 'white',
+                            fontFamily: 'fantasy',
+                            fontSize: '1.5rem'
+                          }}
+                        >
+                          {player.hpMax}
+                        </Typography>
+                      </Box>
                     </Box>
-                  </Box>
+                  </Tooltip>
                 </Box>{' '}
                 <Typography color="brown" fontFamily="fantasy" variant="body1">
-                  Strength: {player.str}
+                  Strength : {player.str}
                 </Typography>
                 <Typography color="green" fontFamily="fantasy" variant="body1">
-                  Dexterity: {player.dex}
+                  Dexterity : {player.dex}
                 </Typography>
-                <Button variant="contained" color="primary">
+                <Typography color="green" fontFamily="fantasy" variant="body1">
+                  Initiative : {player.init}
+                </Typography>
+                <Typography color="green" fontFamily="fantasy" variant="body1">
+                  Speed : {player.speed}
+                </Typography>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={async () => {
+                    if (user.pa < 4) {
+                      setOpen(true)
+                      return
+                    }
+
+                    // Decrement action points
+                    const newPa = user.pa - 4
+
+                    try {
+                      const response = await fetch(`/api/user/${user.id}`, {
+                        method: 'PUT',
+                        headers: {
+                          'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ pa: newPa })
+                      })
+
+                      if (!response.ok) {
+                        throw new Error(
+                          `HTTP error! status: ${response.status}`
+                        )
+                      }
+
+                      const updatedPlayer = await response.json()
+
+                      const uuid = uuidv4()
+                      setCurrentPlayer(user)
+                      setChallengingPlayer(player)
+                      router.push(`/duel/${uuid}`)
+                    } catch (error) {
+                      console.error(`Failed to update player PA: ${error}`)
+                    }
+                  }}
+                >
                   Duel
                 </Button>
               </Box>
@@ -171,6 +225,34 @@ export default function Duel() {
           ))}
         </Grid>
       </Container>
+      <Snackbar
+        open={open}
+        autoHideDuration={3000}
+        onClose={() => {
+          setOpen(false)
+        }}
+      >
+        <MuiAlert
+          severity="warning"
+          elevation={6}
+          variant="filled"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={() => {
+                setOpen(false)
+              }}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          Not enough PA
+        </MuiAlert>
+      </Snackbar>
     </>
   )
 }

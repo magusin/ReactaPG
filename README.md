@@ -37,3 +37,6 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 npx prisma init
 npx prisma migrate dev
+npx prisma generate
+npx prisma db pull
+

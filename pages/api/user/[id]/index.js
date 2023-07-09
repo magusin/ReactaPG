@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client'
 
 // Initialiser le middleware CORS
 let cors = Cors({
-  methods: ['GET', 'HEAD']
+  methods: ['GET', 'PUT', 'HEAD']
 })
 
 const prisma = new PrismaClient()
@@ -27,20 +27,26 @@ export default async function handler(req, res) {
       if (req.query.id) {
         return await getPlayer(req, res)
       }
+      break
+    case 'PUT':
+      if (req.query.id) {
+        return await updatePlayer(req, res)
+      }
+      break
     default:
       return res.status(400).json({ message: 'bad request' })
   }
 }
 
-// Obtenir un joueur spécifique en utilisant son id
+// found player by Id
 const getPlayer = async (req, res) => {
-    try {
-        const { id } = req.query
-    
-        const player = await prisma.player.findUnique({
-        where: {
-            id: parseInt(id)
-        },
+  try {
+    const { id } = req.query
+
+    const player = await prisma.player.findUnique({
+      where: {
+        id: parseInt(id)
+      },
       select: {
         id: true,
         username: true,
@@ -57,15 +63,37 @@ const getPlayer = async (req, res) => {
         paMax: true,
         str: true,
         type: true,
-        xp: true,
-      },
+        xp: true
+      }
     })
-        if (player) {
-        return res.status(200).json(player)
-        } else {
-        return res.status(404).json({ message: 'Player not found' })
-        }
-    } catch (error) {
-        return res.status(500).json({ message: error.message })
+    if (player) {
+      return res.status(200).json(player)
+    } else {
+      return res.status(404).json({ message: 'Player not found' })
     }
+  } catch (error) {
+    return res.status(500).json({ message: error.message })
+  }
+}
+
+const updatePlayer = async (req, res) => {
+  try {
+    const { id } = req.query
+    let updateData = req.body
+
+    const updatedPlayer = await prisma.player.update({
+      where: {
+        id: parseInt(id)
+      },
+      data: updateData
+    })
+
+    if (updatedPlayer) {
+      return res.status(200).json(updatedPlayer)
+    } else {
+      return res.status(404).json({ message: 'Player not found' })
     }
+  } catch (error) {
+    return res.status(500).json({ message: error.message })
+  }
+}

@@ -53,6 +53,7 @@ const getPlayers = async (req, res) => {
         str: true,
         type: true,
         xp: true,
+        speed: true
       },
     }
   );
