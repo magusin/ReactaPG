@@ -318,7 +318,6 @@ export default function DuelFight() {
               maxHeight="500px"
               width="100%"
               mx="auto"
-              bgcolor="white"
               p={2}
               fontSize="1.5rem"
               fontWeight="normal"
