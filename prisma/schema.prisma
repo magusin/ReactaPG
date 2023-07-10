@@ -27,3 +27,20 @@ model player {
   xp       Int    @default(0)
   speed    Int    @default(1)
 }
+
+model Fight {
+  uuid         String         @id @default(uuid())
+  player1_id   Int
+  player2_id   Int
+  winner_id    Int
+  events       FightEvent[]
+}
+
+model FightEvent {
+  uuid        String   @id @default(uuid())
+  combat_id   String   @map("combat_uuid")
+  message     String
+  turn        Int
+
+  combat      Fight   @relation(fields: [combat_id], references: [uuid])
+}

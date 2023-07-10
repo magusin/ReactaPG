@@ -17,7 +17,7 @@ import PlayerContext from 'src/utils/PlayerContext'
 import Image from 'next/legacy/image'
 import vs from '#/public/vs.png'
 // router
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 
 const theme = createTheme({
   palette: {
@@ -156,6 +156,9 @@ function splitWithUsernames(
     }
   })
 }
+
+
+
 // DuelFight component
 export default function DuelFight() {
   const {
@@ -166,6 +169,7 @@ export default function DuelFight() {
   } = useContext(PlayerContext)
 
   const router = useRouter()
+  const pathname = usePathname()
   const [battleHistory, setBattleHistory] = useState<string[]>([])
   const [currentHp1, setCurrentHp1] = useState<number>(
     currentPlayer ? currentPlayer.hpMax : 0
@@ -177,21 +181,13 @@ export default function DuelFight() {
   const lastMessageRef = useRef<HTMLDivElement>(null)
   const [message, setMessage] = useState<string>('')
   const [open, setOpen] = useState<boolean>(false)
+  const uuid = pathname.split('/').pop();
 
   // Function to open the snackbar with a specific message
   const openSnackbar = (newMessage : string) => {
     setMessage(newMessage)
     setOpen(true)
   }
-
-  useEffect(() => {
-    if (currentPlayer) {
-      setCurrentHp1(currentPlayer.hpMax)
-    }
-    if (challengingPlayer) {
-      setCurrentHp2(challengingPlayer.hpMax)
-    }
-  }, [currentPlayer, challengingPlayer])
 
   useEffect(() => {
     if (!currentPlayer || !challengingPlayer) {
@@ -220,6 +216,7 @@ export default function DuelFight() {
             updatePlayerXP(currentPlayer.id, currentPlayer.xp + 2)
             openSnackbar("You win 2 XP");
           }
+          
         } else {
           const player = order.shift()
           if (player === currentPlayer.username) {
