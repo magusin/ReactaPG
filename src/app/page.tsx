@@ -85,9 +85,7 @@ export default function Home() {
               container
               spacing={3}
               className="boxGlobalStyles"
-              sx={{
-                margin: '0 auto'
-              }}
+              
             >
               <Grid item xs={12} md={6}>
                 <TableNav />
