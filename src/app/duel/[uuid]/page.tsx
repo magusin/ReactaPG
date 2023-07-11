@@ -193,7 +193,6 @@ export default function DuelFight() {
   const [message, setMessage] = useState<string>('')
   const [open, setOpen] = useState<boolean>(false)
   const uuid = pathname.split('/').pop()
-  console.log(battleHistory)
   // Function to open the snackbar with a specific message
   const openSnackbar = (newMessage: string) => {
     setMessage(newMessage)
@@ -225,7 +224,7 @@ export default function DuelFight() {
             updatePlayerXP(currentPlayer.id, currentPlayer.xp + 2)
             openSnackbar('You win 2 XP')
           }
-          const saveCombat = async () => {
+          const saveFight = async () => {
             console.log("Saving combat...");
             try {
               const response = await axios.post('/api/fight', {
@@ -235,55 +234,47 @@ export default function DuelFight() {
                 winner_id:
                   currentHp1 <= 0 ? challengingPlayer.id : currentPlayer.id
               })
-              console.log('Combat saved:', response.data)
             } catch (error) {
               if (error.response) {
-                // La requête a été faite et le serveur a renvoyé un code d'état
-                // qui est en dehors de la plage de 2xx
                 console.error('Error response:', error.response.data)
                 console.error('Error status:', error.response.status)
                 console.error('Error headers:', error.response.headers)
               } else if (error.request) {
-                // La requête a été faite mais aucune réponse n'a été reçue
                 console.error('Error request:', error.request)
               } else {
-                // Quelque chose s'est mal passé dans la mise en place de la requête
                 console.error('Error message:', error.message)
               }
             }
           }
 
-          const saveFightEvent = async (message, combatId) => {
-            console.log("Saving fight events...");
-            
+          const saveFightEvent = async (message, combatId, position) => {
             try {
               const response = await axios.post('/api/fightEvent', {
-                combatId: combatId,
+                combat_id: combatId,
                 message: message,
-                timestamp: Date.now()
+                position: position
               })
-          
-              if (response.ok) {
-                const { fightEvent } = await response.json()
-                console.log('FightEvent saved:', fightEvent)
-              } else {
-                console.error('Failed to save fightEvent, response not ok')
-              }
             } catch (error) {
-              console.error('Failed to save fightEvent, error during request:', error)
+              if (error.response) {
+                console.error('Error response:', error.response.data)
+                console.error('Error status:', error.response.status)
+                console.error('Error headers:', error.response.headers)
+              } else if (error.request) {
+                console.error('Error request:', error.request)
+              } else {
+                console.error('Error message:', error.message)
+              }
             }
           }
           // Call saveFightEvent for each message in battleHistory
-          // Définissez une fonction asynchrone à l'intérieur de useEffect
           const performSaving = async () => {
-            console.log("Performing saving...");
-            await saveCombat()
-            console.log("battleHistory:", battleHistory)
-            for (const message of battleHistory) {
-              await saveFightEvent(message, uuid)
+            await saveFight()
+            for (const [index, message] of battleHistory.entries()) {
+              console.log("message:", message, "index:", index, "uuid:", uuid);
+              await saveFightEvent(message, uuid, index)
             }
           }
-          // Appeler la fonction immédiatement
+          // call function
           performSaving()
         } else {
           const player = order.shift()

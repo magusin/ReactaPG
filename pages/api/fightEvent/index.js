@@ -32,13 +32,13 @@ export default async function handler(req, res) {
 }
 
 const createFightEvent = async (req, res) => {
-    const combatData = req.body
-    try {
-      const combat = await prisma.fightEvent.create({
-        data: combatData
-      })
-      res.status(200).json({ combat })
+  const fightEventData = req.body
+  try {
+    const fightEvent = await prisma.fightEvent.create({
+      data: fightEventData
+    })
+    res.status(200).json({ fightEvent })
     } catch (error) {
-      res.status(500).json({ error: 'Unable to save combat data' })
+      res.status(500).json({ message: error.message })
     }
 }

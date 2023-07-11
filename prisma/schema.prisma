@@ -33,14 +33,15 @@ model fight {
   player1_id   Int
   player2_id   Int
   winner_id    Int
+  timestamp DateTime @default(now())
   events       fightEvent[]
 }
 
 model fightEvent {
-  uuid        String   @id @default(uuid())
-  combat_id   String   @map("combat_uuid")
-  message     String
-  turn        Int
-
-  combat      fight   @relation(fields: [combat_id], references: [uuid])
+  id        Int      @id @default(autoincrement())
+  combat_id  String   @map("combat_id")
+  message   String
+  timestamp DateTime @default(now())
+  position  Int      
+  Fight    fight   @relation(fields: [combat_id], references: [uuid])
 }
