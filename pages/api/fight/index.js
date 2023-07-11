@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client'
 
 // Initialiser le middleware CORS
 let cors = Cors({
-  methods: ['GET', 'PUT', 'HEAD']
+  methods: ['POST', 'HEAD']
 })
 
 const prisma = new PrismaClient()
@@ -24,9 +24,7 @@ export default async function handler(req, res) {
     await runMiddleware(req, res, cors)
     switch (req.method) {
       case 'POST':
-        if (req.query.id) {
           return await createFight(req, res)
-        }
         break
       default:
         return res.status(400).json({ message: 'bad request' })
@@ -36,7 +34,7 @@ export default async function handler(req, res) {
 const createFight = async (req, res) => {
     const combatData = req.body
     try {
-      const combat = await prisma.combat.create({
+      const combat = await prisma.fight.create({
         data: combatData
       })
       res.status(200).json({ combat })

@@ -28,19 +28,19 @@ model player {
   speed    Int    @default(1)
 }
 
-model Fight {
+model fight {
   uuid         String         @id @default(uuid())
   player1_id   Int
   player2_id   Int
   winner_id    Int
-  events       FightEvent[]
+  events       fightEvent[]
 }
 
-model FightEvent {
+model fightEvent {
   uuid        String   @id @default(uuid())
   combat_id   String   @map("combat_uuid")
   message     String
   turn        Int
 
-  combat      Fight   @relation(fields: [combat_id], references: [uuid])
+  combat      fight   @relation(fields: [combat_id], references: [uuid])
 }

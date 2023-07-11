@@ -4,7 +4,16 @@
 import React, { useContext, useEffect, useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 // mui
-import { Typography, Box, Tooltip, LinearProgress, Grid, Snackbar, IconButton, Button } from '@mui/material'
+import {
+  Typography,
+  Box,
+  Tooltip,
+  LinearProgress,
+  Grid,
+  Snackbar,
+  IconButton,
+  Button
+} from '@mui/material'
 import MuiAlert from '@mui/material/Alert'
 import CloseIcon from '@mui/icons-material/Close'
 import { createTheme, ThemeProvider } from '@mui/system'
@@ -18,6 +27,8 @@ import Image from 'next/legacy/image'
 import vs from '#/public/vs.png'
 // router
 import { useRouter, usePathname } from 'next/navigation'
+// axios
+import axios from 'axios'
 
 const theme = createTheme({
   palette: {
@@ -157,10 +168,9 @@ function splitWithUsernames(
   })
 }
 
-
-
 // DuelFight component
 export default function DuelFight() {
+  
   const {
     currentPlayer,
     setCurrentPlayer,
@@ -170,6 +180,7 @@ export default function DuelFight() {
 
   const router = useRouter()
   const pathname = usePathname()
+  const [order, setOrder] = useState<string[]>([]);
   const [battleHistory, setBattleHistory] = useState<string[]>([])
   const [currentHp1, setCurrentHp1] = useState<number>(
     currentPlayer ? currentPlayer.hpMax : 0
@@ -181,10 +192,10 @@ export default function DuelFight() {
   const lastMessageRef = useRef<HTMLDivElement>(null)
   const [message, setMessage] = useState<string>('')
   const [open, setOpen] = useState<boolean>(false)
-  const uuid = pathname.split('/').pop();
-
+  const uuid = pathname.split('/').pop()
+  console.log(battleHistory)
   // Function to open the snackbar with a specific message
-  const openSnackbar = (newMessage : string) => {
+  const openSnackbar = (newMessage: string) => {
     setMessage(newMessage)
     setOpen(true)
   }
@@ -194,11 +205,9 @@ export default function DuelFight() {
       router.push('/') // Redirects user to home page
     }
     if (currentPlayer && challengingPlayer && !isBattleFinished) {
-      const order = BattleOrder({ players: [currentPlayer, challengingPlayer] })
-
-      let currentHp1 = currentPlayer.hpMax
-      let currentHp2 = challengingPlayer.hpMax
-
+      if (!order.length) {
+        setOrder(BattleOrder({ players: [currentPlayer, challengingPlayer] }))
+      }
       const fightInterval = setInterval(() => {
         if (currentHp1 <= 0 || currentHp2 <= 0) {
           // The battle is over, display the result only once
@@ -211,41 +220,103 @@ export default function DuelFight() {
           clearInterval(fightInterval)
           if (currentHp1 <= 0) {
             updatePlayerXP(currentPlayer.id, currentPlayer.xp + 1)
-            openSnackbar("You win 1 XP");
+            openSnackbar('You win 1 XP')
           } else {
             updatePlayerXP(currentPlayer.id, currentPlayer.xp + 2)
-            openSnackbar("You win 2 XP");
+            openSnackbar('You win 2 XP')
           }
+          const saveCombat = async () => {
+            console.log("Saving combat...");
+            try {
+              const response = await axios.post('/api/fight', {
+                uuid: uuid,
+                player1_id: currentPlayer.id,
+                player2_id: challengingPlayer.id,
+                winner_id:
+                  currentHp1 <= 0 ? challengingPlayer.id : currentPlayer.id
+              })
+              console.log('Combat saved:', response.data)
+            } catch (error) {
+              if (error.response) {
+                // La requête a été faite et le serveur a renvoyé un code d'état
+                // qui est en dehors de la plage de 2xx
+                console.error('Error response:', error.response.data)
+                console.error('Error status:', error.response.status)
+                console.error('Error headers:', error.response.headers)
+              } else if (error.request) {
+                // La requête a été faite mais aucune réponse n'a été reçue
+                console.error('Error request:', error.request)
+              } else {
+                // Quelque chose s'est mal passé dans la mise en place de la requête
+                console.error('Error message:', error.message)
+              }
+            }
+          }
+
+          const saveFightEvent = async (message, combatId) => {
+            console.log("Saving fight events...");
+            
+            try {
+              const response = await axios.post('/api/fightEvent', {
+                combatId: combatId,
+                message: message,
+                timestamp: Date.now()
+              })
           
+              if (response.ok) {
+                const { fightEvent } = await response.json()
+                console.log('FightEvent saved:', fightEvent)
+              } else {
+                console.error('Failed to save fightEvent, response not ok')
+              }
+            } catch (error) {
+              console.error('Failed to save fightEvent, error during request:', error)
+            }
+          }
+          // Call saveFightEvent for each message in battleHistory
+          // Définissez une fonction asynchrone à l'intérieur de useEffect
+          const performSaving = async () => {
+            console.log("Performing saving...");
+            await saveCombat()
+            console.log("battleHistory:", battleHistory)
+            for (const message of battleHistory) {
+              await saveFightEvent(message, uuid)
+            }
+          }
+          // Appeler la fonction immédiatement
+          performSaving()
         } else {
           const player = order.shift()
+          if (order.length === 0) {
+            setOrder(BattleOrder({ players: [currentPlayer, challengingPlayer] }));
+          }
           if (player === currentPlayer.username) {
             const damage = CalculateDamage(currentPlayer, challengingPlayer)
-            currentHp2 = Math.max(currentHp2 - damage, 0)
+            setCurrentHp2(prevHp2 => Math.max(prevHp2 - damage, 0))
             const message = GenerateMessage(
               currentPlayer,
               challengingPlayer,
               damage
             )
             setBattleHistory((oldArray) => [...oldArray, message])
-            setCurrentHp2(currentHp2)
+            
           } else {
             const damage = CalculateDamage(challengingPlayer, currentPlayer)
-            currentHp1 = Math.max(currentHp1 - damage, 0)
+            setCurrentHp1(prevHp1 => Math.max(prevHp1 - damage, 0))
             const message = GenerateMessage(
               challengingPlayer,
               currentPlayer,
               damage
             )
             setBattleHistory((oldArray) => [...oldArray, message])
-            setCurrentHp1(currentHp1)
+           
           }
         }
       }, 2000)
 
       return () => clearInterval(fightInterval) // Clean up on unmount
     }
-  }, [currentPlayer, challengingPlayer, isBattleFinished, router])
+  }, [currentPlayer, challengingPlayer, isBattleFinished, router, battleHistory, currentHp1, currentHp2, uuid, order])
   // Scroll to bottom of the historic
   useEffect(() => {
     if (lastMessageRef.current) {
@@ -367,22 +438,29 @@ export default function DuelFight() {
             </Grid>
           </Grid>
           {isBattleFinished && (
-          <Typography
+            <Typography
               className="boxTitleStyles"
               variant="h2"
               align="center"
               style={{
-                marginBottom:'8px',
+                marginBottom: '8px',
                 wordBreak: 'break-all',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center'
               }}
             >
-              <Button style={{marginRight:"8px"}} onClick={() => router.push("/")}>Retourner à l'index</Button>
-              <Button onClick={() => router.push("/duel")}>Affronter un autres joueur</Button>
+              <Button
+                style={{ marginRight: '8px' }}
+                onClick={() => router.push('/')}
+              >
+                Retourner à l'index
+              </Button>
+              <Button onClick={() => router.push('/duel')}>
+                Affronter un autres joueur
+              </Button>
             </Typography>
-             )}
+          )}
         </Grid>
       ) : null}
       <Snackbar
