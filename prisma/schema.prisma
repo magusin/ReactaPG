@@ -39,9 +39,9 @@ model fight {
 
 model fightEvent {
   id        Int      @id @default(autoincrement())
-  combat_id  String   @map("combat_id")
+  fight_id  String   @map("fight_id")
   message   String
   timestamp DateTime @default(now())
   position  Int      
-  Fight    fight   @relation(fields: [combat_id], references: [uuid])
+  Fight    fight   @relation(fields: [fight_id], references: [uuid])
 }

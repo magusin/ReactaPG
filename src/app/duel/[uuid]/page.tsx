@@ -225,7 +225,6 @@ export default function DuelFight() {
             openSnackbar('You win 2 XP')
           }
           const saveFight = async () => {
-            console.log("Saving combat...");
             try {
               const response = await axios.post('/api/fight', {
                 uuid: uuid,
@@ -234,43 +233,26 @@ export default function DuelFight() {
                 winner_id:
                   currentHp1 <= 0 ? challengingPlayer.id : currentPlayer.id
               })
-            } catch (error) {
-              if (error.response) {
-                console.error('Error response:', error.response.data)
-                console.error('Error status:', error.response.status)
-                console.error('Error headers:', error.response.headers)
-              } else if (error.request) {
-                console.error('Error request:', error.request)
-              } else {
-                console.error('Error message:', error.message)
-              }
+            } catch (err) {
+              console.error(err)
             }
           }
-
-          const saveFightEvent = async (message, combatId, position) => {
+        
+          const saveFightEvent = async (message, fightId, position) => {
             try {
               const response = await axios.post('/api/fightEvent', {
-                combat_id: combatId,
+                fight_id: fightId,
                 message: message,
                 position: position
               })
-            } catch (error) {
-              if (error.response) {
-                console.error('Error response:', error.response.data)
-                console.error('Error status:', error.response.status)
-                console.error('Error headers:', error.response.headers)
-              } else if (error.request) {
-                console.error('Error request:', error.request)
-              } else {
-                console.error('Error message:', error.message)
-              }
+            } catch (err) {
+              console.error(err)
             }
           }
           // Call saveFightEvent for each message in battleHistory
           const performSaving = async () => {
             await saveFight()
             for (const [index, message] of battleHistory.entries()) {
-              console.log("message:", message, "index:", index, "uuid:", uuid);
               await saveFightEvent(message, uuid, index)
             }
           }
