@@ -169,20 +169,41 @@ export default function Home() {
             </Box>
           </Container>
           <Dialog onClose={handleClose} open={open}>
-            <DialogTitle>Combat Logs</DialogTitle>
-            <DialogContent>
-              {/* Ici vous pouvez mapper les logs pour les afficher dans la modale */}
-              {fightLogs.map((item) => (
-                <p
-                  key={item.uuid}
-                  style={{
-                    color: item.winner_id === player.id ? 'green' : 'red'
-                  }}
-                >
-                  {item.player1.username} vs{' '}
-                  {item.player2.username}
-                </p>
-              ))}
+            <DialogTitle sx={{ textAlign: 'center', backgroundColor: '#f2cb9a' }}>
+              Fight Logs
+            </DialogTitle>
+            <DialogContent sx={{minWidth: '300px', maxWidth: '500px', overflow: 'auto', textAlign: 'center', alignItems: 'center' }}>
+              {Object.entries(
+                fightLogs
+                  // trier par timestamp
+                  .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                  // grouper par date
+                  .reduce((groups, item) => {
+                    const date = item.timestamp.split('T')[0]
+                    if (!groups[date]) {
+                      groups[date] = []
+                    }
+                    groups[date].push(item)
+                    return groups
+                  }, {})
+              )
+                // afficher chaque groupe avec un en-tête contenant la date
+                .map(([date, items], index) => (
+                  <span key={index}>
+                    <h4>{date}</h4>
+                    {items.map((item) => (
+                      <p
+                        key={item.uuid}
+                        style={{
+                          color: item.winner_id === player.id ? 'green' : 'red',
+                          backgroundColor: item.winner_id === player.id ? '#c3dfc4' : '#efc7c7'
+                        }}
+                      >
+                        {item.player1.username} vs {item.player2.username}
+                      </p>
+                    ))}
+                  </span>
+                ))}
             </DialogContent>
           </Dialog>
         </>
