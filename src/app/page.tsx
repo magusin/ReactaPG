@@ -10,6 +10,7 @@ import {
   CircularProgress,
   Grid
 } from '@mui/material'
+import Image from 'next/legacy/image'
 import { useRouter } from 'next/navigation'
 import { useTheme } from '@mui/material/styles'
 import Header from 'src/components/header'
@@ -18,6 +19,10 @@ import TableNav from 'src/components/tableNav'
 import StatsCard from 'src/components/statsCard'
 import axios from 'axios'
 import { Player } from 'src/types/Player'
+import logs from '#/public/logs.png'
+import Dialog from '@mui/material/Dialog'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogContent from '@mui/material/DialogContent'
 
 export default function Home() {
   const [player, setPlayer] = useState<Player | null>(null)
@@ -25,34 +30,46 @@ export default function Home() {
   const router = useRouter()
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<any>(null)
 
   const handleConnectClick = () => {
     router.push('/login')
   }
 
+  // Modal state
+  const [open, setOpen] = useState(false)
+
+  // Open modal
+  const handleClickOpen = () => {
+    setOpen(true)
+  }
+
+  // Close modal
+  const handleClose = () => {
+    setOpen(false)
+  }
   useEffect(() => {
-    const currentUser = localStorage.getItem('user');
-    setUser(currentUser);
-    
+    const currentUser = localStorage.getItem('user')
+    setUser(currentUser)
+
     if (currentUser != null) {
-        const userId = JSON.parse(currentUser).id
-        const fetchData = async () => {
-          try {
-            // call api allPlayers
-            await axios
-              .get(`/api/user/${userId}`)
-              .then((res) => {
-                setPlayer(res.data)
-              })
-              .finally(() => {
-                setIsLoading(false)
-              })
-          } catch (err) {
-            console.error(err)
-          }
+      const userId = JSON.parse(currentUser).id
+      const fetchData = async () => {
+        try {
+          // call api allPlayers
+          await axios
+            .get(`/api/user/${userId}`)
+            .then((res) => {
+              setPlayer(res.data)
+            })
+            .finally(() => {
+              setIsLoading(false)
+            })
+        } catch (err) {
+          console.error(err)
         }
-        fetchData()
+      }
+      fetchData()
     } else {
       // L'utilisateur n'est pas connecté ou vient de se déconnecter
       setPlayer(null)
@@ -81,20 +98,67 @@ export default function Home() {
         <>
           <Header />
           <Container>
-            <Grid
-              container
-              spacing={3}
-              className="boxGlobalStyles"
-              
-            >
+            <Grid container spacing={3} className="boxGlobalStyles" marginBottom="8px">
               <Grid item xs={12} md={6}>
                 <TableNav />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={6} >
                 <StatsCard player={player} />
               </Grid>
             </Grid>
+            <Box display="flex" alignItems="center" width="200px">
+              <Box position="relative" width="100%" height="100" onClick={handleClickOpen} >
+                <Image
+                  priority
+                  src={logs.src}
+                  alt="health"
+                  layout="responsive"
+                  objectFit="cover"
+                  width={100}
+                  height={100}
+                  
+                />
+                <Box
+                sx={{
+                  cursor: 'pointer',
+                }}
+                  position="absolute"
+                  top={0}
+                  left={0}
+                  width="100%"
+                  height="100%"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  cursor="pointer"
+                >
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      
+                      color: 'black',
+                      fontFamily: 'fantasy',
+                      fontSize: '1.5rem',
+                      marginBottom: '50px'
+                    }}
+                  >
+                    Logs
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
+            
           </Container>
+          <Dialog onClose={handleClose} open={open}>
+            <DialogTitle>Combat Logs</DialogTitle>
+            <DialogContent>
+              {/* Ici vous pouvez mapper les logs pour les afficher dans la modale */}
+              {/* {combatLogs.map((log, index) => (
+                <p key={index}>{log}</p>
+              ))} */}
+            </DialogContent>
+          </Dialog>
+          
         </>
       ) : (
         <>
