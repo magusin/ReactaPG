@@ -19,6 +19,7 @@ import TableNav from 'src/components/tableNav'
 import StatsCard from 'src/components/statsCard'
 import axios from 'axios'
 import { Player } from 'src/types/Player'
+import { Fight } from 'src/types/Fight'
 import logs from '#/public/logs.png'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
@@ -27,6 +28,7 @@ import DialogContent from '@mui/material/DialogContent'
 export default function Home() {
   const [player, setPlayer] = useState<Player | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [fightLogs, setFightLogs] = useState<Fight[]>([])
   const router = useRouter()
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
@@ -54,13 +56,24 @@ export default function Home() {
 
     if (currentUser != null) {
       const userId = JSON.parse(currentUser).id
-      const fetchData = async () => {
+      const fetchDataPlayer = async () => {
+        try {
+          // call api allPlayers
+          await axios.get(`/api/user/${userId}`).then((res) => {
+            setPlayer(res.data)
+          })
+        } catch (err) {
+          console.error(err)
+        }
+      }
+      fetchDataPlayer()
+      const fetchDataFight = async () => {
         try {
           // call api allPlayers
           await axios
-            .get(`/api/user/${userId}`)
+            .get(`/api/user/${userId}/fight`)
             .then((res) => {
-              setPlayer(res.data)
+              setFightLogs(res.data)
             })
             .finally(() => {
               setIsLoading(false)
@@ -69,7 +82,7 @@ export default function Home() {
           console.error(err)
         }
       }
-      fetchData()
+      fetchDataFight()
     } else {
       // L'utilisateur n'est pas connecté ou vient de se déconnecter
       setPlayer(null)
@@ -98,16 +111,26 @@ export default function Home() {
         <>
           <Header />
           <Container>
-            <Grid container spacing={3} className="boxGlobalStyles" marginBottom="8px">
+            <Grid
+              container
+              spacing={3}
+              className="boxGlobalStyles"
+              marginBottom="8px"
+            >
               <Grid item xs={12} md={6}>
                 <TableNav />
               </Grid>
-              <Grid item xs={12} md={6} >
+              <Grid item xs={12} md={6}>
                 <StatsCard player={player} />
               </Grid>
             </Grid>
             <Box display="flex" alignItems="center" width="200px">
-              <Box position="relative" width="100%" height="100" onClick={handleClickOpen} >
+              <Box
+                position="relative"
+                width="100%"
+                height="100"
+                onClick={handleClickOpen}
+              >
                 <Image
                   priority
                   src={logs.src}
@@ -116,26 +139,23 @@ export default function Home() {
                   objectFit="cover"
                   width={100}
                   height={100}
-                  
                 />
                 <Box
-                sx={{
-                  cursor: 'pointer',
-                }}
-                  position="absolute"
-                  top={0}
-                  left={0}
-                  width="100%"
-                  height="100%"
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                  cursor="pointer"
+                  sx={{
+                    cursor: 'pointer',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
                 >
                   <Typography
                     variant="h6"
                     sx={{
-                      
                       color: 'black',
                       fontFamily: 'fantasy',
                       fontSize: '1.5rem',
@@ -147,18 +167,24 @@ export default function Home() {
                 </Box>
               </Box>
             </Box>
-            
           </Container>
           <Dialog onClose={handleClose} open={open}>
             <DialogTitle>Combat Logs</DialogTitle>
             <DialogContent>
               {/* Ici vous pouvez mapper les logs pour les afficher dans la modale */}
-              {/* {combatLogs.map((log, index) => (
-                <p key={index}>{log}</p>
-              ))} */}
+              {fightLogs.map((item) => (
+                <p
+                  key={item.uuid}
+                  style={{
+                    color: item.winner_id === player.id ? 'green' : 'red'
+                  }}
+                >
+                  {item.player1.username} vs{' '}
+                  {item.player2.username}
+                </p>
+              ))}
             </DialogContent>
           </Dialog>
-          
         </>
       ) : (
         <>

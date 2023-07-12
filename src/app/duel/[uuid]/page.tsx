@@ -192,7 +192,7 @@ export default function DuelFight() {
   const lastMessageRef = useRef<HTMLDivElement>(null)
   const [message, setMessage] = useState<string>('')
   const [open, setOpen] = useState<boolean>(false)
-  const uuid = pathname.split('/').pop()
+  const uuid = pathname ? pathname.split('/').pop() : ""
   // Function to open the snackbar with a specific message
   const openSnackbar = (newMessage: string) => {
     setMessage(newMessage)
@@ -238,7 +238,7 @@ export default function DuelFight() {
             }
           }
         
-          const saveFightEvent = async (message, fightId, position) => {
+          const saveFightEvent = async (message: string, fightId: string, position: number) => {
             try {
               const response = await axios.post('/api/fightEvent', {
                 fight_id: fightId,
@@ -252,8 +252,11 @@ export default function DuelFight() {
           // Call saveFightEvent for each message in battleHistory
           const performSaving = async () => {
             await saveFight()
-            for (const [index, message] of battleHistory.entries()) {
-              await saveFightEvent(message, uuid, index)
+            if (uuid) { // vérifier si uuid est défini
+              for (let index = 0; index < battleHistory.length; index++) {
+                const message = battleHistory[index];
+                await saveFightEvent(message, uuid, index);
+              }
             }
           }
           // call function

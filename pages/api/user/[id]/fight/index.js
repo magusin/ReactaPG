@@ -47,7 +47,21 @@ const getPlayerFights = async (req, res) => {
             player2_id: id
           }
         ]
-      }
+      },
+      include: {
+        player1: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
+        player2: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
+      },
     })
 
     return res.status(200).json(fights)
