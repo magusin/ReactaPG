@@ -18,17 +18,17 @@ import DialogTitle from '@mui/material/DialogTitle'
 // next
 import Image from 'next/legacy/image'
 import { useRouter } from 'next/navigation'
-import axios from 'axios'
+import Link from 'next/link'
 // types
 import { Player } from 'src/types/Player'
 import { Fight } from 'src/types/Fight'
 // assets
 import logs from '#/public/logs.png'
-import Link from 'next/link'
 // component
 import Header from 'src/components/header'
 import StatsCard from 'src/components/statsCard'
 import TableNav from 'src/components/tableNav'
+import axios from 'axios'
 
 export default function Home() {
   const [player, setPlayer] = useState<Player | null>(null)

@@ -430,10 +430,10 @@ export default function DuelFight() {
                 style={{ marginRight: '8px' }}
                 onClick={() => router.push('/')}
               >
-                Retourner à l'index
+                Go to home
               </Button>
               <Button onClick={() => router.push('/duel')}>
-                Affronter un autres joueur
+                Fight other player
               </Button>
             </Typography>
           )}
