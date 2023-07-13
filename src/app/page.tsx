@@ -1,29 +1,34 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client'
-import React from 'react'
+// react
+import React, { useEffect, useState } from 'react'
+// mui
 import {
   Box,
   Container,
   Typography,
   useMediaQuery,
-  Link,
   CircularProgress,
   Grid
 } from '@mui/material'
+import { useTheme } from '@mui/material/styles'
+import Dialog from '@mui/material/Dialog'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
+// next
 import Image from 'next/legacy/image'
 import { useRouter } from 'next/navigation'
-import { useTheme } from '@mui/material/styles'
-import Header from 'src/components/header'
-import { useEffect, useState } from 'react'
-import TableNav from 'src/components/tableNav'
-import StatsCard from 'src/components/statsCard'
 import axios from 'axios'
+// types
 import { Player } from 'src/types/Player'
 import { Fight } from 'src/types/Fight'
+// assets
 import logs from '#/public/logs.png'
-import Dialog from '@mui/material/Dialog'
-import DialogTitle from '@mui/material/DialogTitle'
-import DialogContent from '@mui/material/DialogContent'
+import Link from 'next/link'
+// component
+import Header from 'src/components/header'
+import StatsCard from 'src/components/statsCard'
+import TableNav from 'src/components/tableNav'
 
 export default function Home() {
   const [player, setPlayer] = useState<Player | null>(null)
@@ -169,17 +174,26 @@ export default function Home() {
             </Box>
           </Container>
           <Dialog onClose={handleClose} open={open}>
-            <DialogTitle sx={{ textAlign: 'center', backgroundColor: '#f2cb9a' }}>
+            <DialogTitle
+              sx={{ textAlign: 'center', backgroundColor: '#f2cb9a' }}
+            >
               Fight Logs
             </DialogTitle>
-            <DialogContent sx={{minWidth: '300px', maxWidth: '500px', overflow: 'auto', textAlign: 'center', alignItems: 'center' }}>
+            <DialogContent
+              sx={{
+                minWidth: '300px',
+                maxWidth: '500px',
+                overflow: 'auto',
+                textAlign: 'center',
+                alignItems: 'center'
+              }}
+            >
               {Object.entries(
                 fightLogs
                   // trier par timestamp
-                  .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                  .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
                   // grouper par date
-                  .reduce((groups, item) => {
-                    const date = item.timestamp.split('T')[0]
+                  .reduce((groups: { [key: string]: typeof fightLogs }, item) => {                    const date = item.timestamp.split('T')[0]
                     if (!groups[date]) {
                       groups[date] = []
                     }
@@ -195,11 +209,22 @@ export default function Home() {
                       <p
                         key={item.uuid}
                         style={{
-                          color: item.winner_id === player.id ? 'green' : 'red',
-                          backgroundColor: item.winner_id === player.id ? '#c3dfc4' : '#efc7c7'
+                          backgroundColor:
+                           player && item.winner_id === player.id ? '#c3dfc4' : '#efc7c7'
                         }}
                       >
-                        {item.player1.username} vs {item.player2.username}
+                        <Link
+                          style={{
+                            textDecoration: 'none',
+                            color:
+                              player && item.winner_id === player.id
+                                ? '#00853f'
+                                : '#d21034'
+                          }}
+                          href={`/replay/${item.uuid}`}
+                        >
+                          {item.player1.username} vs {item.player2.username}
+                        </Link>
                       </p>
                     ))}
                   </span>
