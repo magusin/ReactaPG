@@ -16,7 +16,6 @@ import {
 } from '@mui/material'
 import MuiAlert from '@mui/material/Alert'
 import CloseIcon from '@mui/icons-material/Close'
-import { createTheme, ThemeProvider } from '@mui/system'
 // utils
 import BattleOrder from 'src/utils/BattleOrder'
 import CalculateDamage from 'src/utils/CalculateDamage'
@@ -29,14 +28,8 @@ import vs from '#/public/vs.png'
 import { useRouter, usePathname } from 'next/navigation'
 // axios
 import axios from 'axios'
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#ff0000'
-    }
-  }
-})
+// component
+import PlayerInfo from 'src/components/playerInfo'
 
 // types
 interface Letter {
@@ -75,38 +68,6 @@ const updatePlayerXP = async (playerId: number, newXP: number) => {
     console.error(`Failed to update player XP: ${error}`)
   }
 }
-
-// Player component
-const PlayerInfo = ({ player, hp, hpMax, color }: PlayerComponent) => (
-  <Box style={{ maxWidth: '100%' }}>
-    <Typography
-      variant="h3"
-      color={color}
-      style={{
-        wordBreak: 'break-all',
-        textAlign: 'center'
-      }}
-    >
-      {player.toUpperCase()}
-    </Typography>
-    <Tooltip title={`${hp} / ${hpMax} Health`}>
-      <div>
-        <ThemeProvider theme={theme}>
-          <LinearProgress
-            variant="determinate"
-            value={(hp / hpMax) * 100}
-            color="primary"
-            style={{
-              height: '10px',
-              marginTop: '20px',
-              borderStyle: 'solid'
-            }}
-          />
-        </ThemeProvider>
-      </div>
-    </Tooltip>
-  </Box>
-)
 
 // animation variants
 const MotionTypography = motion(Typography)

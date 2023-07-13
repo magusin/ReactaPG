@@ -122,7 +122,6 @@ export default function Replay() {
             }}
           >
             <Button
-                style={{ marginRight: '8px' }}
                 onClick={() => router.push('/')}
               >
                 Go to Home
