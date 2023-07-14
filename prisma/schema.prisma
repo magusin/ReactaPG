@@ -46,6 +46,8 @@ model FightEvent {
   fight_id  String   @map("fight_id")
   message   String
   timestamp DateTime @default(now())
-  position  Int      
+  position  Int
+  hpPlayer1 Int 
+  hpPlayer2 Int      
   Fight    Fight   @relation(fields: [fight_id], references: [uuid])
 }

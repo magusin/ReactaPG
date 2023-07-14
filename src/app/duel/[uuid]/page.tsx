@@ -41,12 +41,6 @@ interface AnimatedTextProps {
   letters: Letter[]
 }
 
-interface PlayerComponent {
-  player: string
-  hp: number
-  hpMax: number
-  color: string
-}
 // call add xp function
 const updatePlayerXP = async (playerId: number, newXP: number) => {
   try {
@@ -131,7 +125,6 @@ function splitWithUsernames(
 
 // DuelFight component
 export default function DuelFight() {
-  
   const {
     currentPlayer,
     setCurrentPlayer,
@@ -141,8 +134,11 @@ export default function DuelFight() {
 
   const router = useRouter()
   const pathname = usePathname()
-  const [order, setOrder] = useState<string[]>([]);
+  const [order, setOrder] = useState<string[]>([])
   const [battleHistory, setBattleHistory] = useState<string[]>([])
+  const [hpHistory, setHpHistory] = useState<
+    { player1Hp: number; player2Hp: number }[]
+  >([])
   const [currentHp1, setCurrentHp1] = useState<number>(
     currentPlayer ? currentPlayer.hpMax : 0
   )
@@ -153,7 +149,7 @@ export default function DuelFight() {
   const lastMessageRef = useRef<HTMLDivElement>(null)
   const [message, setMessage] = useState<string>('')
   const [open, setOpen] = useState<boolean>(false)
-  const uuid = pathname ? pathname.split('/').pop() : ""
+  const uuid = pathname ? pathname.split('/').pop() : ''
   // Function to open the snackbar with a specific message
   const openSnackbar = (newMessage: string) => {
     setMessage(newMessage)
@@ -198,13 +194,21 @@ export default function DuelFight() {
               console.error(err)
             }
           }
-        
-          const saveFightEvent = async (message: string, fightId: string, position: number) => {
+
+          const saveFightEvent = async (
+            message: string,
+            fightId: string,
+            position: number, 
+            hpPlayer1: number, 
+            hpPlayer2: number
+          ) => {
             try {
               const response = await axios.post('/api/fightEvent', {
                 fight_id: fightId,
                 message: message,
-                position: position
+                position: position,
+                hpPlayer1: hpPlayer1,
+                hpPlayer2: hpPlayer2
               })
             } catch (err) {
               console.error(err)
@@ -213,10 +217,18 @@ export default function DuelFight() {
           // Call saveFightEvent for each message in battleHistory
           const performSaving = async () => {
             await saveFight()
-            if (uuid) { // vérifier si uuid est défini
+            if (uuid) {
+              // vérifier si uuid est défini
               for (let index = 0; index < battleHistory.length; index++) {
-                const message = battleHistory[index];
-                await saveFightEvent(message, uuid, index);
+                const message = battleHistory[index]
+                const hpData = hpHistory[index]
+                await saveFightEvent(
+                  message,
+                  uuid,
+                  index,
+                  hpData.player1Hp,
+                  hpData.player2Hp
+                )
               }
             }
           }
@@ -225,35 +237,56 @@ export default function DuelFight() {
         } else {
           const player = order.shift()
           if (order.length === 0) {
-            setOrder(BattleOrder({ players: [currentPlayer, challengingPlayer] }));
+            setOrder(
+              BattleOrder({ players: [currentPlayer, challengingPlayer] })
+            )
           }
           if (player === currentPlayer.username) {
             const damage = CalculateDamage(currentPlayer, challengingPlayer)
-            setCurrentHp2(prevHp2 => Math.max(prevHp2 - damage, 0))
+            const newHp2 = Math.max(currentHp2 - damage, 0)
+            setCurrentHp2(newHp2)
             const message = GenerateMessage(
               currentPlayer,
               challengingPlayer,
               damage
             )
             setBattleHistory((oldArray) => [...oldArray, message])
-            
+            setHpHistory((oldArray) => [
+              ...oldArray,
+              { player1Hp: currentHp1, player2Hp: newHp2 }
+            ])
           } else {
             const damage = CalculateDamage(challengingPlayer, currentPlayer)
-            setCurrentHp1(prevHp1 => Math.max(prevHp1 - damage, 0))
+            const newHp1 = Math.max(currentHp1 - damage, 0)
+            setCurrentHp1(newHp1)
             const message = GenerateMessage(
               challengingPlayer,
               currentPlayer,
               damage
             )
             setBattleHistory((oldArray) => [...oldArray, message])
-           
+            setHpHistory((oldArray) => [
+              ...oldArray,
+              { player1Hp: newHp1, player2Hp: currentHp2 }
+            ])
           }
         }
+        console.log('hphistory', hpHistory)
       }, 2000)
 
       return () => clearInterval(fightInterval) // Clean up on unmount
     }
-  }, [currentPlayer, challengingPlayer, isBattleFinished, router, battleHistory, currentHp1, currentHp2, uuid, order])
+  }, [
+    currentPlayer,
+    challengingPlayer,
+    isBattleFinished,
+    router,
+    battleHistory,
+    currentHp1,
+    currentHp2,
+    uuid,
+    order
+  ])
   // Scroll to bottom of the historic
   useEffect(() => {
     if (lastMessageRef.current) {
