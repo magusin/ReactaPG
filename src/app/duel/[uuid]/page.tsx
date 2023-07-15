@@ -30,15 +30,12 @@ import { useRouter, usePathname } from 'next/navigation'
 import axios from 'axios'
 // component
 import PlayerInfo from 'src/components/playerInfo'
+import AnimatedText from 'src/components/AnimatedText'
 
 // types
 interface Letter {
   letter: string
   color: string
-}
-
-interface AnimatedTextProps {
-  letters: Letter[]
 }
 
 // call add xp function
@@ -71,32 +68,6 @@ const titleVariants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { delay: 0.5 } },
   exit: { opacity: 0, transition: { ease: 'easeInOut' } }
-}
-
-// animated history
-const AnimatedText = ({ letters }: AnimatedTextProps) => {
-  const variants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1 }
-  }
-  const transition = { duration: 0.03 }
-
-  return (
-    <Box display="flex" flexDirection="row" flexWrap="wrap">
-      {letters.map(({ letter, color }, index) => (
-        <motion.span
-          key={index}
-          variants={variants}
-          initial="hidden"
-          animate="visible"
-          transition={{ ...transition, delay: 0.03 * index }}
-          style={{ color }}
-        >
-          {letter === ' ' ? '\u00A0' : letter}
-        </motion.span>
-      ))}
-    </Box>
-  )
 }
 
 // assign color
@@ -276,17 +247,7 @@ export default function DuelFight() {
 
       return () => clearInterval(fightInterval) // Clean up on unmount
     }
-  }, [
-    currentPlayer,
-    challengingPlayer,
-    isBattleFinished,
-    router,
-    battleHistory,
-    currentHp1,
-    currentHp2,
-    uuid,
-    order
-  ])
+  }, [currentPlayer, challengingPlayer, isBattleFinished, router, battleHistory, currentHp1, currentHp2, uuid, order, hpHistory])
   // Scroll to bottom of the historic
   useEffect(() => {
     if (lastMessageRef.current) {

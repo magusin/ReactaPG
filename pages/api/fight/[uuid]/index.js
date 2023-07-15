@@ -37,7 +37,9 @@ const getFight = async (req, res) => {
     const fight = await prisma.fight.findUnique({
       where: { uuid: uuid },
       include: {
-        events: true,
+        player1: true,
+        player2: true,
+        events: true
       },
     })
 
