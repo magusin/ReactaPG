@@ -21,6 +21,7 @@ import BattleOrder from 'src/utils/BattleOrder'
 import CalculateDamage from 'src/utils/CalculateDamage'
 import GenerateMessage from 'src/utils/GenerateMessage'
 import PlayerContext from 'src/utils/PlayerContext'
+import assignColor from 'src/utils/assignColor'
 // img
 import Image from 'next/legacy/image'
 import vs from '#/public/vs.png'
@@ -68,30 +69,6 @@ const titleVariants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { delay: 0.5 } },
   exit: { opacity: 0, transition: { ease: 'easeInOut' } }
-}
-
-// assign color
-function splitWithUsernames(
-  text: string,
-  username1: string,
-  username2: string
-) {
-  const parts = text.split(
-    new RegExp(`(${username1}|${username2}|\\[\\d+\\]|{[^}]+})`, 'g')
-  )
-  return parts.map((part) => {
-    if (part === username1) {
-      return { text: part, color: 'blue' }
-    } else if (part === username2) {
-      return { text: part, color: 'red' }
-    } else if (part.startsWith('[') && part.endsWith(']')) {
-      return { text: part.slice(1, -1), color: 'brown' }
-    } else if (part.startsWith('{') && part.endsWith('}')) {
-      return { text: part.slice(1, -1), color: 'green' }
-    } else {
-      return { text: part, color: 'black' }
-    }
-  })
 }
 
 // DuelFight component
@@ -294,6 +271,7 @@ export default function DuelFight() {
             alignItems="center"
             style={{ flex: 1, overflow: 'auto', padding: '10px', gap: '10px' }}
             wrap="nowrap"
+            spacing={3}
           >
             <Grid item xs={12} sm={3}>
               <PlayerInfo
@@ -326,7 +304,7 @@ export default function DuelFight() {
             >
               <AnimatePresence initial={false}>
                 {battleHistory.map((event, index) => {
-                  const parts = splitWithUsernames(
+                  const parts = assignColor(
                     event,
                     currentPlayer.username,
                     challengingPlayer.username

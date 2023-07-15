@@ -14,6 +14,10 @@ import {
   Button
 } from '@mui/material'
 import PlayerInfo from 'src/components/playerInfo'
+import AnimatedText from 'src/components/AnimatedText'
+// img
+import Image from 'next/legacy/image'
+import vs from '#/public/vs.png'
 
 export default function Replay() {
   const [fight, setFight] = useState<Fight | null>(null)
@@ -25,7 +29,7 @@ export default function Replay() {
   const uuid = pathname ? pathname.split('/').pop() : ''
   const [replayIndex, setReplayIndex] = useState<number | null>(null)
   const [showReplay, setShowReplay] = useState<boolean>(false)
-  
+
   const handleReplay = () => {
     setReplayIndex(0)
     setShowReplay(true)
@@ -153,7 +157,36 @@ export default function Replay() {
   return (
     <>
       {fight && fight.events ? (
-        <Grid container spacing={3}>
+        <Grid
+        container
+        sx={{
+          height: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Typography
+              variant="h2"
+              align="center"
+              style={{
+                marginTop: '10px',
+                wordBreak: 'break-all',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}
+            >
+           <span style={{ color: 'blue' }}>{fight.player1.username}</span>
+              <Image src={vs.src} alt="fight" width={100} height={100}></Image>
+              <span style={{ color: 'red' }}>{fight.player2.username}</span>
+            </Typography>
+
+        <Grid container spacing={3} direction="row"
+        justifyContent="center"
+        alignItems="center"
+          sx={{ flex: 1, overflow: 'auto', padding: '10px', gap: '10px' }}
+            wrap="nowrap">
           <Grid item xs={12} sm={3}>
             <PlayerInfo
               player={fight.player1.username}
@@ -191,6 +224,7 @@ export default function Replay() {
               color="red"
             />
           </Grid>
+        </Grid>
         </Grid>
       ) : (
         <Container
