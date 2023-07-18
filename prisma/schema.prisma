@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model player {
+model Player {
   id       Int    @id @default(autoincrement())
   username String @unique(map: "Player_username_key")
   password String @db.VarChar(255)
@@ -26,4 +26,29 @@ model player {
   type     String @default("player")
   xp       Int    @default(0)
   speed    Int    @default(1)
+  fights   Fight[] @relation("player1")
+  fights2  Fight[] @relation("player2")
+}
+
+model Fight {
+  uuid         String         @id @default(uuid())
+  player1_id   Int
+  player2_id   Int
+  winner_id    Int
+  timestamp DateTime @default(now())
+  events       FightEvent[]
+  player2      Player         @relation("player1", fields: [player2_id], references: [id])
+  player1      Player         @relation("player2", fields: [player1_id], references: [id])
+}
+
+model FightEvent {
+  id        Int      @id @default(autoincrement())
+  fight_id  String   @map("fight_id")
+  message   String
+  timestamp DateTime @default(now())
+  position  Int
+  hpPlayer1 Int 
+  hpPlayer2 Int 
+       
+  Fight    Fight   @relation(fields: [fight_id], references: [uuid])
 }
