@@ -1,3 +1,6 @@
+//react
+import React, { useEffect } from 'react'
+//mui
 import {
   Box,
   Typography,
@@ -5,6 +8,7 @@ import {
   Tooltip,
   LinearProgress
 } from '@mui/material'
+//img
 import Image from 'next/legacy/image'
 import hp from '#/public/hp.png'
 import str from '#/public/biceps.png'
@@ -14,8 +18,10 @@ import speed from '#/public/speed.png'
 import damage from '#/public/damage.png'
 import ini from '#/public/ini.png'
 import def from '#/public/def.png'
-import React, { useEffect } from 'react'
+//types
 import { Player } from 'src/types/Player'
+//utils
+import xpThresholdForLevel from 'src/utils/levelFunction'
 
 const Stats = ({ player }: { player: Player | null }) => {
   if (player === null) {
@@ -93,17 +99,20 @@ const Stats = ({ player }: { player: Player | null }) => {
           </Tooltip>
         </Box>
         <Box alignItems="center" maxWidth="100%">
-          <Tooltip title={`${player.xp} XP`}>
-            <LinearProgress
-              variant="determinate"
-              value={(player.xp / player.xp) * 100}
-              color="primary"
-              style={{
-                borderStyle: 'solid',
-                width: '100px'
-              }}
-            />
-          </Tooltip>
+        <Tooltip title={`${player.xp} / ${xpThresholdForLevel(player.level)} XP`}>
+  <LinearProgress
+    variant="determinate"
+    // use level function
+    value={(player.xp / xpThresholdForLevel(player.level)) * 100} 
+    color="primary"
+    style={{
+      borderStyle: 'solid',
+      width: '100px',
+      position: 'relative', 
+      top: -50,
+    }}
+  />
+</Tooltip>
         </Box>
         <Box display="flex" alignItems="center">
           <Tooltip title="Action" placement="top">
