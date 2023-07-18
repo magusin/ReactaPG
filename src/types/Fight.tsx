@@ -1,4 +1,5 @@
 import { Player } from 'src/types/Player'
+import { Event } from 'src/types/FightEvents'
 
 export interface Fight {
     uuid: string;
@@ -8,4 +9,5 @@ export interface Fight {
     timestamp: string;
     player1: Player;
     player2: Player;
+    events: Event[];
   }

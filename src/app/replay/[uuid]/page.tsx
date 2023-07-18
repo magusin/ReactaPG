@@ -3,6 +3,8 @@
 import React, { FC, useEffect, useState, useRef } from 'react'
 import axios from 'axios'
 import { Fight } from 'src/types/Fight'
+import { Event } from 'src/types/FightEvents'
+import { EndEvent } from 'src/types/EndEvent'
 import { usePathname, useRouter } from 'next/navigation'
 import {
   Box,
@@ -27,22 +29,21 @@ export default function Replay() {
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
   const pathname = usePathname()
-  const uuid = pathname ? pathname.split('/').pop() : ''
+  const uuid = pathname?.split('/').pop()
   const [isReplaying, setIsReplaying] = useState<boolean>(false)
   const [currentIndex, setCurrentIndex] = useState<number>(0)
-  const [displayedEvents, setDisplayedEvents] = useState([])
+  const [displayedEvents, setDisplayedEvents] = useState<(Event | EndEvent)[]>([])
   const lastMessageRef = useRef<HTMLDivElement>(null)
   const [currentHpPlayer1, setCurrentHpPlayer1] = useState<number>(0)
   const [currentHpPlayer2, setCurrentHpPlayer2] = useState<number>(0)
 
   const handleReplay = () => {
     setIsReplaying(true)
-  
-    // Pour la relecture, commencez à la première manche
-    setCurrentHpPlayer1(fight.events[0].hpPlayer1)
-    setCurrentHpPlayer2(fight.events[0].hpPlayer2)
-  
-    setDisplayedEvents([fight.events[0]])
+    if (fight && fight.events.length > 0) {
+      setCurrentHpPlayer1(fight.events[0].hpPlayer1)
+      setCurrentHpPlayer2(fight.events[0].hpPlayer2)
+      setDisplayedEvents([fight.events[0]])
+    }
     setCurrentIndex(1)
   }
 
@@ -61,7 +62,11 @@ export default function Replay() {
         setDisplayedEvents([...fightData.events, { message: `Le gagnant est ${winner}` }])
         setIsLoading(false)
       } catch (error) {
-        console.error('Failed to fetch fight data:', error.message)
+        if (error instanceof Error) {
+          console.error('Failed to fetch fight data:', error.message)         
+        } else {
+          console.error('Failed to fetch fight data:', error)
+        }
         setError('Failed to fetch fight data')
       } finally {
         setIsLoading(false)
@@ -77,7 +82,7 @@ export default function Replay() {
   }, [uuid])
 
   useEffect(() => {
-    if (isReplaying && currentIndex < fight.events.length) {
+    if (isReplaying && fight && currentIndex < fight.events.length) {
       const timer = setTimeout(() => {
   
         // Mettez à jour la santé des joueurs pour chaque manche
@@ -88,11 +93,11 @@ export default function Replay() {
         setCurrentIndex(currentIndex + 1)
       }, 2000)
       return () => clearTimeout(timer)
-    } else if (isReplaying && currentIndex === fight.events.length && displayedEvents[displayedEvents.length - 1].message.indexOf('Le gagnant est') === -1) {
+    } else if (isReplaying && fight && currentIndex === fight.events.length && displayedEvents[displayedEvents.length - 1].message.indexOf('Le gagnant est') === -1) {
       const winner = fight.winner_id === fight.player1_id ? fight.player1.username : fight.player2.username;
       setDisplayedEvents([...displayedEvents, { message: `Le gagnant est ${winner}` }])
     }
-  }, [isReplaying, currentIndex, displayedEvents])
+  }, [isReplaying, currentIndex, displayedEvents, fight?.events, fight?.winner_id, fight?.player1_id, fight?.player1.username, fight?.player2.username, fight])
 
   useEffect(() => {
     lastMessageRef.current?.scrollIntoView({ behavior: "smooth" })

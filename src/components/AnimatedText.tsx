@@ -1,6 +1,11 @@
 import { motion } from 'framer-motion'
 import { Box } from '@mui/material'
 
+type Letter = {
+  letter: string;
+  color: string;
+};
+
 interface AnimatedTextProps {
     letters: Letter[]
 }
