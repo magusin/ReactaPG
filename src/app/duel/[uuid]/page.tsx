@@ -287,20 +287,24 @@ export default function DuelFight() {
               xs={12}
               sm={6}
               className="boxHistoryFightStyles"
-              display="flex"
-              flexDirection="column"
-              justifyContent="flex-start"
-              alignItems="center"
-              minHeight="200px"
-              maxHeight="500px"
-              width="100%"
-              mx="auto"
+              sx={{
+                display:"flex",
+                flexDirection:"column",
+                justifyContent:"flex-start",
+                alignItems:"center",
+                minHeight:"200px",
+                maxHeight:"500px",
+                width:"100%",
+                mx:"auto",
+                fontSize:"1.5rem",
+              fontWeight:"normal",
+              height:"100%",
+              marginLeft:"10px",
+              marginRight:"10px"
+              }}
+              
               p={2}
-              fontSize="1.5rem"
-              fontWeight="normal"
-              height="100%"
-              marginLeft="10px"
-              marginRight="10px"
+              
             >
               <AnimatePresence initial={false}>
                 {battleHistory.map((event, index) => {
