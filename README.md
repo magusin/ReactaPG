@@ -39,4 +39,5 @@ npx prisma init
 npx prisma migrate dev
 npx prisma generate
 npx prisma db pull
+npx prisma migrate dev --name <name>
 

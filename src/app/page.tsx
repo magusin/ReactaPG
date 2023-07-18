@@ -1,58 +1,93 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client'
-import React from 'react'
+// react
+import React, { useEffect, useState } from 'react'
+// mui
 import {
   Box,
   Container,
   Typography,
   useMediaQuery,
-  Link,
   CircularProgress,
   Grid
 } from '@mui/material'
-import { useRouter } from 'next/navigation'
 import { useTheme } from '@mui/material/styles'
-import Header from 'src/components/header'
-import { useEffect, useState } from 'react'
-import TableNav from 'src/components/tableNav'
-import StatsCard from 'src/components/statsCard'
-import axios from 'axios'
+import Dialog from '@mui/material/Dialog'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
+// next
+import Image from 'next/legacy/image'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+// types
 import { Player } from 'src/types/Player'
+import { Fight } from 'src/types/Fight'
+// assets
+import logs from '#/public/logs.png'
+// component
+import Header from 'src/components/header'
+import StatsCard from 'src/components/statsCard'
+import TableNav from 'src/components/tableNav'
+import axios from 'axios'
 
 export default function Home() {
   const [player, setPlayer] = useState<Player | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [fightLogs, setFightLogs] = useState<Fight[]>([])
   const router = useRouter()
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<any>(null)
 
   const handleConnectClick = () => {
     router.push('/login')
   }
 
+  // Modal state
+  const [open, setOpen] = useState(false)
+
+  // Open modal
+  const handleClickOpen = () => {
+    setOpen(true)
+  }
+
+  // Close modal
+  const handleClose = () => {
+    setOpen(false)
+  }
   useEffect(() => {
-    const currentUser = localStorage.getItem('user');
-    setUser(currentUser);
-    
+    const currentUser = localStorage.getItem('user')
+    setUser(currentUser)
+
     if (currentUser != null) {
-        const userId = JSON.parse(currentUser).id
-        const fetchData = async () => {
-          try {
-            // call api allPlayers
-            await axios
-              .get(`/api/user/${userId}`)
-              .then((res) => {
-                setPlayer(res.data)
-              })
-              .finally(() => {
-                setIsLoading(false)
-              })
-          } catch (err) {
-            console.error(err)
-          }
+      const userId = JSON.parse(currentUser).id
+      const fetchDataPlayer = async () => {
+        try {
+          // call api allPlayers
+          await axios.get(`/api/user/${userId}`).then((res) => {
+            setPlayer(res.data)
+          })
+        } catch (err) {
+          console.error(err)
         }
-        fetchData()
+      }
+      fetchDataPlayer()
+      const fetchDataFight = async () => {
+        try {
+          // call api allPlayers
+          await axios
+            .get(`/api/user/${userId}/fight`)
+            .then((res) => {
+              setFightLogs(res.data)
+            })
+            .finally(() => {
+              setIsLoading(false)
+            })
+        } catch (err) {
+          console.error(err)
+        }
+      }
+      fetchDataFight()
     } else {
       // L'utilisateur n'est pas connecté ou vient de se déconnecter
       setPlayer(null)
@@ -85,7 +120,7 @@ export default function Home() {
               container
               spacing={3}
               className="boxGlobalStyles"
-              
+              marginBottom="8px"
             >
               <Grid item xs={12} md={6}>
                 <TableNav />
@@ -94,7 +129,108 @@ export default function Home() {
                 <StatsCard player={player} />
               </Grid>
             </Grid>
+            <Box display="flex" alignItems="center" width="200px">
+              <Box
+                position="relative"
+                width="100%"
+                height="100"
+                onClick={handleClickOpen}
+              >
+                <Image
+                  priority
+                  src={logs.src}
+                  alt="health"
+                  layout="responsive"
+                  objectFit="cover"
+                  width={100}
+                  height={100}
+                />
+                <Box
+                  sx={{
+                    cursor: 'pointer',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      color: 'black',
+                      fontFamily: 'fantasy',
+                      fontSize: '1.5rem',
+                      marginBottom: '50px'
+                    }}
+                  >
+                    Logs
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
           </Container>
+          <Dialog onClose={handleClose} open={open}>
+            <DialogTitle
+              sx={{ textAlign: 'center', backgroundColor: '#f2cb9a' }}
+            >
+              Fight Logs
+            </DialogTitle>
+            <DialogContent
+              sx={{
+                minWidth: '300px',
+                maxWidth: '500px',
+                overflow: 'auto',
+                textAlign: 'center',
+                alignItems: 'center'
+              }}
+            >
+              {Object.entries(
+                fightLogs
+                  // trier par timestamp
+                  .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+                  // grouper par date
+                  .reduce((groups: { [key: string]: typeof fightLogs }, item) => {                    const date = item.timestamp.split('T')[0]
+                    if (!groups[date]) {
+                      groups[date] = []
+                    }
+                    groups[date].push(item)
+                    return groups
+                  }, {})
+              )
+                // afficher chaque groupe avec un en-tête contenant la date
+                .map(([date, items], index) => (
+                  <span key={index}>
+                    <h4>{date}</h4>
+                    {items.map((item) => (
+                      <p
+                        key={item.uuid}
+                        style={{
+                          backgroundColor:
+                           player && item.winner_id === player.id ? '#c3dfc4' : '#efc7c7'
+                        }}
+                      >
+                        <Link
+                          style={{
+                            textDecoration: 'none',
+                            color:
+                              player && item.winner_id === player.id
+                                ? '#00853f'
+                                : '#d21034'
+                          }}
+                          href={`/replay/${item.uuid}`}
+                        >
+                          {item.player1.username} vs {item.player2.username}
+                        </Link>
+                      </p>
+                    ))}
+                  </span>
+                ))}
+            </DialogContent>
+          </Dialog>
         </>
       ) : (
         <>

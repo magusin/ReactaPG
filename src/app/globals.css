@@ -29,7 +29,7 @@ html {
 .boxGlobalStyles {
   box-shadow: rgb(222, 195, 127) 0px 0px 0px 1px, rgb(246, 238, 144) 0px 0px 1px 4.5px, rgb(114, 82, 84) 0px 0px 0px 6px, rgb(188, 123, 74) 3px 3px 0px 6px;
   border-radius: 5px 5px 5px 5px;
- 
+ padding: 8px;
   background-color: rgb(251, 247, 192);
   
 }
@@ -52,16 +52,15 @@ html {
 
 .boxHistoryFightStyles {
   overflow-y: auto;
-
   box-shadow: rgb(222, 195, 127) 0px 0px 0px 1px, rgb(246, 238, 144) 0px 0px 1px 4.5px, rgb(114, 82, 84) 0px 0px 0px 6px, rgb(188, 123, 74) 3px 3px 0px 6px;
   background-color: rgb(251, 242, 175);
   padding: 20px;
-
 }
 
 .main {
   margin: auto 80px;
 }
+
 .css-zow5z4-MuiGrid-root {
 width: auto !important;
 margin-left: 0 !important;
