@@ -9,7 +9,8 @@ import {
   Typography,
   useMediaQuery,
   CircularProgress,
-  Grid
+  Grid,
+  Button
 } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import Dialog from '@mui/material/Dialog'
@@ -29,6 +30,7 @@ import Header from 'src/components/header'
 import StatsCard from 'src/components/statsCard'
 import TableNav from 'src/components/tableNav'
 import axios from 'axios'
+import xpThresholdForLevel from 'src/utils/levelFunction'
 
 export default function Home() {
   const [player, setPlayer] = useState<Player | null>(null)
@@ -38,13 +40,14 @@ export default function Home() {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [user, setUser] = useState<any>(null)
+  const [inLeveling, setInLeveling] = useState<boolean>(false)
 
   const handleConnectClick = () => {
     router.push('/login')
   }
 
   // Modal state
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState<boolean>(false)
 
   // Open modal
   const handleClickOpen = () => {
@@ -55,6 +58,24 @@ export default function Home() {
   const handleClose = () => {
     setOpen(false)
   }
+
+  const handleLevelUp = async () => {
+    setInLeveling(true)
+    if (player) {
+      try {
+        await axios.get(`api/user/${player.id}/levelUp`)
+      } catch (err) {
+        if (err instanceof Error) {
+          console.error('Failed to level up:', err.message);
+        } else {
+          console.error('Failed to level up:', err);
+        }
+      } finally {
+        setInLeveling(true)
+      }
+    }
+  }
+
   useEffect(() => {
     const currentUser = localStorage.getItem('user')
     setUser(currentUser)
@@ -122,8 +143,26 @@ export default function Home() {
               className="boxGlobalStyles"
               marginBottom="8px"
             >
-              <Grid item xs={12} md={6}>
-                <TableNav />
+              <Grid
+                item
+                xs={12}
+                md={6}
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                {player.xp >= xpThresholdForLevel(player.level + 1) ? (
+                  <Button
+                    onClick={handleLevelUp}
+                    sx={{ fontSize: '3rem', backgroundColor: '#dfe7ed' }}
+                  >
+                    Level Up
+                  </Button>
+                ) : (
+                  <TableNav />
+                )}
               </Grid>
               <Grid item xs={12} md={6}>
                 <StatsCard player={player} />
@@ -191,15 +230,23 @@ export default function Home() {
               {Object.entries(
                 fightLogs
                   // trier par timestamp
-                  .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+                  .sort(
+                    (a, b) =>
+                      new Date(b.timestamp).getTime() -
+                      new Date(a.timestamp).getTime()
+                  )
                   // grouper par date
-                  .reduce((groups: { [key: string]: typeof fightLogs }, item) => {                    const date = item.timestamp.split('T')[0]
-                    if (!groups[date]) {
-                      groups[date] = []
-                    }
-                    groups[date].push(item)
-                    return groups
-                  }, {})
+                  .reduce(
+                    (groups: { [key: string]: typeof fightLogs }, item) => {
+                      const date = item.timestamp.split('T')[0]
+                      if (!groups[date]) {
+                        groups[date] = []
+                      }
+                      groups[date].push(item)
+                      return groups
+                    },
+                    {}
+                  )
               )
                 // afficher chaque groupe avec un en-tête contenant la date
                 .map(([date, items], index) => (
@@ -210,7 +257,9 @@ export default function Home() {
                         key={item.uuid}
                         style={{
                           backgroundColor:
-                           player && item.winner_id === player.id ? '#c3dfc4' : '#efc7c7'
+                            player && item.winner_id === player.id
+                              ? '#c3dfc4'
+                              : '#efc7c7'
                         }}
                       >
                         <Link

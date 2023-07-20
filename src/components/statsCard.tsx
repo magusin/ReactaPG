@@ -99,11 +99,11 @@ const Stats = ({ player }: { player: Player | null }) => {
           </Tooltip>
         </Box>
         <Box alignItems="center" maxWidth="100%">
-        <Tooltip title={`${player.xp} / ${xpThresholdForLevel(player.level)} XP`}>
+        <Tooltip title={`${player.xp} / ${xpThresholdForLevel(player.level +1)} XP`}>
   <LinearProgress
     variant="determinate"
     // use level function
-    value={(player.xp / xpThresholdForLevel(player.level)) * 100} 
+    value={(player.xp / xpThresholdForLevel(player.level +1)) * 100} 
     color="primary"
     style={{
       borderStyle: 'solid',

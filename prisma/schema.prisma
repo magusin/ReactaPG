@@ -8,26 +8,32 @@ datasource db {
 }
 
 model Player {
-  id       Int     @id @default(autoincrement())
-  username String  @unique(map: "Player_username_key")
-  password String  @db.VarChar(255)
-  email    String  @unique(map: "Player_email_key")
-  def      Int     @default(1)
-  dex      Int     @default(1)
-  dmgMax   Int     @default(5)
-  dmgMin   Int     @default(1)
-  hp       Int     @default(50)
-  hpMax    Int     @default(50)
-  init     Int     @default(1)
-  level    Int     @default(1)
-  pa       Int     @default(20)
-  paMax    Int     @default(20)
-  str      Int     @default(1)
-  type     String  @default("player")
-  xp       Int     @default(0)
-  speed    Int     @default(1)
-  fights   Fight[] @relation("player1")
-  fights2  Fight[] @relation("player2")
+  id         Int      @id @default(autoincrement())
+  username   String   @unique(map: "Player_username_key")
+  password   String   @db.VarChar(255)
+  email      String   @unique(map: "Player_email_key")
+  def        Int      @default(1)
+  dex        Int      @default(1)
+  dmgMax     Int      @default(5)
+  dmgMin     Int      @default(1)
+  hp         Int      @default(50)
+  hpMax      Int      @default(50)
+  init       Int      @default(1)
+  level      Int      @default(1)
+  pa         Int      @default(20)
+  paMax      Int      @default(20)
+  str        Int      @default(1)
+  type       String   @default("player")
+  xp         Int      @default(0)
+  speed      Int      @default(1)
+  fights     Fight[]  @relation("player1")
+  fights2    Fight[]  @relation("player2")
+  ability1Id Int?
+  ability1   Ability? @relation("AbilityToPlayer1", fields: [ability1Id], references: [id], map: "AbilityToPlayer1FKey")
+  ability2Id Int?
+  ability2   Ability? @relation("AbilityToPlayer2", fields: [ability2Id], references: [id], map: "AbilityToPlayer2FKey")
+  ability3Id Int?
+  ability3   Ability? @relation("AbilityToPlayer3", fields: [ability3Id], references: [id], map: "AbilityToPlayer3FKey")
 }
 
 model Fight {
@@ -53,10 +59,13 @@ model FightEvent {
 }
 
 model Ability {
-  id               Int    @id @default(autoincrement())
+  id               Int      @id @default(autoincrement())
   name             String
-  strengthIncrease Int  @default(0)
-  agilityIncrease  Int  @default(0)
-  healthIncrease   Int  @default(0)
-  speedIncrease    Int  @default(0)
+  strengthIncrease Int      @default(0)
+  agilityIncrease  Int      @default(0)
+  healthIncrease   Int      @default(0)
+  speedIncrease    Int      @default(0)
+  player1          Player[] @relation("AbilityToPlayer1")
+  player2          Player[] @relation("AbilityToPlayer2")
+  player3          Player[] @relation("AbilityToPlayer3")
 }
