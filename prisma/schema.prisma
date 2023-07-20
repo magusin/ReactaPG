@@ -62,7 +62,7 @@ model Ability {
   id               Int      @id @default(autoincrement())
   name             String
   strengthIncrease Int      @default(0)
-  agilityIncrease  Int      @default(0)
+  dexterityIncrease  Int      @default(0)
   healthIncrease   Int      @default(0)
   speedIncrease    Int      @default(0)
   player1          Player[] @relation("AbilityToPlayer1")
