@@ -29,6 +29,7 @@ import logs from '#/public/logs.png'
 import Header from 'src/components/header'
 import StatsCard from 'src/components/statsCard'
 import TableNav from 'src/components/tableNav'
+import LevelUpChoices from 'src/components/levelUpChoices'
 import axios from 'axios'
 import xpThresholdForLevel from 'src/utils/levelFunction'
 
@@ -66,9 +67,9 @@ export default function Home() {
         await axios.get(`api/user/${player.id}/levelUp`)
       } catch (err) {
         if (err instanceof Error) {
-          console.error('Failed to level up:', err.message);
+          console.error('Failed to level up:', err.message)
         } else {
-          console.error('Failed to level up:', err);
+          console.error('Failed to level up:', err)
         }
       } finally {
         setInLeveling(true)
@@ -153,13 +154,14 @@ export default function Home() {
                   alignItems: 'center'
                 }}
               >
-                {player.xp >= xpThresholdForLevel(player.level + 1) ? (
-                  <Button
-                    onClick={handleLevelUp}
-                    sx={{ fontSize: '3rem', backgroundColor: '#dfe7ed' }}
-                  >
+                {player &&
+                player.xp >= xpThresholdForLevel(player.level + 1) &&
+                !inLeveling ? (
+                  <Button onClick={handleLevelUp} sx={{ fontSize: '2rem' }}>
                     Level Up
                   </Button>
+                ) : inLeveling ? (
+                  <LevelUpChoices player={player} />
                 ) : (
                   <TableNav />
                 )}

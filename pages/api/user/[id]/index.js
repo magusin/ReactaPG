@@ -63,7 +63,37 @@ const getPlayer = async (req, res) => {
         paMax: true,
         str: true,
         type: true,
-        xp: true
+        xp: true,
+        ability1: {
+          select: {
+            id: true,
+            name: true,
+            strengthIncrease: true,
+            agilityIncrease: true,
+            healthIncrease: true,
+            speedIncrease: true
+          }
+        },
+        ability2: {
+          select: {
+            id: true,
+            name: true,
+            strengthIncrease: true,
+            agilityIncrease: true,
+            healthIncrease: true,
+            speedIncrease: true
+          }
+        },
+        ability3: {
+          select: {
+            id: true,
+            name: true,
+            strengthIncrease: true,
+            agilityIncrease: true,
+            healthIncrease: true,
+            speedIncrease: true
+          }
+        }
       }
     })
     if (player) {
