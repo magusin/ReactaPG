@@ -162,7 +162,7 @@ export default function Home() {
                     Level Up
                   </Button>
                 ) : inLeveling ? (
-                  <LevelUpCapacityChoices player={player} />
+                  <LevelUpCapacityChoices player={player} setPlayer={setPlayer} />
                 ) : (
                   <TableNav />
                 )}
