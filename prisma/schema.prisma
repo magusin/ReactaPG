@@ -39,10 +39,10 @@ model Player {
   spellsRequired     Boolean    @default(false)
   capacities         Capacity[] @relation("PlayerToCapacity")
   spells             Spell[]    @relation("PlayerToSpell")
-  levelingUp  Boolean @default(false)
-  }
+  levelingUp         Boolean    @default(false)
+}
 
-  model Fight {
+model Fight {
   uuid       String       @id @default(uuid())
   player1_id Int
   player2_id Int
@@ -77,13 +77,21 @@ model Ability {
 }
 
 model Capacity {
-  id      Int      @id @default(autoincrement())
- 
-  players Player[] @relation("PlayerToCapacity")
+  id                Int      @id @default(autoincrement())
+  name              String
+  defIncrease       Int      @default(0)
+  dmgMaxIncrease    Int      @default(0)
+  dmgMinIncrease    Int      @default(0)
+  healthIncrease    Int      @default(0)
+  strengthIncrease  Int      @default(0)
+  dexterityIncrease Int      @default(0)
+  speedIncrease     Int      @default(0)
+  players           Player[] @relation("PlayerToCapacity")
 }
 
 model Spell {
-  id      Int      @id @default(autoincrement())
- 
-  players Player[] @relation("PlayerToSpell")
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  players     Player[] @relation("PlayerToSpell")
 }
