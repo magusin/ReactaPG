@@ -4,7 +4,7 @@ export interface Ability {
     id: number;
     name: string;
     strengthIncrease: number;
-    agilityIncrease: number;
+    dexterityIncrease: number;
     healthIncrease: number;
     speedIncrease: number;
     player1: Player[];

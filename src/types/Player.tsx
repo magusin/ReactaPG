@@ -1,3 +1,5 @@
+import { Ability } from 'src/types/Ability'
+
 export interface Player {
   id: number
   username: string

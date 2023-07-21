@@ -29,7 +29,7 @@ import logs from '#/public/logs.png'
 import Header from 'src/components/header'
 import StatsCard from 'src/components/statsCard'
 import TableNav from 'src/components/tableNav'
-import LevelUpChoices from 'src/components/levelUpChoices'
+import LevelUpCapacityChoices from 'src/components/levelUpCapacityChoices'
 import axios from 'axios'
 import xpThresholdForLevel from 'src/utils/levelFunction'
 
@@ -91,6 +91,7 @@ export default function Home() {
           })
         } catch (err) {
           console.error(err)
+          router.push('/login')
         }
       }
       fetchDataPlayer()
@@ -115,7 +116,7 @@ export default function Home() {
       setPlayer(null)
       setIsLoading(false)
     }
-  }, [])
+  }, [router])
 
   if (isLoading) {
     return (
@@ -161,7 +162,7 @@ export default function Home() {
                     Level Up
                   </Button>
                 ) : inLeveling ? (
-                  <LevelUpChoices player={player} />
+                  <LevelUpCapacityChoices player={player} />
                 ) : (
                   <TableNav />
                 )}

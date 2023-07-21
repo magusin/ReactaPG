@@ -21,20 +21,24 @@ function runMiddleware(req, res, fn) {
 }
 
 export default async function handler(req, res) {
-  await runMiddleware(req, res, cors)
-  switch (req.method) {
-    case 'GET':
-      if (req.query.id) {
-        return await getPlayer(req, res)
-      }
-      break
-    case 'PUT':
-      if (req.query.id) {
-        return await updatePlayer(req, res)
-      }
-      break
-    default:
-      return res.status(400).json({ message: 'bad request' })
+  try {
+    await runMiddleware(req, res, cors)
+    switch (req.method) {
+      case 'GET':
+        if (req.query.id) {
+          return await getPlayer(req, res)
+        }
+        break
+      case 'PUT':
+        if (req.query.id) {
+          return await updatePlayer(req, res)
+        }
+        break
+      default:
+        return res.status(400).json({ message: 'bad request' })
+    }
+  } finally {
+    await prisma.$disconnect()
   }
 }
 
@@ -69,7 +73,7 @@ const getPlayer = async (req, res) => {
             id: true,
             name: true,
             strengthIncrease: true,
-            agilityIncrease: true,
+            dexterityIncrease: true,
             healthIncrease: true,
             speedIncrease: true
           }
@@ -79,7 +83,7 @@ const getPlayer = async (req, res) => {
             id: true,
             name: true,
             strengthIncrease: true,
-            agilityIncrease: true,
+            dexterityIncrease: true,
             healthIncrease: true,
             speedIncrease: true
           }
@@ -89,7 +93,7 @@ const getPlayer = async (req, res) => {
             id: true,
             name: true,
             strengthIncrease: true,
-            agilityIncrease: true,
+            dexterityIncrease: true,
             healthIncrease: true,
             speedIncrease: true
           }

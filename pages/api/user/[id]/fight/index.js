@@ -21,6 +21,7 @@ function runMiddleware(req, res, fn) {
 }
 
 export default async function handler(req, res) {
+  try {
   await runMiddleware(req, res, cors)
   switch (req.method) {
     case 'GET':
@@ -31,6 +32,9 @@ export default async function handler(req, res) {
     default:
       return res.status(400).json({ message: 'bad request' })
   }
+} finally {
+  await prisma.$disconnect()
+}
 }
 
 const getPlayerFights = async (req, res) => {
