@@ -118,6 +118,7 @@ export default function Home() {
     }
   }, [router])
 
+  console.log('player', player)
   if (isLoading) {
     return (
       <Box

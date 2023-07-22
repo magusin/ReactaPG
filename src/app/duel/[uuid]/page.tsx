@@ -219,7 +219,6 @@ export default function DuelFight() {
             ])
           }
         }
-        console.log('hphistory', hpHistory)
       }, 2000)
 
       return () => clearInterval(fightInterval) // Clean up on unmount

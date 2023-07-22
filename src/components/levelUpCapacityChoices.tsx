@@ -65,7 +65,7 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
         style={{ width: 'auto' }}
       >
         <Grid item xs={12} sm={6} sx={{display: "flex", justifyContent: 'center'}}>
-          {player && player.ability1 && (
+          {player && player.abilitiesChoices[0] && (
             <Box
               sx={{
                 width: '160px',
@@ -73,7 +73,7 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                 cursor: 'pointer',
                 marginBottom: 2,
                 backgroundColor:
-                  selectedAbility === player.ability1 ? '#9ac3ed' : '#d9d6b6',
+                  selectedAbility === player.abilitiesChoices[0] ? '#9ac3ed' : '#d9d6b6',
                 boxShadow: '0 3px 5px 2px rgba(0, 0, 0, .3)',
                 display: 'flex',
                 flexDirection: 'column',
@@ -83,15 +83,15 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                 borderRadius: '30px'
               }}
               onClick={() => {
-                if (player.ability1) {
-                  handleSelect(player.ability1)
+                if (player.abilitiesChoices[0]) {
+                  handleSelect(player.abilitiesChoices[0])
                 }
               }}
             >
-              <Typography variant="h5">{player.ability1.name}</Typography>
+              <Typography variant="h5">{player.abilitiesChoices[0].name}</Typography>
               {player &&
-                player.ability1 &&
-                player.ability1.strengthIncrease > 0 && (
+                player.abilitiesChoices[0] &&
+                player.abilitiesChoices[0].strengthIncrease > 0 && (
                   <Box
                     sx={{
                       display: 'flex',
@@ -109,12 +109,12 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                     />
                     <Typography
                       sx={{ marginLeft: '10px' }}
-                    >{`+ ${player.ability1.strengthIncrease}`}</Typography>
+                    >{`+ ${player.abilitiesChoices[0].strengthIncrease}`}</Typography>
                   </Box>
                 )}
               {player &&
-                player.ability1 &&
-                player.ability1.dexterityIncrease > 0 && (
+                player.abilitiesChoices[0] &&
+                player.abilitiesChoices[0].dexterityIncrease > 0 && (
                   <Box
                     sx={{
                       display: 'flex',
@@ -132,12 +132,12 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                     />
                     <Typography
                       sx={{ marginLeft: '10px' }}
-                    >{`+ ${player.ability1.dexterityIncrease}`}</Typography>
+                    >{`+ ${player.abilitiesChoices[0].dexterityIncrease}`}</Typography>
                   </Box>
                 )}
               {player &&
-                player.ability1 &&
-                player.ability1.healthIncrease > 0 && (
+                player.abilitiesChoices[0] &&
+                player.abilitiesChoices[0].healthIncrease > 0 && (
                   <Box
                     sx={{
                       display: 'flex',
@@ -155,12 +155,12 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                     />
                     <Typography
                       sx={{ marginLeft: '10px' }}
-                    >{`+ ${player.ability1.healthIncrease}`}</Typography>
+                    >{`+ ${player.abilitiesChoices[0].healthIncrease}`}</Typography>
                   </Box>
                 )}
               {player &&
-                player.ability1 &&
-                player.ability1.speedIncrease > 0 && (
+                player.abilitiesChoices[0] &&
+                player.abilitiesChoices[0].speedIncrease > 0 && (
                   <Box
                     sx={{
                       display: 'flex',
@@ -178,14 +178,14 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                     />
                     <Typography
                       sx={{ marginLeft: '10px' }}
-                    >{`+ ${player.ability1.speedIncrease}`}</Typography>
+                    >{`+ ${player.abilitiesChoices[0].speedIncrease}`}</Typography>
                   </Box>
                 )}
             </Box>
           )}
         </Grid>
         <Grid item xs={12} sm={6} sx={{display: "flex", justifyContent: 'center'}}>
-          {player && player.ability2 && (
+          {player && player.abilitiesChoices[1] && (
             <Box
               sx={{
                 width: '160px',
@@ -193,7 +193,7 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                 cursor: 'pointer',
                 marginBottom: 2,
                 backgroundColor:
-                  selectedAbility === player.ability2 ? '#9ac3ed' : '#d9d6b6',
+                  selectedAbility === player.abilitiesChoices[1] ? '#9ac3ed' : '#d9d6b6',
                 boxShadow: '0 3px 5px 2px rgba(0, 0, 0, .3)',
                 display: 'flex',
                 flexDirection: 'column',
@@ -203,15 +203,15 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                 borderRadius: '30px'
               }}
               onClick={() => {
-                if (player.ability2) {
-                  handleSelect(player.ability2)
+                if (player.abilitiesChoices[1]) {
+                  handleSelect(player.abilitiesChoices[1])
                 }
               }}
             >
-              <Typography variant="h5">{player.ability2.name}</Typography>
+              <Typography variant="h5">{player.abilitiesChoices[1].name}</Typography>
               {player &&
-                player.ability2 &&
-                player.ability2.strengthIncrease > 0 && (
+                player.abilitiesChoices[1] &&
+                player.abilitiesChoices[1].strengthIncrease > 0 && (
                   <Box
                     sx={{
                       display: 'flex',
@@ -229,12 +229,12 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                     />
                     <Typography
                       sx={{ marginLeft: '10px' }}
-                    >{`+ ${player.ability2.strengthIncrease}`}</Typography>
+                    >{`+ ${player.abilitiesChoices[1].strengthIncrease}`}</Typography>
                   </Box>
                 )}
               {player &&
-                player.ability2 &&
-                player.ability2.dexterityIncrease > 0 && (
+                player.abilitiesChoices[1] &&
+                player.abilitiesChoices[1].dexterityIncrease > 0 && (
                   <Box
                     sx={{
                       display: 'flex',
@@ -252,12 +252,12 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                     />
                     <Typography
                       sx={{ marginLeft: '10px' }}
-                    >{`+ ${player.ability2.dexterityIncrease}`}</Typography>
+                    >{`+ ${player.abilitiesChoices[1].dexterityIncrease}`}</Typography>
                   </Box>
                 )}
               {player &&
-                player.ability2 &&
-                player.ability2.healthIncrease > 0 && (
+                player.abilitiesChoices[1] &&
+                player.abilitiesChoices[1].healthIncrease > 0 && (
                   <Box
                     sx={{
                       display: 'flex',
@@ -275,12 +275,12 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                     />
                     <Typography
                       sx={{ marginLeft: '10px' }}
-                    >{`+ ${player.ability2.healthIncrease}`}</Typography>
+                    >{`+ ${player.abilitiesChoices[1].healthIncrease}`}</Typography>
                   </Box>
                 )}
               {player &&
-                player.ability2 &&
-                player.ability2.speedIncrease > 0 && (
+                player.abilitiesChoices[1] &&
+                player.abilitiesChoices[1].speedIncrease > 0 && (
                   <Box
                     sx={{
                       display: 'flex',
@@ -298,14 +298,14 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                     />
                     <Typography
                       sx={{ marginLeft: '10px' }}
-                    >{`+ ${player.ability2.speedIncrease}`}</Typography>
+                    >{`+ ${player.abilitiesChoices[1].speedIncrease}`}</Typography>
                   </Box>
                 )}
             </Box>
           )}
         </Grid>
         <Grid item xs={12} sm={6} sx={{display: "flex", justifyContent: 'center'}}>
-          {player && player.ability3 && (
+          {player && player.abilitiesChoices[2] && (
             <Box
               sx={{
                 width: '160px',
@@ -313,7 +313,7 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                 cursor: 'pointer',
                 marginBottom: 2,
                 backgroundColor:
-                  selectedAbility === player.ability3 ? '#9ac3ed' : '#d9d6b6',
+                  selectedAbility === player.abilitiesChoices[2] ? '#9ac3ed' : '#d9d6b6',
                 boxShadow: '0 3px 5px 2px rgba(0, 0, 0, .3)',
                 display: 'flex',
                 flexDirection: 'column',
@@ -323,15 +323,15 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                 borderRadius: '30px'
               }}
               onClick={() => {
-                if (player.ability3) {
-                  handleSelect(player.ability3)
+                if (player.abilitiesChoices[2]) {
+                  handleSelect(player.abilitiesChoices[2])
                 }
               }}
             >
-              <Typography variant="h5">{player.ability3.name}</Typography>
+              <Typography variant="h5">{player.abilitiesChoices[2].name}</Typography>
               {player &&
-                player.ability3 &&
-                player.ability3.strengthIncrease > 0 && (
+                player.abilitiesChoices[2] &&
+                player.abilitiesChoices[2].strengthIncrease > 0 && (
                   <Box
                     sx={{
                       display: 'flex',
@@ -349,12 +349,12 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                     />
                     <Typography
                       sx={{ marginLeft: '10px' }}
-                    >{`+ ${player.ability3.strengthIncrease}`}</Typography>
+                    >{`+ ${player.abilitiesChoices[2].strengthIncrease}`}</Typography>
                   </Box>
                 )}
               {player &&
-                player.ability3 &&
-                player.ability3.dexterityIncrease > 0 && (
+                player.abilitiesChoices[2] &&
+                player.abilitiesChoices[2].dexterityIncrease > 0 && (
                   <Box
                     sx={{
                       display: 'flex',
@@ -372,12 +372,12 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                     />
                     <Typography
                       sx={{ marginLeft: '10px' }}
-                    >{`+ ${player.ability3.dexterityIncrease}`}</Typography>
+                    >{`+ ${player.abilitiesChoices[2].dexterityIncrease}`}</Typography>
                   </Box>
                 )}
               {player &&
-                player.ability3 &&
-                player.ability3.healthIncrease > 0 && (
+                player.abilitiesChoices[2] &&
+                player.abilitiesChoices[2].healthIncrease > 0 && (
                   <Box
                     sx={{
                       display: 'flex',
@@ -395,12 +395,12 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                     />
                     <Typography
                       sx={{ marginLeft: '10px' }}
-                    >{`+ ${player.ability3.healthIncrease}`}</Typography>
+                    >{`+ ${player.abilitiesChoices[2].healthIncrease}`}</Typography>
                   </Box>
                 )}
               {player &&
-                player.ability3 &&
-                player.ability3.speedIncrease > 0 && (
+                player.abilitiesChoices[2] &&
+                player.abilitiesChoices[2].speedIncrease > 0 && (
                   <Box
                     sx={{
                       display: 'flex',
@@ -418,7 +418,7 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                     />
                     <Typography
                       sx={{ marginLeft: '10px' }}
-                    >{`+ ${player.ability3.speedIncrease}`}</Typography>
+                    >{`+ ${player.abilitiesChoices[2].speedIncrease}`}</Typography>
                   </Box>
                 )}
             </Box>

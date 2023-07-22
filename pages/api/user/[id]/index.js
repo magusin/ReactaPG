@@ -68,36 +68,13 @@ const getPlayer = async (req, res) => {
         str: true,
         type: true,
         xp: true,
-        ability1: {
-          select: {
-            id: true,
-            name: true,
-            strengthIncrease: true,
-            dexterityIncrease: true,
-            healthIncrease: true,
-            speedIncrease: true
-          }
-        },
-        ability2: {
-          select: {
-            id: true,
-            name: true,
-            strengthIncrease: true,
-            dexterityIncrease: true,
-            healthIncrease: true,
-            speedIncrease: true
-          }
-        },
-        ability3: {
-          select: {
-            id: true,
-            name: true,
-            strengthIncrease: true,
-            dexterityIncrease: true,
-            healthIncrease: true,
-            speedIncrease: true
-          }
-        }
+        abilityRequired: true,
+        capacitiesRequired: true,
+        spellsRequired: true,
+        levelingUp: true,
+        abilitiesChoices: true,
+        capacities: true,
+        capacitiesChoices: true
       }
     })
     if (player) {

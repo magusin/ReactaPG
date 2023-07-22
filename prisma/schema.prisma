@@ -28,16 +28,12 @@ model Player {
   speed              Int        @default(1)
   fights             Fight[]    @relation("player1")
   fights2            Fight[]    @relation("player2")
-  ability1Id         Int?
-  ability1           Ability?   @relation("AbilityToPlayer1", fields: [ability1Id], references: [id], map: "AbilityToPlayer1FKey")
-  ability2Id         Int?
-  ability2           Ability?   @relation("AbilityToPlayer2", fields: [ability2Id], references: [id], map: "AbilityToPlayer2FKey")
-  ability3Id         Int?
-  ability3           Ability?   @relation("AbilityToPlayer3", fields: [ability3Id], references: [id], map: "AbilityToPlayer3FKey")
-  abilityRequired    Boolean    @default(true)
+  abilitiesChoices   Ability[]  @relation("PlayerToAbilityChoices")
+  abilityRequired    Boolean    @default(false)
   capacitiesRequired Boolean    @default(false)
   spellsRequired     Boolean    @default(false)
   capacities         Capacity[] @relation("PlayerToCapacity")
+  capacitiesChoices  Capacity[] @relation("PlayerToCapacityChoices")
   spells             Spell[]    @relation("PlayerToSpell")
   levelingUp         Boolean    @default(false)
 }
@@ -71,9 +67,7 @@ model Ability {
   dexterityIncrease Int      @default(0)
   healthIncrease    Int      @default(0)
   speedIncrease     Int      @default(0)
-  player1           Player[] @relation("AbilityToPlayer1")
-  player2           Player[] @relation("AbilityToPlayer2")
-  player3           Player[] @relation("AbilityToPlayer3")
+ playersChoices    Player[] @relation("PlayerToAbilityChoices")
 }
 
 model Capacity {
@@ -87,6 +81,7 @@ model Capacity {
   dexterityIncrease Int      @default(0)
   speedIncrease     Int      @default(0)
   players           Player[] @relation("PlayerToCapacity")
+  playersChoices    Player[] @relation("PlayerToCapacityChoices")
 }
 
 model Spell {
