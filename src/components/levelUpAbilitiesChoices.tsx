@@ -10,7 +10,7 @@ import speed from '#/public/speed.png'
 import axios from 'axios'
 import PlayerContext from 'src/utils/PlayerContext'
 
-const LevelUpChoices = () => {
+const LevelUpAbilitiesChoices = () => {
   const [selectedAbility, setSelectedAbility] = useState<Ability | null>(null)
   const { currentPlayer, setCurrentPlayer } = useContext(PlayerContext)
   const handleSelect = (ability: Ability) => {
@@ -18,7 +18,7 @@ const LevelUpChoices = () => {
   }
 
   const handleSubmit = async () => {
-    if (selectedAbility) {
+    if (selectedAbility && currentPlayer) {
       try {
         const updatedPlayer = {
           dex: currentPlayer.dex + selectedAbility.dexterityIncrease,
@@ -48,6 +48,17 @@ const LevelUpChoices = () => {
           const data = await response.json()
           console.log(data)
           setCurrentPlayer(data)
+
+          try {
+            const response = await fetch(`/api/user/${currentPlayer.id}/abilities`, {
+              method: 'DELETE',
+            })
+            if (response.status !== 200) {
+              throw new Error(`Failed to delete abilitiesChoices for player ${currentPlayer.id}`)
+            }
+          } catch (error) {
+            console.error('Error deleting abilitiesChoices: ', error)
+          }
         }
       } catch (error) {
         console.error('Error updating player: ', error)
@@ -85,7 +96,7 @@ const LevelUpChoices = () => {
           sm={6}
           sx={{ display: 'flex', justifyContent: 'center' }}
         >
-          {currentPlayer && currentPlayer.abilitiesChoices[0] && (
+          {currentPlayer && currentPlayer.abilitiesChoices && currentPlayer.abilitiesChoices[0] && (
             <Box
               sx={{
                 width: '160px',
@@ -105,9 +116,9 @@ const LevelUpChoices = () => {
                 borderRadius: '30px'
               }}
               onClick={() => {
-                if (currentPlayer.abilitiesChoices[0]) {
+                if (currentPlayer && currentPlayer.abilitiesChoices && currentPlayer.abilitiesChoices[0]) {
                   handleSelect(currentPlayer.abilitiesChoices[0])
-                }
+              }              
               }}
             >
               <Typography variant="h5">
@@ -214,7 +225,7 @@ const LevelUpChoices = () => {
           sm={6}
           sx={{ display: 'flex', justifyContent: 'center' }}
         >
-          {currentPlayer && currentPlayer.abilitiesChoices[1] && (
+          {currentPlayer && currentPlayer.abilitiesChoices && currentPlayer.abilitiesChoices[1] && (
             <Box
               sx={{
                 width: '160px',
@@ -234,7 +245,7 @@ const LevelUpChoices = () => {
                 borderRadius: '30px'
               }}
               onClick={() => {
-                if (currentPlayer.abilitiesChoices[1]) {
+                if (currentPlayer && currentPlayer.abilitiesChoices && currentPlayer.abilitiesChoices[1]) {
                   handleSelect(currentPlayer.abilitiesChoices[1])
                 }
               }}
@@ -343,7 +354,7 @@ const LevelUpChoices = () => {
           sm={6}
           sx={{ display: 'flex', justifyContent: 'center' }}
         >
-          {currentPlayer && currentPlayer.abilitiesChoices[2] && (
+          {currentPlayer && currentPlayer.abilitiesChoices && currentPlayer.abilitiesChoices[2] && (
             <Box
               sx={{
                 width: '160px',
@@ -363,7 +374,7 @@ const LevelUpChoices = () => {
                 borderRadius: '30px'
               }}
               onClick={() => {
-                if (currentPlayer.abilitiesChoices[2]) {
+                if (currentPlayer && currentPlayer.abilitiesChoices && currentPlayer.abilitiesChoices[2]) {
                   handleSelect(currentPlayer.abilitiesChoices[2])
                 }
               }}
@@ -479,4 +490,4 @@ const LevelUpChoices = () => {
   )
 }
 
-export default LevelUpChoices
+export default LevelUpAbilitiesChoices

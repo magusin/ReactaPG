@@ -1,4 +1,4 @@
-import { Fight } from "src/utils/Fight";
+import { Fight } from "src/types/Fight";
 
 export interface Event {
     id: number;

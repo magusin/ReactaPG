@@ -29,7 +29,7 @@ import logs from '#/public/logs.png'
 import Header from 'src/components/header'
 import StatsCard from 'src/components/statsCard'
 import TableNav from 'src/components/tableNav'
-import LevelUpCapacityChoices from 'src/components/levelUpCapacityChoices'
+import LevelUpAbilitiesChoices from 'src/components/levelUpAbilitiesChoices'
 import axios from 'axios'
 import xpThresholdForLevel from 'src/utils/levelFunction'
 import PlayerContext from 'src/utils/PlayerContext'
@@ -155,12 +155,16 @@ export default function Home() {
                 }}
               >
                 {currentPlayer &&
-                currentPlayer.xp >= xpThresholdForLevel(currentPlayer.level + 1) && !currentPlayer.levelingUp ? (
+                currentPlayer.xp >=
+                  xpThresholdForLevel(currentPlayer.level + 1) &&
+                !currentPlayer.levelingUp ? (
                   <Button onClick={handleLevelUp} sx={{ fontSize: '2rem' }}>
                     Level Up
                   </Button>
-                ) : currentPlayer && currentPlayer.levelingUp && currentPlayer.abilityRequired ? (
-                  <LevelUpCapacityChoices />
+                ) : currentPlayer &&
+                  currentPlayer.levelingUp &&
+                  currentPlayer.abilityRequired ? (
+                  <LevelUpAbilitiesChoices />
                 ) : (
                   <TableNav />
                 )}
@@ -239,14 +243,17 @@ export default function Home() {
                   // grouper par date
                   .reduce(
                     (groups: { [key: string]: typeof fightLogs }, item) => {
-                      const date = item.timestamp.toISOString().split('T')[0];
-                      if (!groups[date]) {
-                        groups[date] = []
+                      if (item && item.timestamp) {
+                        const dateObj = new Date(item.timestamp)
+                        const date = dateObj.toISOString().split('T')[0]
+
+                        if (!groups[date]) {
+                          groups[date] = []
+                        }
+                        groups[date].push(item)
                       }
-                      groups[date].push(item)
                       return groups
-                    },
-                    {}
+                    }, {}
                   )
               )
                 // afficher chaque groupe avec un en-tête contenant la date

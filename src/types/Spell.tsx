@@ -1,4 +1,4 @@
-import { Player } from 'src/utils/Player'
+import { Player } from 'src/types/Player'
 
 export interface Spell {
     id: number
