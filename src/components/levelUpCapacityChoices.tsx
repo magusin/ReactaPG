@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Button, Box, Container, Typography, Grid } from '@mui/material'
 import { Player } from 'src/types/Player'
 import { Ability } from 'src/types/Ability'
@@ -8,10 +8,11 @@ import str from '#/public/biceps.png'
 import dex from '#/public/dex.png'
 import speed from '#/public/speed.png'
 import axios from 'axios'
+import PlayerContext from 'src/utils/PlayerContext'
 
-const LevelUpChoices = ({ player }: { player: Player | null }) => {
+const LevelUpChoices = () => {
   const [selectedAbility, setSelectedAbility] = useState<Ability | null>(null)
-
+  const { currentPlayer, setCurrentPlayer } = useContext(PlayerContext)
   const handleSelect = (ability: Ability) => {
     setSelectedAbility(ability)
   }
@@ -20,25 +21,39 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
     if (selectedAbility) {
       try {
         const updatedPlayer = {
-          ...player,
-          dex: player.dex + selectedAbility.dexterityIncrease,
-          str: player.str + selectedAbility.strengthIncrease,
-          speed: player.speed + selectedAbility.speedIncrease,
-          hpMax: player.hpMax + selectedAbility.healthIncrease,
-          hp: player.hp + selectedAbility.healthIncrease,
-        };
-        
-        const response = await axios.put(`/api/user/${player.id}`, updatedPlayer);
-  
-        if(response.status === 200){
-           // Mise à jour de l'état du joueur avec les nouvelles valeurs
-           setPlayer(updatedPlayer);
+          dex: currentPlayer.dex + selectedAbility.dexterityIncrease,
+          str: currentPlayer.str + selectedAbility.strengthIncrease,
+          speed: currentPlayer.speed + selectedAbility.speedIncrease,
+          hpMax: currentPlayer.hpMax + selectedAbility.healthIncrease,
+          hp: currentPlayer.hp + selectedAbility.healthIncrease,
+          abilityRequired: false,
+          levelingUp:
+            currentPlayer.capacitiesRequired || currentPlayer.spellsRequired
+              ? true
+              : false,
+          level:
+            !currentPlayer.capacitiesRequired && !currentPlayer.spellsRequired
+              ? currentPlayer.level + 1
+              : currentPlayer.level
+        }
+
+        const response = await fetch(`/api/user/${currentPlayer.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(updatedPlayer)
+        })
+        if (response.status === 200) {
+          const data = await response.json()
+          console.log(data)
+          setCurrentPlayer(data)
         }
       } catch (error) {
-        console.error('Error updating player: ', error);
+        console.error('Error updating player: ', error)
       }
     }
-  };
+  }
 
   return (
     <Container
@@ -55,7 +70,7 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
         variant="h4"
         sx={{ margin: '12px', fontFamily: 'fantasy', textAlign: 'center' }}
       >
-        Choisissez votre charactéristique primaire pour le level up
+        Choisissez votre habileté pour le level up
       </Typography>
       <Grid
         container
@@ -64,8 +79,13 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
         spacing={2}
         style={{ width: 'auto' }}
       >
-        <Grid item xs={12} sm={6} sx={{display: "flex", justifyContent: 'center'}}>
-          {player && player.abilitiesChoices[0] && (
+        <Grid
+          item
+          xs={12}
+          sm={6}
+          sx={{ display: 'flex', justifyContent: 'center' }}
+        >
+          {currentPlayer && currentPlayer.abilitiesChoices[0] && (
             <Box
               sx={{
                 width: '160px',
@@ -73,7 +93,9 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                 cursor: 'pointer',
                 marginBottom: 2,
                 backgroundColor:
-                  selectedAbility === player.abilitiesChoices[0] ? '#9ac3ed' : '#d9d6b6',
+                  selectedAbility === currentPlayer.abilitiesChoices[0]
+                    ? '#9ac3ed'
+                    : '#d9d6b6',
                 boxShadow: '0 3px 5px 2px rgba(0, 0, 0, .3)',
                 display: 'flex',
                 flexDirection: 'column',
@@ -83,15 +105,17 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                 borderRadius: '30px'
               }}
               onClick={() => {
-                if (player.abilitiesChoices[0]) {
-                  handleSelect(player.abilitiesChoices[0])
+                if (currentPlayer.abilitiesChoices[0]) {
+                  handleSelect(currentPlayer.abilitiesChoices[0])
                 }
               }}
             >
-              <Typography variant="h5">{player.abilitiesChoices[0].name}</Typography>
-              {player &&
-                player.abilitiesChoices[0] &&
-                player.abilitiesChoices[0].strengthIncrease > 0 && (
+              <Typography variant="h5">
+                {currentPlayer.abilitiesChoices[0].name}
+              </Typography>
+              {currentPlayer &&
+                currentPlayer.abilitiesChoices[0] &&
+                currentPlayer.abilitiesChoices[0].strengthIncrease > 0 && (
                   <Box
                     sx={{
                       display: 'flex',
@@ -109,12 +133,12 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                     />
                     <Typography
                       sx={{ marginLeft: '10px' }}
-                    >{`+ ${player.abilitiesChoices[0].strengthIncrease}`}</Typography>
+                    >{`+ ${currentPlayer.abilitiesChoices[0].strengthIncrease}`}</Typography>
                   </Box>
                 )}
-              {player &&
-                player.abilitiesChoices[0] &&
-                player.abilitiesChoices[0].dexterityIncrease > 0 && (
+              {currentPlayer &&
+                currentPlayer.abilitiesChoices[0] &&
+                currentPlayer.abilitiesChoices[0].dexterityIncrease > 0 && (
                   <Box
                     sx={{
                       display: 'flex',
@@ -132,12 +156,12 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                     />
                     <Typography
                       sx={{ marginLeft: '10px' }}
-                    >{`+ ${player.abilitiesChoices[0].dexterityIncrease}`}</Typography>
+                    >{`+ ${currentPlayer.abilitiesChoices[0].dexterityIncrease}`}</Typography>
                   </Box>
                 )}
-              {player &&
-                player.abilitiesChoices[0] &&
-                player.abilitiesChoices[0].healthIncrease > 0 && (
+              {currentPlayer &&
+                currentPlayer.abilitiesChoices[0] &&
+                currentPlayer.abilitiesChoices[0].healthIncrease > 0 && (
                   <Box
                     sx={{
                       display: 'flex',
@@ -155,12 +179,12 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                     />
                     <Typography
                       sx={{ marginLeft: '10px' }}
-                    >{`+ ${player.abilitiesChoices[0].healthIncrease}`}</Typography>
+                    >{`+ ${currentPlayer.abilitiesChoices[0].healthIncrease}`}</Typography>
                   </Box>
                 )}
-              {player &&
-                player.abilitiesChoices[0] &&
-                player.abilitiesChoices[0].speedIncrease > 0 && (
+              {currentPlayer &&
+                currentPlayer.abilitiesChoices[0] &&
+                currentPlayer.abilitiesChoices[0].speedIncrease > 0 && (
                   <Box
                     sx={{
                       display: 'flex',
@@ -178,14 +202,19 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                     />
                     <Typography
                       sx={{ marginLeft: '10px' }}
-                    >{`+ ${player.abilitiesChoices[0].speedIncrease}`}</Typography>
+                    >{`+ ${currentPlayer.abilitiesChoices[0].speedIncrease}`}</Typography>
                   </Box>
                 )}
             </Box>
           )}
         </Grid>
-        <Grid item xs={12} sm={6} sx={{display: "flex", justifyContent: 'center'}}>
-          {player && player.abilitiesChoices[1] && (
+        <Grid
+          item
+          xs={12}
+          sm={6}
+          sx={{ display: 'flex', justifyContent: 'center' }}
+        >
+          {currentPlayer && currentPlayer.abilitiesChoices[1] && (
             <Box
               sx={{
                 width: '160px',
@@ -193,7 +222,9 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                 cursor: 'pointer',
                 marginBottom: 2,
                 backgroundColor:
-                  selectedAbility === player.abilitiesChoices[1] ? '#9ac3ed' : '#d9d6b6',
+                  selectedAbility === currentPlayer.abilitiesChoices[1]
+                    ? '#9ac3ed'
+                    : '#d9d6b6',
                 boxShadow: '0 3px 5px 2px rgba(0, 0, 0, .3)',
                 display: 'flex',
                 flexDirection: 'column',
@@ -203,15 +234,17 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                 borderRadius: '30px'
               }}
               onClick={() => {
-                if (player.abilitiesChoices[1]) {
-                  handleSelect(player.abilitiesChoices[1])
+                if (currentPlayer.abilitiesChoices[1]) {
+                  handleSelect(currentPlayer.abilitiesChoices[1])
                 }
               }}
             >
-              <Typography variant="h5">{player.abilitiesChoices[1].name}</Typography>
-              {player &&
-                player.abilitiesChoices[1] &&
-                player.abilitiesChoices[1].strengthIncrease > 0 && (
+              <Typography variant="h5">
+                {currentPlayer.abilitiesChoices[1].name}
+              </Typography>
+              {currentPlayer &&
+                currentPlayer.abilitiesChoices[1] &&
+                currentPlayer.abilitiesChoices[1].strengthIncrease > 0 && (
                   <Box
                     sx={{
                       display: 'flex',
@@ -229,12 +262,12 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                     />
                     <Typography
                       sx={{ marginLeft: '10px' }}
-                    >{`+ ${player.abilitiesChoices[1].strengthIncrease}`}</Typography>
+                    >{`+ ${currentPlayer.abilitiesChoices[1].strengthIncrease}`}</Typography>
                   </Box>
                 )}
-              {player &&
-                player.abilitiesChoices[1] &&
-                player.abilitiesChoices[1].dexterityIncrease > 0 && (
+              {currentPlayer &&
+                currentPlayer.abilitiesChoices[1] &&
+                currentPlayer.abilitiesChoices[1].dexterityIncrease > 0 && (
                   <Box
                     sx={{
                       display: 'flex',
@@ -252,12 +285,12 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                     />
                     <Typography
                       sx={{ marginLeft: '10px' }}
-                    >{`+ ${player.abilitiesChoices[1].dexterityIncrease}`}</Typography>
+                    >{`+ ${currentPlayer.abilitiesChoices[1].dexterityIncrease}`}</Typography>
                   </Box>
                 )}
-              {player &&
-                player.abilitiesChoices[1] &&
-                player.abilitiesChoices[1].healthIncrease > 0 && (
+              {currentPlayer &&
+                currentPlayer.abilitiesChoices[1] &&
+                currentPlayer.abilitiesChoices[1].healthIncrease > 0 && (
                   <Box
                     sx={{
                       display: 'flex',
@@ -275,12 +308,12 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                     />
                     <Typography
                       sx={{ marginLeft: '10px' }}
-                    >{`+ ${player.abilitiesChoices[1].healthIncrease}`}</Typography>
+                    >{`+ ${currentPlayer.abilitiesChoices[1].healthIncrease}`}</Typography>
                   </Box>
                 )}
-              {player &&
-                player.abilitiesChoices[1] &&
-                player.abilitiesChoices[1].speedIncrease > 0 && (
+              {currentPlayer &&
+                currentPlayer.abilitiesChoices[1] &&
+                currentPlayer.abilitiesChoices[1].speedIncrease > 0 && (
                   <Box
                     sx={{
                       display: 'flex',
@@ -298,14 +331,19 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                     />
                     <Typography
                       sx={{ marginLeft: '10px' }}
-                    >{`+ ${player.abilitiesChoices[1].speedIncrease}`}</Typography>
+                    >{`+ ${currentPlayer.abilitiesChoices[1].speedIncrease}`}</Typography>
                   </Box>
                 )}
             </Box>
           )}
         </Grid>
-        <Grid item xs={12} sm={6} sx={{display: "flex", justifyContent: 'center'}}>
-          {player && player.abilitiesChoices[2] && (
+        <Grid
+          item
+          xs={12}
+          sm={6}
+          sx={{ display: 'flex', justifyContent: 'center' }}
+        >
+          {currentPlayer && currentPlayer.abilitiesChoices[2] && (
             <Box
               sx={{
                 width: '160px',
@@ -313,7 +351,9 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                 cursor: 'pointer',
                 marginBottom: 2,
                 backgroundColor:
-                  selectedAbility === player.abilitiesChoices[2] ? '#9ac3ed' : '#d9d6b6',
+                  selectedAbility === currentPlayer.abilitiesChoices[2]
+                    ? '#9ac3ed'
+                    : '#d9d6b6',
                 boxShadow: '0 3px 5px 2px rgba(0, 0, 0, .3)',
                 display: 'flex',
                 flexDirection: 'column',
@@ -323,15 +363,17 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                 borderRadius: '30px'
               }}
               onClick={() => {
-                if (player.abilitiesChoices[2]) {
-                  handleSelect(player.abilitiesChoices[2])
+                if (currentPlayer.abilitiesChoices[2]) {
+                  handleSelect(currentPlayer.abilitiesChoices[2])
                 }
               }}
             >
-              <Typography variant="h5">{player.abilitiesChoices[2].name}</Typography>
-              {player &&
-                player.abilitiesChoices[2] &&
-                player.abilitiesChoices[2].strengthIncrease > 0 && (
+              <Typography variant="h5">
+                {currentPlayer.abilitiesChoices[2].name}
+              </Typography>
+              {currentPlayer &&
+                currentPlayer.abilitiesChoices[2] &&
+                currentPlayer.abilitiesChoices[2].strengthIncrease > 0 && (
                   <Box
                     sx={{
                       display: 'flex',
@@ -349,12 +391,12 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                     />
                     <Typography
                       sx={{ marginLeft: '10px' }}
-                    >{`+ ${player.abilitiesChoices[2].strengthIncrease}`}</Typography>
+                    >{`+ ${currentPlayer.abilitiesChoices[2].strengthIncrease}`}</Typography>
                   </Box>
                 )}
-              {player &&
-                player.abilitiesChoices[2] &&
-                player.abilitiesChoices[2].dexterityIncrease > 0 && (
+              {currentPlayer &&
+                currentPlayer.abilitiesChoices[2] &&
+                currentPlayer.abilitiesChoices[2].dexterityIncrease > 0 && (
                   <Box
                     sx={{
                       display: 'flex',
@@ -372,12 +414,12 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                     />
                     <Typography
                       sx={{ marginLeft: '10px' }}
-                    >{`+ ${player.abilitiesChoices[2].dexterityIncrease}`}</Typography>
+                    >{`+ ${currentPlayer.abilitiesChoices[2].dexterityIncrease}`}</Typography>
                   </Box>
                 )}
-              {player &&
-                player.abilitiesChoices[2] &&
-                player.abilitiesChoices[2].healthIncrease > 0 && (
+              {currentPlayer &&
+                currentPlayer.abilitiesChoices[2] &&
+                currentPlayer.abilitiesChoices[2].healthIncrease > 0 && (
                   <Box
                     sx={{
                       display: 'flex',
@@ -395,12 +437,12 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                     />
                     <Typography
                       sx={{ marginLeft: '10px' }}
-                    >{`+ ${player.abilitiesChoices[2].healthIncrease}`}</Typography>
+                    >{`+ ${currentPlayer.abilitiesChoices[2].healthIncrease}`}</Typography>
                   </Box>
                 )}
-              {player &&
-                player.abilitiesChoices[2] &&
-                player.abilitiesChoices[2].speedIncrease > 0 && (
+              {currentPlayer &&
+                currentPlayer.abilitiesChoices[2] &&
+                currentPlayer.abilitiesChoices[2].speedIncrease > 0 && (
                   <Box
                     sx={{
                       display: 'flex',
@@ -418,14 +460,19 @@ const LevelUpChoices = ({ player }: { player: Player | null }) => {
                     />
                     <Typography
                       sx={{ marginLeft: '10px' }}
-                    >{`+ ${player.abilitiesChoices[2].speedIncrease}`}</Typography>
+                    >{`+ ${currentPlayer.abilitiesChoices[2].speedIncrease}`}</Typography>
                   </Box>
                 )}
             </Box>
           )}
         </Grid>
       </Grid>
-      <Button variant="contained" color="primary" disabled={!selectedAbility} onClick={handleSubmit}>
+      <Button
+        variant="contained"
+        color="primary"
+        disabled={!selectedAbility}
+        onClick={handleSubmit}
+      >
         Validate
       </Button>
     </Container>

@@ -1,4 +1,7 @@
 import { Ability } from 'src/types/Ability'
+import { Fight } from 'src/types/Fight'
+import { Capacity } from 'src/types/Capacity'
+import { Spell } from 'src/types/Spell'
 
 export interface Player {
   id: number
@@ -18,10 +21,14 @@ export interface Player {
   type: string
   xp: number
   speed: number
-  ability1Id: number | null
-  ability1: Ability | null
-  ability2Id: number | null
-  ability2: Ability | null
-  ability3Id: number | null
-  ability3: Ability | null
+  fights?: Fight[]
+  fights2?: Fight[]
+  abilitiesChoices?: Ability[]
+  abilityRequired: boolean
+  capacitiesRequired: boolean
+  spellsRequired: boolean
+  capacities?: Capacity[]
+  capacitiesChoices?: Capacity[]
+  spells?: Spell[]
+  levelingUp: boolean
 }

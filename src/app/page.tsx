@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client'
 // react
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 // mui
 import {
   Box,
@@ -32,8 +32,10 @@ import TableNav from 'src/components/tableNav'
 import LevelUpCapacityChoices from 'src/components/levelUpCapacityChoices'
 import axios from 'axios'
 import xpThresholdForLevel from 'src/utils/levelFunction'
+import PlayerContext from 'src/utils/PlayerContext'
 
 export default function Home() {
+  const { currentPlayer, setCurrentPlayer } = useContext(PlayerContext)
   const [player, setPlayer] = useState<Player | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [fightLogs, setFightLogs] = useState<Fight[]>([])
@@ -41,7 +43,6 @@ export default function Home() {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [user, setUser] = useState<any>(null)
-  const [inLeveling, setInLeveling] = useState<boolean>(false)
 
   const handleConnectClick = () => {
     router.push('/login')
@@ -61,18 +62,15 @@ export default function Home() {
   }
 
   const handleLevelUp = async () => {
-    setInLeveling(true)
-    if (player) {
+    if (currentPlayer) {
       try {
-        await axios.get(`api/user/${player.id}/levelUp`)
+        await axios.get(`api/user/${currentPlayer.id}/levelUp`)
       } catch (err) {
         if (err instanceof Error) {
           console.error('Failed to level up:', err.message)
         } else {
           console.error('Failed to level up:', err)
         }
-      } finally {
-        setInLeveling(true)
       }
     }
   }
@@ -87,7 +85,7 @@ export default function Home() {
         try {
           // call api allPlayers
           await axios.get(`/api/user/${userId}`).then((res) => {
-            setPlayer(res.data)
+            setCurrentPlayer(res.data)
           })
         } catch (err) {
           console.error(err)
@@ -116,9 +114,9 @@ export default function Home() {
       setPlayer(null)
       setIsLoading(false)
     }
-  }, [router])
+  }, [router, setCurrentPlayer])
 
-  console.log('player', player)
+  console.log('player', currentPlayer)
   if (isLoading) {
     return (
       <Box
@@ -156,20 +154,19 @@ export default function Home() {
                   alignItems: 'center'
                 }}
               >
-                {player &&
-                player.xp >= xpThresholdForLevel(player.level + 1) &&
-                !inLeveling ? (
+                {currentPlayer &&
+                currentPlayer.xp >= xpThresholdForLevel(currentPlayer.level + 1) && !currentPlayer.levelingUp ? (
                   <Button onClick={handleLevelUp} sx={{ fontSize: '2rem' }}>
                     Level Up
                   </Button>
-                ) : inLeveling ? (
-                  <LevelUpCapacityChoices player={player} setPlayer={setPlayer} />
+                ) : currentPlayer && currentPlayer.levelingUp && currentPlayer.abilityRequired ? (
+                  <LevelUpCapacityChoices />
                 ) : (
                   <TableNav />
                 )}
               </Grid>
               <Grid item xs={12} md={6}>
-                <StatsCard player={player} />
+                <StatsCard />
               </Grid>
             </Grid>
             <Box display="flex" alignItems="center" width="200px">
@@ -242,7 +239,7 @@ export default function Home() {
                   // grouper par date
                   .reduce(
                     (groups: { [key: string]: typeof fightLogs }, item) => {
-                      const date = item.timestamp.split('T')[0]
+                      const date = item.timestamp.toISOString().split('T')[0];
                       if (!groups[date]) {
                         groups[date] = []
                       }

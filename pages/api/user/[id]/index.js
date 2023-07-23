@@ -66,6 +66,7 @@ const getPlayer = async (req, res) => {
         pa: true,
         paMax: true,
         str: true,
+        speed: true,
         type: true,
         xp: true,
         abilityRequired: true,
@@ -91,12 +92,16 @@ const updatePlayer = async (req, res) => {
   try {
     const { id } = req.query
     let updateData = req.body
-
+    console.log(updateData)
     const updatedPlayer = await prisma.player.update({
       where: {
         id: parseInt(id)
       },
-      data: updateData
+      data: updateData,
+      include: {
+        abilitiesChoices: true, 
+        capacitiesChoices: true
+      }
     })
 
     if (updatedPlayer) {
