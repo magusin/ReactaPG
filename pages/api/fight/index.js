@@ -24,6 +24,9 @@ export default async function handler(req, res) {
   try {
     await runMiddleware(req, res, cors)
     switch (req.method) {
+      case 'GET':
+        return await getFights(req, res)
+        break
       case 'POST':
           return await createFight(req, res)
         break
@@ -32,6 +35,30 @@ export default async function handler(req, res) {
     }
   } finally {
     await prisma.$disconnect()
+  }
+}
+
+const getFights = async (req, res) => {
+  try {
+    const fights = await prisma.fight.findMany({
+      include: {
+        player1: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
+        player2: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
+      },
+    })
+    res.status(200).json({ fights })
+  } catch (error) {
+    res.status(500).json({ error: 'Unable to fetch fights' })
   }
 }
 

@@ -222,7 +222,7 @@ export default function Replay() {
               <PlayerInfo
                 player={fight.player1.username}
                 hp={currentHpPlayer1}
-                hpMax={fight.player1.hpMax}
+                hpMax={fight.player1HP}
                 color="blue"
               />
             </Grid>
@@ -280,7 +280,7 @@ export default function Replay() {
               <PlayerInfo
                  player={fight.player2.username}
                  hp={currentHpPlayer2}
-                 hpMax={fight.player2.hpMax}
+                 hpMax={fight.player2HP}
                  color="red"
               />
             </Grid>

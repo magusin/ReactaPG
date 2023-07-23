@@ -265,7 +265,7 @@ export default function Home() {
                         key={item.uuid}
                         style={{
                           backgroundColor:
-                            player && item.winner_id === player.id
+                          currentPlayer && item.winner_id === currentPlayer.id
                               ? '#c3dfc4'
                               : '#efc7c7'
                         }}
@@ -274,7 +274,7 @@ export default function Home() {
                           style={{
                             textDecoration: 'none',
                             color:
-                              player && item.winner_id === player.id
+                            currentPlayer && item.winner_id === currentPlayer.id
                                 ? '#00853f'
                                 : '#d21034'
                           }}

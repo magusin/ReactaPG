@@ -7,6 +7,8 @@ export interface Fight {
     player2_id: number
     winner_id: number
     timestamp: Date
+    player1HP: number
+    player2HP: number
     player1: Player
     player2: Player
     events?: Event[]

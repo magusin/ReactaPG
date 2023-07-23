@@ -44,6 +44,8 @@ model Fight {
   player2_id Int
   winner_id  Int
   timestamp  DateTime     @default(now())
+  player1HP  Int
+  player2HP  Int
   events     FightEvent[]
   player2    Player       @relation("player1", fields: [player2_id], references: [id])
   player1    Player       @relation("player2", fields: [player1_id], references: [id])
