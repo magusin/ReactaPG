@@ -51,31 +51,18 @@ const getPlayer = async (req, res) => {
       where: {
         id: parseInt(id)
       },
-      select: {
-        id: true,
-        username: true,
-        email: true,
-        def: true,
-        dex: true,
-        dmgMax: true,
-        dmgMin: true,
-        hp: true,
-        hpMax: true,
-        init: true,
-        level: true,
-        pa: true,
-        paMax: true,
-        str: true,
-        speed: true,
-        type: true,
-        xp: true,
-        abilityRequired: true,
-        capacitiesRequired: true,
-        spellsRequired: true,
-        levelingUp: true,
-        abilitiesChoices: true,
+      include: {
+        abilityChoices: {
+          include: {
+            ability: true
+          }
+        },
+        capacityChoices: {
+          include: {
+            capacity: true
+          }
+        },
         capacities: true,
-        capacitiesChoices: true
       }
     })
     if (player) {
@@ -91,16 +78,40 @@ const getPlayer = async (req, res) => {
 const updatePlayer = async (req, res) => {
   try {
     const { id } = req.query
-    let updateData = req.body
-    console.log(updateData)
+    const updateData = req.body
+
+    console.log('updateData before:', updateData)
+
+    if (
+      !Boolean(updateData.capacitiesRequired) &&
+      !Boolean(updateData.spellsRequired) &&
+      !Boolean(updateData.abilityRequired) &&
+      Boolean(updateData.levelingUp)
+    ) {
+      updateData.levelingUp = false
+      updateData.xp = updateData.xp - xpThresholdForLevel(updateData.level);
+      updateData.level = updateData.level + 1
+    }
+
+    console.log('updateData after:', updateData)
+
     const updatedPlayer = await prisma.player.update({
       where: {
         id: parseInt(id)
       },
       data: updateData,
       include: {
-        abilitiesChoices: true, 
-        capacitiesChoices: true
+        abilityChoices: {
+          include: {
+            ability: true
+          }
+        },
+        capacityChoices: {
+          include: {
+            capacity: true
+          }
+        },
+        capacities: true,
       }
     })
 
@@ -110,6 +121,7 @@ const updatePlayer = async (req, res) => {
       return res.status(404).json({ message: 'Player not found' })
     }
   } catch (error) {
+    console.log(error)
     return res.status(500).json({ message: error.message })
   }
 }

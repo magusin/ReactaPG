@@ -28,14 +28,54 @@ model Player {
   speed              Int        @default(1)
   fights             Fight[]    @relation("player1")
   fights2            Fight[]    @relation("player2")
-  abilitiesChoices   Ability[]  @relation("PlayerToAbilityChoices")
+  abilityChoices     AbilityChoice[]  @relation("PlayerToAbilityChoice")
   abilityRequired    Boolean    @default(false)
   capacitiesRequired Boolean    @default(false)
   spellsRequired     Boolean    @default(false)
   capacities         Capacity[] @relation("PlayerToCapacity")
-  capacitiesChoices  Capacity[] @relation("PlayerToCapacityChoices")
+  capacityChoices    CapacityChoice[] @relation("PlayerToCapacityChoice")
   spells             Spell[]    @relation("PlayerToSpell")
   levelingUp         Boolean    @default(false)
+}
+
+model Ability {
+  id                Int      @id @default(autoincrement())
+  name              String
+  strengthIncrease  Int      @default(0)
+  dexterityIncrease Int      @default(0)
+  healthIncrease    Int      @default(0)
+  speedIncrease     Int      @default(0)
+  abilityChoices    AbilityChoice[] @relation("AbilityToAbilityChoice")
+}
+
+model AbilityChoice {
+  id                Int      @id @default(autoincrement())
+  playerId          Int
+  player            Player   @relation("PlayerToAbilityChoice", fields: [playerId], references: [id])
+  abilityId         Int
+  ability           Ability  @relation("AbilityToAbilityChoice", fields: [abilityId], references: [id])
+}
+
+model Capacity {
+  id                Int      @id @default(autoincrement())
+  name              String
+  defIncrease       Int      @default(0)
+  dmgMaxIncrease    Int      @default(0)
+  dmgMinIncrease    Int      @default(0)
+  healthIncrease    Int      @default(0)
+  strengthIncrease  Int      @default(0)
+  dexterityIncrease Int      @default(0)
+  speedIncrease     Int      @default(0)
+  capacityChoices   CapacityChoice[] @relation("CapacityToCapacityChoice")
+  players           Player[] @relation("PlayerToCapacity")
+}
+
+model CapacityChoice {
+  id                Int      @id @default(autoincrement())
+  playerId          Int
+  player            Player   @relation("PlayerToCapacityChoice", fields: [playerId], references: [id])
+  capacityId        Int
+  capacity          Capacity @relation("CapacityToCapacityChoice", fields: [capacityId], references: [id])
 }
 
 model Fight {
@@ -60,30 +100,6 @@ model FightEvent {
   hpPlayer1 Int
   hpPlayer2 Int
   Fight     Fight    @relation(fields: [fight_id], references: [uuid])
-}
-
-model Ability {
-  id                Int      @id @default(autoincrement())
-  name              String
-  strengthIncrease  Int      @default(0)
-  dexterityIncrease Int      @default(0)
-  healthIncrease    Int      @default(0)
-  speedIncrease     Int      @default(0)
- playersChoices    Player[] @relation("PlayerToAbilityChoices")
-}
-
-model Capacity {
-  id                Int      @id @default(autoincrement())
-  name              String
-  defIncrease       Int      @default(0)
-  dmgMaxIncrease    Int      @default(0)
-  dmgMinIncrease    Int      @default(0)
-  healthIncrease    Int      @default(0)
-  strengthIncrease  Int      @default(0)
-  dexterityIncrease Int      @default(0)
-  speedIncrease     Int      @default(0)
-  players           Player[] @relation("PlayerToCapacity")
-  playersChoices    Player[] @relation("PlayerToCapacityChoices")
 }
 
 model Spell {

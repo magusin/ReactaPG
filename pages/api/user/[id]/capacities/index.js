@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client'
 
 // Initialiser le middleware CORS
 let cors = Cors({
-  methods: ['GET', 'PUT', 'HEAD']
+  methods: ['DELETE', 'HEAD']
 })
 
 const prisma = new PrismaClient()
@@ -26,7 +26,7 @@ export default async function handler(req, res) {
     switch (req.method) {
       case 'DELETE':
         if (req.query.id) {
-          return await deleteAbilities(req, res)
+          return await deleteCapacities(req, res)
         }
         break
       default:
@@ -37,17 +37,17 @@ export default async function handler(req, res) {
   }
 }
 
-const deleteAbilities = async (req, res) => {
+const deleteCapacities = async (req, res) => {
     try {
       const playerId = parseInt(req.query.id);
   
-      const abilities = await prisma.abilityChoice.deleteMany({
+      const capacities = await prisma.capacityChoice.deleteMany({
         where: {
           playerId: playerId,
         },
       });
   
-      return res.status(200).json(abilities)
+      return res.status(200).json(capacities)
     } catch (error) {
       return res.status(500).json({ message: error.message })
     }

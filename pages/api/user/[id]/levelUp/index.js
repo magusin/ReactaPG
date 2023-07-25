@@ -4,7 +4,7 @@ import xpThresholdForLevel from 'src/utils/levelFunction'
 
 // Initialiser le middleware CORS
 let cors = Cors({
-  methods: ['POST', 'HEAD']
+  methods: ['GET', 'HEAD']
 })
 
 const prisma = new PrismaClient()
@@ -46,11 +46,16 @@ const levelUp = async (req, res) => {
     const player = await prisma.player.findUnique({
       where: { id: playerId },
       include: {
-        abilitiesChoices: true,
-        capacitiesChoices: true
+        abilityChoices: true,
+        capacityChoices: {
+          include: {
+            capacity: true
+          }
+        },
+        capacities: true,
       }
-    })
-    console.log('player', player)
+    });
+
     if (!player) {
       return res.status(404).json({ message: 'Player not found' })
     }
@@ -59,69 +64,76 @@ const levelUp = async (req, res) => {
       return res
         .status(403)
         .json({ message: 'Player not eligible for level up' })
-    }
-
-    const abilities = []
-    const capacitiesChoices = []
-
-    if (player.abilitiesChoices.length < 3) {
-      const allAbilities = await prisma.ability.findMany()
-
-      while (abilities.length < 3) {
-        const randomIndex = Math.floor(Math.random() * allAbilities.length)
-        const ability = allAbilities[randomIndex]
-
-        if (!abilities.includes(ability)) {
-          abilities.push(ability)
-        }
-        console.log('Selected abilities:', abilities)
       }
-    }
-
-    const levelSet = new Set([2, 5, 7, 10, 12, 15, 17, 20, 22, 25, 27, 30, 32, 35, 37, 40, 42, 45, 47, 50])
-
-    if (player.capacitiesChoices.length < 3 && levelSet.has(player.level + 1)) {
-      const allCapacities = await prisma.capacity.findMany({
-        where: {
-          NOT: {
-            players: {
-              some: {
-                id: playerId
-              }
-            }
+      
+      const levelSet = new Set([2, 5, 7, 10, 12, 15, 17, 20, 22, 25, 27, 30, 32, 35, 37, 40, 42, 45, 47, 50]);
+      const allAbilities = await prisma.ability.findMany();
+      let abilities = [];
+      
+      while (abilities.length < 3) {
+        const randomAbility = allAbilities[Math.floor(Math.random() * allAbilities.length)];
+      
+        // Vérifiez que l'ability n'est pas déjà dans le tableau
+        if (!abilities.find(ability => ability.id === randomAbility.id)) {
+          abilities.push(randomAbility);
+        }
+      }
+      
+      // Pour les Capacity
+      let capacitiesChoices = [];
+      if (levelSet.has(player.level + 1)) {
+        const allCapacities = await prisma.capacity.findMany({
+          where: {
+            NOT: {
+              id: {
+                in: player.capacities.map(capacity => capacity.id),
+              },
+            },
+          },
+        });
+      
+        while (capacitiesChoices.length < 3) {
+          const randomCapacity = allCapacities[Math.floor(Math.random() * allCapacities.length)];
+      
+          // Vérifiez que la capacité n'est pas déjà dans le tableau
+          if (!capacitiesChoices.find(capacity => capacity.id === randomCapacity.id)) {
+            capacitiesChoices.push(randomCapacity);
           }
         }
-      })
-
-      while (capacitiesChoices.length < 3) {
-        const randomIndex = Math.floor(Math.random() * allCapacities.length)
-        const capacity = allCapacities[randomIndex]
-
-        if (!capacitiesChoices.includes(capacity)) {
-          capacitiesChoices.push(capacity)
-        }
-        console.log('Selected capacities:', capacitiesChoices)
       }
-    }
-
-    await prisma.player.update({
-      where: { id: playerId },
-      data: {
-        abilitiesChoices: {
-          connect: abilities.map((ability) => ({ id: ability.id })),
+      
+      const updatedPlayer = await prisma.player.update({
+        where: { id: playerId },
+        data: {
+          abilityChoices: {
+            create: abilities.map((ability) => ({
+              abilityId: ability.id,
+            })),
+          },
+          capacityChoices: {
+            create: capacitiesChoices.map((capacity) => ({
+              capacityId: capacity.id,
+            })),
+          },
+          abilityRequired: true,
+          capacitiesRequired: levelSet.has(player.level + 1),
+          levelingUp: true,
         },
-        capacitiesChoices: {
-          connect: capacitiesChoices.map((capacity) => ({ id: capacity.id })),
+        include: {
+          abilityChoices: {
+            include: {
+              ability: true,
+            },
+          },
+          capacityChoices: {
+            include: {
+              capacity: true,
+            },
+          },
         },
-        abilityRequired: true,
-        capacitiesRequired: levelSet.has(player.level + 1),
-        levelingUp: true
-      }
-    })
+      });
 
-    console.log('Player leveled up')
-
-    return res.status(200).json({ message: 'Level up successful' })
+    return res.status(200).json(updatedPlayer)
   } catch (error) {
     console.error(error)
     return res

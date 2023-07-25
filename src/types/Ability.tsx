@@ -1,4 +1,4 @@
-import { Player } from 'src/types/Player'
+import { AbilityChoice } from 'src/types/AbilityChoice'
 
 export interface Ability {
     id: number
@@ -7,5 +7,5 @@ export interface Ability {
     dexterityIncrease: number
     healthIncrease: number
     speedIncrease: number
-    playersChoices: Player[]
+    abilityChoices: AbilityChoice[];
   }

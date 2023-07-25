@@ -30,6 +30,7 @@ import Header from 'src/components/header'
 import StatsCard from 'src/components/statsCard'
 import TableNav from 'src/components/tableNav'
 import LevelUpAbilitiesChoices from 'src/components/levelUpAbilitiesChoices'
+import LevelUpCapacitiesChoices from 'src/components/levelUpCapacitiesChoices'
 import axios from 'axios'
 import xpThresholdForLevel from 'src/utils/levelFunction'
 import PlayerContext from 'src/utils/PlayerContext'
@@ -64,7 +65,11 @@ export default function Home() {
   const handleLevelUp = async () => {
     if (currentPlayer) {
       try {
-        await axios.get(`api/user/${currentPlayer.id}/levelUp`)
+        const response = await axios.get(`api/user/${currentPlayer.id}/levelUp`)
+        if (response.status === 200) {
+          const data = response.data
+          setCurrentPlayer(data)
+        }
       } catch (err) {
         if (err instanceof Error) {
           console.error('Failed to level up:', err.message)
@@ -116,7 +121,6 @@ export default function Home() {
     }
   }, [router, setCurrentPlayer])
 
-  console.log('player', currentPlayer)
   if (isLoading) {
     return (
       <Box
@@ -131,7 +135,7 @@ export default function Home() {
       </Box>
     )
   }
-
+console.log('currentPlayer', currentPlayer) 
   return (
     <>
       {user != null ? (
@@ -165,7 +169,11 @@ export default function Home() {
                   currentPlayer.levelingUp &&
                   currentPlayer.abilityRequired ? (
                   <LevelUpAbilitiesChoices />
-                ) : (
+                ) : currentPlayer &&
+                currentPlayer.levelingUp &&
+                currentPlayer.capacitiesRequired && !currentPlayer.abilityRequired ? (
+                <LevelUpCapacitiesChoices />
+              ) : (
                   <TableNav />
                 )}
               </Grid>
