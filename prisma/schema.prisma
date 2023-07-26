@@ -8,37 +8,87 @@ datasource db {
 }
 
 model Player {
-  id       Int    @id @default(autoincrement())
-  username String @unique(map: "Player_username_key")
-  password String @db.VarChar(255)
-  email    String @unique(map: "Player_email_key")
-  def      Int    @default(1)
-  dex      Int    @default(1)
-  dmgMax   Int    @default(5)
-  dmgMin   Int    @default(1)
-  hp       Int    @default(50)
-  hpMax    Int    @default(50)
-  init     Int    @default(1)
-  level    Int    @default(1)
-  pa       Int    @default(20)
-  paMax    Int    @default(20)
-  str      Int    @default(1)
-  type     String @default("player")
-  xp       Int    @default(0)
-  speed    Int    @default(1)
-  fights   Fight[] @relation("player1")
-  fights2  Fight[] @relation("player2")
+  id                 Int        @id @default(autoincrement())
+  username           String     @unique(map: "Player_username_key")
+  password           String     @db.VarChar(255)
+  email              String     @unique(map: "Player_email_key")
+  def                Int        @default(1)
+  dex                Int        @default(1)
+  dmgMax             Int        @default(5)
+  dmgMin             Int        @default(1)
+  hp                 Int        @default(50)
+  hpMax              Int        @default(50)
+  init               Int        @default(1)
+  level              Int        @default(1)
+  pa                 Int        @default(20)
+  paMax              Int        @default(20)
+  str                Int        @default(1)
+  type               String     @default("player")
+  xp                 Int        @default(0)
+  speed              Int        @default(1)
+  fights             Fight[]    @relation("player1")
+  fights2            Fight[]    @relation("player2")
+  abilityChoices     AbilityChoice[]  @relation("PlayerToAbilityChoice")
+  abilityRequired    Boolean    @default(false)
+  capacitiesRequired Boolean    @default(false)
+  spellsRequired     Boolean    @default(false)
+  capacities         Capacity[] @relation("PlayerToCapacity")
+  capacityChoices    CapacityChoice[] @relation("PlayerToCapacityChoice")
+  spells             Spell[]    @relation("PlayerToSpell")
+  levelingUp         Boolean    @default(false)
+}
+
+model Ability {
+  id                Int      @id @default(autoincrement())
+  name              String
+  strengthIncrease  Int      @default(0)
+  dexterityIncrease Int      @default(0)
+  healthIncrease    Int      @default(0)
+  speedIncrease     Int      @default(0)
+  abilityChoices    AbilityChoice[] @relation("AbilityToAbilityChoice")
+}
+
+model AbilityChoice {
+  id                Int      @id @default(autoincrement())
+  playerId          Int
+  player            Player   @relation("PlayerToAbilityChoice", fields: [playerId], references: [id])
+  abilityId         Int
+  ability           Ability  @relation("AbilityToAbilityChoice", fields: [abilityId], references: [id])
+}
+
+model Capacity {
+  id                Int      @id @default(autoincrement())
+  name              String
+  defIncrease       Int      @default(0)
+  dmgMaxIncrease    Int      @default(0)
+  dmgMinIncrease    Int      @default(0)
+  healthIncrease    Int      @default(0)
+  strengthIncrease  Int      @default(0)
+  dexterityIncrease Int      @default(0)
+  speedIncrease     Int      @default(0)
+  capacityChoices   CapacityChoice[] @relation("CapacityToCapacityChoice")
+  players           Player[] @relation("PlayerToCapacity")
+}
+
+model CapacityChoice {
+  id                Int      @id @default(autoincrement())
+  playerId          Int
+  player            Player   @relation("PlayerToCapacityChoice", fields: [playerId], references: [id])
+  capacityId        Int
+  capacity          Capacity @relation("CapacityToCapacityChoice", fields: [capacityId], references: [id])
 }
 
 model Fight {
-  uuid         String         @id @default(uuid())
-  player1_id   Int
-  player2_id   Int
-  winner_id    Int
-  timestamp DateTime @default(now())
-  events       FightEvent[]
-  player2      Player         @relation("player1", fields: [player2_id], references: [id])
-  player1      Player         @relation("player2", fields: [player1_id], references: [id])
+  uuid       String       @id @default(uuid())
+  player1_id Int
+  player2_id Int
+  winner_id  Int
+  timestamp  DateTime     @default(now())
+  player1HP  Int
+  player2HP  Int
+  events     FightEvent[]
+  player2    Player       @relation("player1", fields: [player2_id], references: [id])
+  player1    Player       @relation("player2", fields: [player1_id], references: [id])
 }
 
 model FightEvent {
@@ -47,8 +97,14 @@ model FightEvent {
   message   String
   timestamp DateTime @default(now())
   position  Int
-  hpPlayer1 Int 
-  hpPlayer2 Int 
-       
-  Fight    Fight   @relation(fields: [fight_id], references: [uuid])
+  hpPlayer1 Int
+  hpPlayer2 Int
+  Fight     Fight    @relation(fields: [fight_id], references: [uuid])
+}
+
+model Spell {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  players     Player[] @relation("PlayerToSpell")
 }

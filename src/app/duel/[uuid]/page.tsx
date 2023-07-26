@@ -136,7 +136,9 @@ export default function DuelFight() {
                 player1_id: currentPlayer.id,
                 player2_id: challengingPlayer.id,
                 winner_id:
-                  currentHp1 <= 0 ? challengingPlayer.id : currentPlayer.id
+                  currentHp1 <= 0 ? challengingPlayer.id : currentPlayer.id,
+                  player1HP: currentPlayer.hpMax,
+                  player2HP: challengingPlayer.hpMax
               })
             } catch (err) {
               console.error(err)
@@ -219,7 +221,6 @@ export default function DuelFight() {
             ])
           }
         }
-        console.log('hphistory', hpHistory)
       }, 2000)
 
       return () => clearInterval(fightInterval) // Clean up on unmount

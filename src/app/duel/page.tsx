@@ -45,6 +45,9 @@ export default function Duel() {
             (player: Player) => player.id === userId
           )[0]
           setUser(currentPlayer)
+          if (!currentPlayer) {
+            router.push('/login')
+          }
           let allPlayers = (res.data as Player[]).filter(
             (player: Player) => player.id !== userId
           )

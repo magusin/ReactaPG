@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client'
 
 // Initialiser le middleware CORS
 let cors = Cors({
-  methods: ['POST', 'HEAD']
+  methods: ['DELETE', 'HEAD']
 })
 
 const prisma = new PrismaClient()
@@ -24,8 +24,10 @@ export default async function handler(req, res) {
   try {
     await runMiddleware(req, res, cors)
     switch (req.method) {
-      case 'POST':
-          return await createFightEvent(req, res)
+      case 'DELETE':
+        if (req.query.id) {
+          return await deleteCapacities(req, res)
+        }
         break
       default:
         return res.status(400).json({ message: 'bad request' })
@@ -35,14 +37,18 @@ export default async function handler(req, res) {
   }
 }
 
-const createFightEvent = async (req, res) => {
-  const fightEventData = req.body
-  try {
-    const fightEvent = await prisma.fightEvent.create({
-      data: fightEventData
-    })
-    res.status(200).json({ fightEvent })
+const deleteCapacities = async (req, res) => {
+    try {
+      const playerId = parseInt(req.query.id);
+  
+      const capacities = await prisma.capacityChoice.deleteMany({
+        where: {
+          playerId: playerId,
+        },
+      });
+  
+      return res.status(200).json(capacities)
     } catch (error) {
-      res.status(500).json({ message: error.message })
+      return res.status(500).json({ message: error.message })
     }
-}
+  }

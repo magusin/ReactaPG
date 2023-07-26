@@ -39,7 +39,7 @@ export default function Replay() {
 
   const handleReplay = () => {
     setIsReplaying(true)
-    if (fight && fight.events.length > 0) {
+    if (fight && fight.events && fight.events.length > 0) {
       setCurrentHpPlayer1(fight.events[0].hpPlayer1)
       setCurrentHpPlayer2(fight.events[0].hpPlayer2)
       setDisplayedEvents([fight.events[0]])
@@ -53,13 +53,13 @@ export default function Replay() {
         const res = await axios.get(`http://localhost:3000/api/fight/${uuid}`)
         const fightData: Fight = res.data
         setFight(fightData)
-  
+        if (fightData && fightData.events && fightData.events.length > 0) {
         // À la fin du combat, définissez la santé actuelle des joueurs sur la santé finale
         setCurrentHpPlayer1(fightData.events[fightData.events.length - 1].hpPlayer1)
         setCurrentHpPlayer2(fightData.events[fightData.events.length - 1].hpPlayer2)
-  
+        }
         const winner = fightData.winner_id === fightData.player1_id ? fightData.player1.username : fightData.player2.username;
-        setDisplayedEvents([...fightData.events, { message: `Le gagnant est ${winner}` }])
+        setDisplayedEvents([...(fightData.events ?? []), { message: `Le gagnant est ${winner}` }])
         setIsLoading(false)
       } catch (error) {
         if (error instanceof Error) {
@@ -82,18 +82,19 @@ export default function Replay() {
   }, [uuid])
 
   useEffect(() => {
-    if (isReplaying && fight && currentIndex < fight.events.length) {
+    if (isReplaying && fight && fight.events && currentIndex < fight.events.length) {
+      const fightEvents = fight.events
       const timer = setTimeout(() => {
   
         // Mettez à jour la santé des joueurs pour chaque manche
-        setCurrentHpPlayer1(fight.events[currentIndex].hpPlayer1)
-        setCurrentHpPlayer2(fight.events[currentIndex].hpPlayer2)
+        setCurrentHpPlayer1(fightEvents[currentIndex].hpPlayer1)
+        setCurrentHpPlayer2(fightEvents[currentIndex].hpPlayer2)
   
-        setDisplayedEvents([...displayedEvents, fight.events[currentIndex]])
+        setDisplayedEvents([...displayedEvents, fightEvents[currentIndex]])
         setCurrentIndex(currentIndex + 1)
       }, 2000)
       return () => clearTimeout(timer)
-    } else if (isReplaying && fight && currentIndex === fight.events.length && displayedEvents[displayedEvents.length - 1].message.indexOf('Le gagnant est') === -1) {
+    } else if (isReplaying && fight && fight.events && currentIndex === fight.events.length && displayedEvents[displayedEvents.length - 1].message.indexOf('Le gagnant est') === -1) {
       const winner = fight.winner_id === fight.player1_id ? fight.player1.username : fight.player2.username;
       setDisplayedEvents([...displayedEvents, { message: `Le gagnant est ${winner}` }])
     }
@@ -221,7 +222,7 @@ export default function Replay() {
               <PlayerInfo
                 player={fight.player1.username}
                 hp={currentHpPlayer1}
-                hpMax={fight.player1.hpMax}
+                hpMax={fight.player1HP}
                 color="blue"
               />
             </Grid>
@@ -279,7 +280,7 @@ export default function Replay() {
               <PlayerInfo
                  player={fight.player2.username}
                  hp={currentHpPlayer2}
-                 hpMax={fight.player2.hpMax}
+                 hpMax={fight.player2HP}
                  color="red"
               />
             </Grid>

@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client'
 // react
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 // mui
 import {
   Box,
@@ -9,7 +9,8 @@ import {
   Typography,
   useMediaQuery,
   CircularProgress,
-  Grid
+  Grid,
+  Button
 } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import Dialog from '@mui/material/Dialog'
@@ -28,9 +29,14 @@ import logs from '#/public/logs.png'
 import Header from 'src/components/header'
 import StatsCard from 'src/components/statsCard'
 import TableNav from 'src/components/tableNav'
+import LevelUpAbilitiesChoices from 'src/components/levelUpAbilitiesChoices'
+import LevelUpCapacitiesChoices from 'src/components/levelUpCapacitiesChoices'
 import axios from 'axios'
+import xpThresholdForLevel from 'src/utils/levelFunction'
+import PlayerContext from 'src/utils/PlayerContext'
 
 export default function Home() {
+  const { currentPlayer, setCurrentPlayer } = useContext(PlayerContext)
   const [player, setPlayer] = useState<Player | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [fightLogs, setFightLogs] = useState<Fight[]>([])
@@ -44,7 +50,7 @@ export default function Home() {
   }
 
   // Modal state
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState<boolean>(false)
 
   // Open modal
   const handleClickOpen = () => {
@@ -55,6 +61,25 @@ export default function Home() {
   const handleClose = () => {
     setOpen(false)
   }
+
+  const handleLevelUp = async () => {
+    if (currentPlayer) {
+      try {
+        const response = await axios.get(`api/user/${currentPlayer.id}/levelUp`)
+        if (response.status === 200) {
+          const data = response.data
+          setCurrentPlayer(data)
+        }
+      } catch (err) {
+        if (err instanceof Error) {
+          console.error('Failed to level up:', err.message)
+        } else {
+          console.error('Failed to level up:', err)
+        }
+      }
+    }
+  }
+
   useEffect(() => {
     const currentUser = localStorage.getItem('user')
     setUser(currentUser)
@@ -65,10 +90,11 @@ export default function Home() {
         try {
           // call api allPlayers
           await axios.get(`/api/user/${userId}`).then((res) => {
-            setPlayer(res.data)
+            setCurrentPlayer(res.data)
           })
         } catch (err) {
           console.error(err)
+          router.push('/login')
         }
       }
       fetchDataPlayer()
@@ -93,7 +119,7 @@ export default function Home() {
       setPlayer(null)
       setIsLoading(false)
     }
-  }, [])
+  }, [router, setCurrentPlayer])
 
   if (isLoading) {
     return (
@@ -109,7 +135,7 @@ export default function Home() {
       </Box>
     )
   }
-
+console.log('currentPlayer', currentPlayer) 
   return (
     <>
       {user != null ? (
@@ -122,11 +148,37 @@ export default function Home() {
               className="boxGlobalStyles"
               marginBottom="8px"
             >
-              <Grid item xs={12} md={6}>
-                <TableNav />
+              <Grid
+                item
+                xs={12}
+                md={6}
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                {currentPlayer &&
+                currentPlayer.xp >=
+                  xpThresholdForLevel(currentPlayer.level + 1) &&
+                !currentPlayer.levelingUp ? (
+                  <Button onClick={handleLevelUp} sx={{ fontSize: '2rem' }}>
+                    Level Up
+                  </Button>
+                ) : currentPlayer &&
+                  currentPlayer.levelingUp &&
+                  currentPlayer.abilityRequired ? (
+                  <LevelUpAbilitiesChoices />
+                ) : currentPlayer &&
+                currentPlayer.levelingUp &&
+                currentPlayer.capacitiesRequired && !currentPlayer.abilityRequired ? (
+                <LevelUpCapacitiesChoices />
+              ) : (
+                  <TableNav />
+                )}
               </Grid>
               <Grid item xs={12} md={6}>
-                <StatsCard player={player} />
+                <StatsCard />
               </Grid>
             </Grid>
             <Box display="flex" alignItems="center" width="200px">
@@ -191,15 +243,26 @@ export default function Home() {
               {Object.entries(
                 fightLogs
                   // trier par timestamp
-                  .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+                  .sort(
+                    (a, b) =>
+                      new Date(b.timestamp).getTime() -
+                      new Date(a.timestamp).getTime()
+                  )
                   // grouper par date
-                  .reduce((groups: { [key: string]: typeof fightLogs }, item) => {                    const date = item.timestamp.split('T')[0]
-                    if (!groups[date]) {
-                      groups[date] = []
-                    }
-                    groups[date].push(item)
-                    return groups
-                  }, {})
+                  .reduce(
+                    (groups: { [key: string]: typeof fightLogs }, item) => {
+                      if (item && item.timestamp) {
+                        const dateObj = new Date(item.timestamp)
+                        const date = dateObj.toISOString().split('T')[0]
+
+                        if (!groups[date]) {
+                          groups[date] = []
+                        }
+                        groups[date].push(item)
+                      }
+                      return groups
+                    }, {}
+                  )
               )
                 // afficher chaque groupe avec un en-tête contenant la date
                 .map(([date, items], index) => (
@@ -210,14 +273,16 @@ export default function Home() {
                         key={item.uuid}
                         style={{
                           backgroundColor:
-                           player && item.winner_id === player.id ? '#c3dfc4' : '#efc7c7'
+                          currentPlayer && item.winner_id === currentPlayer.id
+                              ? '#c3dfc4'
+                              : '#efc7c7'
                         }}
                       >
                         <Link
                           style={{
                             textDecoration: 'none',
                             color:
-                              player && item.winner_id === player.id
+                            currentPlayer && item.winner_id === currentPlayer.id
                                 ? '#00853f'
                                 : '#d21034'
                           }}

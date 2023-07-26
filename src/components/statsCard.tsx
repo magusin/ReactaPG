@@ -1,10 +1,15 @@
+//react
+import React, { useContext, useEffect, useState } from 'react'
+//mui
 import {
   Box,
   Typography,
   Container,
   Tooltip,
-  LinearProgress
+  LinearProgress,
+  CircularProgress
 } from '@mui/material'
+//img
 import Image from 'next/legacy/image'
 import hp from '#/public/hp.png'
 import str from '#/public/biceps.png'
@@ -14,13 +19,38 @@ import speed from '#/public/speed.png'
 import damage from '#/public/damage.png'
 import ini from '#/public/ini.png'
 import def from '#/public/def.png'
-import React, { useEffect } from 'react'
+//types
 import { Player } from 'src/types/Player'
+//utils
+import xpThresholdForLevel from 'src/utils/levelFunction'
+import PlayerContext from 'src/utils/PlayerContext'
 
-const Stats = ({ player }: { player: Player | null }) => {
-  if (player === null) {
-    // Render something appropriate when there is no player.
-    return <div>No player</div>
+const Stats = () => {
+
+  const { currentPlayer, setCurrentPlayer } = useContext(PlayerContext)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+
+  useEffect(() => {
+    if(currentPlayer){
+      setIsLoading(false)
+    } else {
+      setIsLoading(true)
+    }
+  }, [currentPlayer])
+
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh'
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    )
   }
 
   return (
@@ -38,7 +68,7 @@ const Stats = ({ player }: { player: Player | null }) => {
         component="h3"
         sx={{ flexGrow: 1, fontFamily: 'fantasy' }}
       >
-        {player.username.toUpperCase()}
+        {currentPlayer && currentPlayer.username && currentPlayer.username.toUpperCase()}
       </Typography>
       <Typography
         variant="h4"
@@ -46,7 +76,7 @@ const Stats = ({ player }: { player: Player | null }) => {
         color="teal"
         sx={{ flexGrow: 1, fontFamily: 'fantasy', padding: '8px' }}
       >
-        Level : {player.level}
+        Level : {currentPlayer && currentPlayer.level}
       </Typography>
       <Box
         display="flex"
@@ -86,24 +116,27 @@ const Stats = ({ player }: { player: Player | null }) => {
                     fontSize: '1.5rem'
                   }}
                 >
-                  {player.hpMax}
+                  {currentPlayer && currentPlayer.hpMax}
                 </Typography>
               </Box>
             </Box>
           </Tooltip>
         </Box>
         <Box alignItems="center" maxWidth="100%">
-          <Tooltip title={`${player.xp} XP`}>
-            <LinearProgress
-              variant="determinate"
-              value={(player.xp / player.xp) * 100}
-              color="primary"
-              style={{
-                borderStyle: 'solid',
-                width: '100px'
-              }}
-            />
-          </Tooltip>
+        <Tooltip title={`${currentPlayer ? currentPlayer.xp : 0} / ${xpThresholdForLevel(currentPlayer ? currentPlayer.level + 1 : 0)} XP`}>
+  <LinearProgress
+    variant="determinate"
+    // use level function
+    value={currentPlayer ? (currentPlayer.xp / xpThresholdForLevel(currentPlayer.level + 1)) * 100 : 0}
+    color="primary"
+    style={{
+      borderStyle: 'solid',
+      width: '100px',
+      position: 'relative', 
+      top: -50,
+    }}
+  />
+</Tooltip>
         </Box>
         <Box display="flex" alignItems="center">
           <Tooltip title="Action" placement="top">
@@ -136,7 +169,7 @@ const Stats = ({ player }: { player: Player | null }) => {
                     fontSize: '1.5rem'
                   }}
                 >
-                  {player.pa}
+                  {currentPlayer && currentPlayer.pa}
                 </Typography>
               </Box>
             </Box>
@@ -181,7 +214,7 @@ const Stats = ({ player }: { player: Player | null }) => {
                       fontSize: '1.5rem'
                     }}
                   >
-                    {player.str}
+                    {currentPlayer && currentPlayer.str}
                   </Typography>
                 </Box>
               </Box>
@@ -218,7 +251,7 @@ const Stats = ({ player }: { player: Player | null }) => {
                       fontSize: '1.5rem'
                     }}
                   >
-                    {player.dex}
+                    {currentPlayer && currentPlayer.dex}
                   </Typography>
                 </Box>
               </Box>
@@ -255,7 +288,7 @@ const Stats = ({ player }: { player: Player | null }) => {
                       fontSize: '1.5rem'
                     }}
                   >
-                    {player.dex}
+                    {currentPlayer && currentPlayer.speed}
                   </Typography>
                 </Box>
               </Box>
@@ -294,7 +327,7 @@ const Stats = ({ player }: { player: Player | null }) => {
                       fontSize: '1.5rem'
                     }}
                   >
-                    {player.dmgMin} - {player.dmgMax}
+                    {currentPlayer && currentPlayer.dmgMin} - {currentPlayer && currentPlayer.dmgMax}
                   </Typography>
                 </Box>
               </Box>
@@ -331,7 +364,7 @@ const Stats = ({ player }: { player: Player | null }) => {
                       fontSize: '1.5rem'
                     }}
                   >
-                    {player.def}
+                    {currentPlayer && currentPlayer.def}
                   </Typography>
                 </Box>
               </Box>
@@ -368,7 +401,7 @@ const Stats = ({ player }: { player: Player | null }) => {
                       fontSize: '1.5rem'
                     }}
                   >
-                    {player.init}
+                    {currentPlayer && currentPlayer.init}
                   </Typography>
                 </Box>
               </Box>

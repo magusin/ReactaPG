@@ -20,6 +20,7 @@ function runMiddleware(req, res, fn) {
 }
 
 export default async function handler(req, res) {
+  try {
   await runMiddleware(req, res, cors)
   
   switch (req.method) {
@@ -28,6 +29,9 @@ export default async function handler(req, res) {
     default:
       return res.status(405).end(`Method ${req.method} Not Allowed`)
   }
+} finally {
+  await prisma.$disconnect()
+}
 }
 
 const getFight = async (req, res) => {

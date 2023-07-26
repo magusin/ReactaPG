@@ -1,12 +1,12 @@
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt'
 import Cors from 'cors'
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client'
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient()
 
 // Initialiser le middleware CORS
 let cors = Cors({
-  methods: ['POST', 'HEAD'],
+  methods: ['POST', 'HEAD']
 })
 
 function runMiddleware(req, res, fn) {
@@ -21,12 +21,16 @@ function runMiddleware(req, res, fn) {
 }
 
 export default async function handler(req, res) {
-  await runMiddleware(req, res, cors)
-  switch (req.method) {
-    case "POST":
-      return await login(req, res);
-    default:
-      return res.status(400).json({ message: "bad request" });
+  try {
+    await runMiddleware(req, res, cors)
+    switch (req.method) {
+      case 'POST':
+        return await login(req, res)
+      default:
+        return res.status(400).json({ message: 'bad request' })
+    }
+  } finally {
+    await prisma.$disconnect()
   }
 }
 
@@ -34,20 +38,23 @@ export default async function handler(req, res) {
 const login = async (req, res) => {
   try {
     const player = await prisma.player.findUnique({
-      where: { username: req.body.username },
-    });
-    
+      where: { username: req.body.username }
+    })
+
     if (!player) {
-      return res.status(401).json({ usernameIncorrect: 'Username incorrect' });
+      return res.status(401).json({ usernameIncorrect: 'Username incorrect' })
     }
-    
-    const isPasswordCorrect = await bcrypt.compare(req.body.password, player.password);
+
+    const isPasswordCorrect = await bcrypt.compare(
+      req.body.password,
+      player.password
+    )
     if (!isPasswordCorrect) {
-      return res.status(401).json({ passwordIncorrect: 'Username incorrect' });
+      return res.status(401).json({ passwordIncorrect: 'Username incorrect' })
     }
-    
-    return res.status(200).json(player);
+
+    return res.status(200).json(player)
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message })
   }
-};
+}
