@@ -1,5 +1,6 @@
 import Cors from 'cors'
 import { PrismaClient } from '@prisma/client'
+import xpThresholdForLevel from 'src/utils/levelFunction'
 
 // Initialiser le middleware CORS
 let cors = Cors({
@@ -89,7 +90,7 @@ const updatePlayer = async (req, res) => {
       Boolean(updateData.levelingUp)
     ) {
       updateData.levelingUp = false
-      updateData.xp = updateData.xp - xpThresholdForLevel(updateData.level);
+      updateData.xp = updateData.xp - xpThresholdForLevel(updateData.level +1);
       updateData.level = updateData.level + 1
     }
 
