@@ -333,9 +333,9 @@ console.log('currentPlayer', currentPlayer)
                   onClick={handleConnectClick}
                   color="primary"
                 >
-                  Connectes-toi
+                 {t("Connectes-toi")}
                 </Link>{' '}
-                pour commencer à jouer !
+                {t("pour commencer à jouer !")}
               </Typography>
             </Box>
           </Container>

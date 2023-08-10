@@ -21,6 +21,8 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import axios from 'axios'
 import Header from 'src/components/header'
 import ReCAPTCHA from 'react-google-recaptcha'
+import { useTranslation } from "react-i18next"
+import Footer from 'src/components/footer'
 
 const Login = () => {
   const theme = useTheme()
@@ -38,6 +40,7 @@ const Login = () => {
   const [usernameIncorrect, setUsernameIncorrect] = useState(false)
   const [passwordIncorrect, setPasswordIncorrect] = useState(false)
   const [captchaValue, setCaptchaValue] = useState('')
+  const { t, i18n } = useTranslation()
 
   // Schéma de validation du formulaire de connexion
   const loginValidationSchema = Yup.object().shape({
@@ -173,10 +176,10 @@ const Login = () => {
               }}
             >
               <Typography component="h1" variant="h5">
-                Log in
+                {t("Connexion")}
               </Typography>
               <TextField
-                label="Username"
+                label={t("Pseudo")}
                 type="text"
                 value={username}
                 autoComplete="username"
@@ -193,7 +196,7 @@ const Login = () => {
                 }
               />
               <TextField
-                label="Password"
+                label={t("Mot de passe")}
                 type="password"
                 value={password}
                 {...loginForm.register('password')}
@@ -214,10 +217,10 @@ const Login = () => {
                 onChange={(value) => value && setCaptchaValue(value)}
               />
               <Button variant="contained" type="submit">
-                Login
+                {t("Se connecter")}
               </Button>
               <Button variant="text" onClick={() => setLog(!log)}>
-                Je n'ai pas de compte
+                {t("Je n'ai pas de compte")}
               </Button>
             </Box>
           </form>
@@ -236,10 +239,10 @@ const Login = () => {
               }}
             >
               <Typography component="h1" variant="h5">
-                Sign in
+                {t("Inscription")}
               </Typography>
               <TextField
-                label="Username"
+                label={t("Pseudo")}
                 type="text"
                 value={username}
                 {...registerForm.register('username')}
@@ -256,7 +259,7 @@ const Login = () => {
                 }
               />
               <TextField
-                label="Email"
+                label={t("Email")}
                 type="email"
                 value={email}
                 {...registerForm.register('email')}
@@ -272,7 +275,7 @@ const Login = () => {
                 }
               />
               <TextField
-                label="Password"
+                label={t("Mot de passe")}
                 type="password"
                 value={password}
                 {...registerForm.register('password')}
@@ -284,15 +287,16 @@ const Login = () => {
                 }
               />
               <Button variant="contained" type="submit">
-                Register
+                {t("S'inscrire")}
               </Button>
               <Button variant="text" onClick={() => setLog(!log)}>
-                J'ai déjà un compte
+                {t("J'ai déjà un compte")}
               </Button>
             </Box>
           </form>
         </Container>
       )}
+      <Footer />
       <Snackbar
         open={open}
         autoHideDuration={6000}
@@ -318,7 +322,7 @@ const Login = () => {
           }
           sx={{ mb: 2 }}
         >
-          Registration successful!
+          {t("Inscription réussie !")}
         </MuiAlert>
       </Snackbar>
       <Snackbar

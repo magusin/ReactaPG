@@ -1,3 +1,16 @@
 {
-    "Rejoins l'aventure, terrasse des monstres, monte en puissance et montre aux autres joueurs qui est le plus fort !" : "Join the adventure, defeat monsters, increase in power and show other players who is the strongest!"
+    "Rejoins l'aventure, terrasse des monstres, monte en puissance et montre aux autres joueurs qui est le plus fort !" : "Join the adventure, defeat monsters, increase in power and show other players who is the strongest!",
+    "Connectes-toi" : "Log in",
+    "pour commencer à jouer !" : "to start playing !",
+    "Connexion" : "Log in",
+    "Inscription" : "Sign up",
+    "Email" : "Email",
+    "Pseudo" : "Username",
+    "Mot de passe" : "Password",
+    "Je n'ai pas de compte" : "I don't have an account",
+    "J'ai déjà un compte" : "I already have an account",
+    "Se connecter" : "Log in",
+    "S'inscrire" : "Sign up",
+    "Déconnexion" : "Log out",
+    "Inscription réussie" : "Sign up successful"
 }
