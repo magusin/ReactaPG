@@ -25,6 +25,7 @@ import PlayerContext from 'src/utils/PlayerContext'
 import Tooltip from '@mui/material/Tooltip'
 import MuiAlert from '@mui/material/Alert'
 import CloseIcon from '@mui/icons-material/Close'
+import { useTranslation } from "react-i18next";
 
 export default function Duel() {
   const [players, setPlayers] = useState<Player[]>([])

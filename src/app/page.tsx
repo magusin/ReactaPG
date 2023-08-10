@@ -31,9 +31,11 @@ import StatsCard from 'src/components/statsCard'
 import TableNav from 'src/components/tableNav'
 import LevelUpAbilitiesChoices from 'src/components/levelUpAbilitiesChoices'
 import LevelUpCapacitiesChoices from 'src/components/levelUpCapacitiesChoices'
+import Footer from 'src/components/footer'
 import axios from 'axios'
 import xpThresholdForLevel from 'src/utils/levelFunction'
 import PlayerContext from 'src/utils/PlayerContext'
+import { useTranslation } from "react-i18next"
 
 export default function Home() {
   const { currentPlayer, setCurrentPlayer } = useContext(PlayerContext)
@@ -44,6 +46,15 @@ export default function Home() {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [user, setUser] = useState<any>(null)
+  const { locale } = router
+  const { t, i18n } = useTranslation()
+
+  // i18n
+  useEffect(() => {
+    if (i18n.changeLanguage) {
+      i18n.changeLanguage(locale);
+    }
+  }, [locale, i18n]);
 
   const handleConnectClick = () => {
     router.push('/login')
@@ -316,8 +327,7 @@ console.log('currentPlayer', currentPlayer)
                   fontSize: { xs: '1rem', sm: '1rem', md: '1rem' }
                 }}
               >
-                Rentre dans l'aventure, terrasse des monstres, monte en
-                puissance et montre aux autres joueurs qui est le plus fort !{' '}
+                {t("Rejoins l'aventure, terrasse des monstres, monte en puissance et montre aux autres joueurs qui est le plus fort !")}{' '}
                 <Link
                   href="/login"
                   onClick={handleConnectClick}
@@ -329,6 +339,7 @@ console.log('currentPlayer', currentPlayer)
               </Typography>
             </Box>
           </Container>
+          <Footer />
         </>
       )}
     </>

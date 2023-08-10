@@ -62,3 +62,23 @@ margin-left: 0 !important;
 .css-zow5z4-MuiGrid-root>.MuiGrid-item {
   padding-left: 0 !important;
 }
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+  background-color: #b59f3f00;
+  color: white;
+  text-align: center;
+  box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.1);
+  border-top: 1px #ccc;
+}
+
+
+.flag-button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 10px;
+}

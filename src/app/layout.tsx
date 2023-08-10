@@ -5,6 +5,7 @@ import { Inter } from 'next/font/google'
 import PlayerContext from 'src/utils/PlayerContext';
 import metaData from 'src/utils/MetaData';
 import { Player } from 'src/types/Player';
+import '#/i18n'
 
 const inter = Inter({ subsets: ['latin'] })
 
