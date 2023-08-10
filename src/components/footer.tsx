@@ -10,7 +10,6 @@ const Footer = () => {
   const pathname = usePathname();
 
   const handleLocaleChange = (locale) => {
-    console.log(`Changing locale to ${locale}`);
         const currentPath = pathname;
         if (currentPath) {
           i18n.changeLanguage(locale);

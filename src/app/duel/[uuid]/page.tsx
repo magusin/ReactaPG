@@ -32,6 +32,8 @@ import axios from 'axios'
 // component
 import PlayerInfo from 'src/components/playerInfo'
 import AnimatedText from 'src/components/AnimatedText'
+// translation
+import { useTranslation } from 'next-i18next';
 
 // types
 interface Letter {
@@ -71,6 +73,7 @@ const titleVariants = {
   exit: { opacity: 0, transition: { ease: 'easeInOut' } }
 }
 
+
 // DuelFight component
 export default function DuelFight() {
   const {
@@ -103,6 +106,10 @@ export default function DuelFight() {
     setMessage(newMessage)
     setOpen(true)
   }
+  const { i18n } = useTranslation();
+// translation current language
+const currentLanguage = i18n.language;
+console.log('currentLanguage', currentLanguage)
 
   useEffect(() => {
     if (!currentPlayer || !challengingPlayer) {
@@ -198,7 +205,8 @@ export default function DuelFight() {
             const message = GenerateMessage(
               currentPlayer,
               challengingPlayer,
-              damage
+              damage,
+              currentLanguage 
             )
             setBattleHistory((oldArray) => [...oldArray, message])
             setHpHistory((oldArray) => [
@@ -212,7 +220,8 @@ export default function DuelFight() {
             const message = GenerateMessage(
               challengingPlayer,
               currentPlayer,
-              damage
+              damage,
+              currentLanguage 
             )
             setBattleHistory((oldArray) => [...oldArray, message])
             setHpHistory((oldArray) => [

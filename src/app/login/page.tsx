@@ -350,7 +350,7 @@ const Login = () => {
           }
           sx={{ mb: 2 }}
         >
-          Login complete
+          {t("Connexion réussie !")}
         </MuiAlert>
       </Snackbar>
       <Snackbar
@@ -378,7 +378,7 @@ const Login = () => {
           }
           sx={{ mb: 2 }}
         >
-          Complete the captcha please
+          {t("Veuillez remplir le captcha s'il vous plait")}
         </MuiAlert>
       </Snackbar>
     </>

@@ -236,6 +236,7 @@ console.log('currentPlayer', currentPlayer)
               </Box>
             </Box>
           </Container>
+          <Footer/>
           <Dialog onClose={handleClose} open={open}>
             <DialogTitle
               sx={{ textAlign: 'center', backgroundColor: '#f2cb9a' }}

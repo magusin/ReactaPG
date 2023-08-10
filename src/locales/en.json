@@ -12,5 +12,7 @@
     "Se connecter" : "Log in",
     "S'inscrire" : "Sign up",
     "Déconnexion" : "Log out",
-    "Inscription réussie" : "Sign up successful"
+    "Inscription réussie" : "Sign up successful",
+    "Connexion réussie" : "Log in complete",
+    "Veuillez remplir le captcha s'il vous plait" : "Please fill in the captcha"
 }
