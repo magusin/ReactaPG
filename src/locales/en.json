@@ -29,5 +29,9 @@
     "Initiative" : "Initiative",
     "Aventure" : "Adventure",
     "Duel" : "Duel",
-    "Arêne" : "Arena"
+    "Arêne" : "Arena",
+    "Choisis ton adversaire" : "Choose your opponent",
+    "(Un combat coûte 4 Points d'Actions)" : "(A fight costs 4 Action Points)",
+    "Combat" : "Fight",
+    "Pas assez de points d'actions" : "Not enough action points"
 }

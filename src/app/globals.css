@@ -54,13 +54,11 @@ html {
   margin: auto 80px;
 }
 
-.css-zow5z4-MuiGrid-root {
-width: auto !important;
-margin-left: 0 !important;
-}
-
-.css-zow5z4-MuiGrid-root>.MuiGrid-item {
-  padding-left: 0 !important;
+@media (min-width: 600px) {
+  .table {
+      padding-left: 48px;
+      padding-right: 24px;
+  }
 }
 
 .footer {

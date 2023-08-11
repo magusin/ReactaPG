@@ -29,6 +29,10 @@
     "Initiative" : "Initiative",
     "Aventure" : "Aventure",
     "Duel" : "Duel",
-    "Arêne" : "Arêne"
+    "Arêne" : "Arêne",
+    "Choisis ton adversaire" : "Choisis ton adversaire",
+    "(Un combat coûte 4 Points d'Actions)" : "(Un combat coûte 4 Points d'Actions)",
+    "Combat" : "Combat",
+    "Pas assez de Points d'Actions" : "Pas assez de Points d'Actions"
     
 }

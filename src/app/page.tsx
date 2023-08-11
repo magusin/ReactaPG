@@ -146,13 +146,13 @@ export default function Home() {
       </Box>
     )
   }
-console.log('currentPlayer', currentPlayer) 
+
   return (
     <>
       {user != null ? (
         <>
           <Header />
-          <Container>
+          <Container className="table">
             <Grid
               container
               spacing={3}
