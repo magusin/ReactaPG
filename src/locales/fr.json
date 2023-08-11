@@ -14,6 +14,18 @@
     "Déconnexion" : "Déconnexion",
     "Inscription réussie" : "Inscription réussie",
     "Connexion réussie" : "Connexion réussie",
-    "Veuillez remplir le captcha s'il vous plait" : "Veuillez remplir le captcha s'il vous plait"
-  
+    "Veuillez remplir le captcha s'il vous plait" : "Veuillez remplir le captcha s'il vous plait",
+    "Logs" : "Logs",
+    "Niveau supérieur" : "Niveau supérieur",
+    "Historique de combat" : "Historique de combat",
+    "Niveau" : "Niveau",
+    "Vie" : "Vie",
+    "Action" : "Action",
+    "Force" : "Force",
+    "Dextérité" : "Dextérité",
+    "Vitesse" : "Vitesse",
+    "Dommage" : "Dommage",
+    "Défense" : "Défense",
+    "Initiative" : "Initiative"
+    
 }

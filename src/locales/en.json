@@ -14,5 +14,17 @@
     "Déconnexion" : "Log out",
     "Inscription réussie" : "Sign up successful",
     "Connexion réussie" : "Log in complete",
-    "Veuillez remplir le captcha s'il vous plait" : "Please fill in the captcha"
+    "Veuillez remplir le captcha s'il vous plait" : "Please fill in the captcha",
+    "Logs" : "Logs",
+    "Niveau supérieur" : "Level up",
+    "Historique de combat" : "Fight Logs",
+    "Niveau" : "Level",
+    "Vie" : "Health",
+    "Action" : "Action",
+    "Force" : "Strength",
+    "Dextérité" : "Dexterity",
+    "Vitesse" : "Speed",
+    "Dommage" : "Damage",
+    "Défense" : "Defense",
+    "Initiative" : "Initiative"
 }

@@ -174,7 +174,7 @@ console.log('currentPlayer', currentPlayer)
                   xpThresholdForLevel(currentPlayer.level + 1) &&
                 !currentPlayer.levelingUp ? (
                   <Button onClick={handleLevelUp} sx={{ fontSize: '2rem' }}>
-                    Level Up
+                    {t("Niveau supérieur")}
                   </Button>
                 ) : currentPlayer &&
                   currentPlayer.levelingUp &&
@@ -230,7 +230,7 @@ console.log('currentPlayer', currentPlayer)
                       marginBottom: '50px'
                     }}
                   >
-                    Logs
+                    {t("Logs")}
                   </Typography>
                 </Box>
               </Box>
@@ -241,7 +241,7 @@ console.log('currentPlayer', currentPlayer)
             <DialogTitle
               sx={{ textAlign: 'center', backgroundColor: '#f2cb9a' }}
             >
-              Fight Logs
+              {t("Historique de combat")}
             </DialogTitle>
             <DialogContent
               sx={{

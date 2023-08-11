@@ -24,9 +24,10 @@ import { Player } from 'src/types/Player'
 //utils
 import xpThresholdForLevel from 'src/utils/levelFunction'
 import PlayerContext from 'src/utils/PlayerContext'
+import { useTranslation } from "react-i18next"
 
 const Stats = () => {
-
+  const { t, i18n } = useTranslation()
   const { currentPlayer, setCurrentPlayer } = useContext(PlayerContext)
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
@@ -76,7 +77,7 @@ const Stats = () => {
         color="teal"
         sx={{ flexGrow: 1, fontFamily: 'fantasy', padding: '8px' }}
       >
-        Level : {currentPlayer && currentPlayer.level}
+        {t("Niveau")} : {currentPlayer && currentPlayer.level}
       </Typography>
       <Box
         display="flex"
@@ -86,7 +87,7 @@ const Stats = () => {
         width="100%"
       >
         <Box display="flex" alignItems="center">
-          <Tooltip title="Health" placement="top">
+          <Tooltip title={t("Vie")} placement="top">
             <Box position="relative" width={100} height={100}>
               <Image
                 priority
@@ -139,7 +140,7 @@ const Stats = () => {
 </Tooltip>
         </Box>
         <Box display="flex" alignItems="center">
-          <Tooltip title="Action" placement="top">
+          <Tooltip title={t("Action")} placement="top">
             <Box position="relative" width={100} height={100}>
               <Image
                 priority
@@ -184,7 +185,7 @@ const Stats = () => {
       >
         <Box display="flex" alignItems="center" flexDirection="column">
           <Box display="flex" alignItems="center" padding="8px">
-            <Tooltip title="Strength" placement="top">
+            <Tooltip title={t("Force")} placement="top">
               <Box position="relative" width={100} height={100}>
                 <Image
                   priority
@@ -221,7 +222,7 @@ const Stats = () => {
             </Tooltip>
           </Box>
           <Box display="flex" alignItems="center" padding="8px">
-            <Tooltip title="Dexterity" placement="top">
+            <Tooltip title={t("Dextérité")} placement="top">
               <Box position="relative" width={100} height={100}>
                 <Image
                   priority
@@ -258,7 +259,7 @@ const Stats = () => {
             </Tooltip>
           </Box>
           <Box display="flex" alignItems="center" padding="8px">
-            <Tooltip title="Speed" placement="top">
+            <Tooltip title={t("Vitesse")} placement="top">
               <Box position="relative" width={100} height={100}>
                 <Image
                   priority
@@ -297,7 +298,7 @@ const Stats = () => {
         </Box>
         <Box display="flex" alignItems="center" flexDirection="column">
           <Box display="flex" alignItems="center" padding="8px">
-            <Tooltip title="Damage" placement="top">
+            <Tooltip title={t("Dommage")} placement="top">
               <Box position="relative" width={100} height={100}>
                 <Image
                   priority
@@ -334,7 +335,7 @@ const Stats = () => {
             </Tooltip>
           </Box>
           <Box display="flex" alignItems="center" padding="8px">
-            <Tooltip title="Defense" placement="top">
+            <Tooltip title={t("Défense")} placement="top">
               <Box position="relative" width={100} height={100}>
                 <Image
                   priority
@@ -371,7 +372,7 @@ const Stats = () => {
             </Tooltip>
           </Box>
           <Box display="flex" alignItems="center" padding="8px">
-            <Tooltip title="Initiative" placement="top">
+            <Tooltip title={t("Initiative")} placement="top">
               <Box position="relative" width={100} height={100}>
                 <Image
                   priority
