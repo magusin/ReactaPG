@@ -26,6 +26,9 @@
     "Vitesse" : "Vitesse",
     "Dommage" : "Dommage",
     "Défense" : "Défense",
-    "Initiative" : "Initiative"
+    "Initiative" : "Initiative",
+    "Aventure" : "Aventure",
+    "Duel" : "Duel",
+    "Arêne" : "Arêne"
     
 }
