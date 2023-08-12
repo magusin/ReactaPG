@@ -131,7 +131,7 @@ export default function Home() {
       setIsLoading(false)
     }
   }, [router, setCurrentPlayer])
-
+console.log(currentPlayer)
   if (isLoading) {
     return (
       <Box
