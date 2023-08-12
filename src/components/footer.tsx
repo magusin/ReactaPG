@@ -9,7 +9,7 @@ const Footer = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const handleLocaleChange = (locale) => {
+  const handleLocaleChange = (locale : any) => {
         const currentPath = pathname;
         if (currentPath) {
           i18n.changeLanguage(locale);

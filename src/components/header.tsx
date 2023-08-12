@@ -3,6 +3,10 @@ import { styled } from '@mui/material/styles'
 import { useRouter } from 'next/navigation'
 import { useTranslation } from 'next-i18next'
 
+interface ClickableImageProps {
+  bgImageUrl: string;
+}
+
 const Header = () => {
   const { i18n } = useTranslation()
   // translation current language
@@ -11,6 +15,8 @@ const Header = () => {
   const home = () => {
     router.push('/')
   }
+
+ 
 
   const bgImageUrl =
     currentLanguage === 'fr'
@@ -26,7 +32,7 @@ const Header = () => {
     marginBottom: '50px'
   })
 
-  const ClickableImage = styled('div')(({ bgImageUrl }) => ({
+  const ClickableImage = styled('div')<ClickableImageProps>(({ bgImageUrl }) => ({
     backgroundImage: `url("${bgImageUrl}")`,
     backgroundPosition: 'top center',
     backgroundRepeat: 'no-repeat',

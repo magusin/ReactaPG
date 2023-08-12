@@ -46,8 +46,8 @@ export default function Home() {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [user, setUser] = useState<any>(null)
-  const { locale } = router
   const { t, i18n } = useTranslation()
+  const locale = i18n.language
 
   // i18n
   useEffect(() => {
