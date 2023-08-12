@@ -31,9 +31,11 @@ import StatsCard from 'src/components/statsCard'
 import TableNav from 'src/components/tableNav'
 import LevelUpAbilitiesChoices from 'src/components/levelUpAbilitiesChoices'
 import LevelUpCapacitiesChoices from 'src/components/levelUpCapacitiesChoices'
+import Footer from 'src/components/footer'
 import axios from 'axios'
 import xpThresholdForLevel from 'src/utils/levelFunction'
 import PlayerContext from 'src/utils/PlayerContext'
+import { useTranslation } from "react-i18next"
 
 export default function Home() {
   const { currentPlayer, setCurrentPlayer } = useContext(PlayerContext)
@@ -44,6 +46,15 @@ export default function Home() {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [user, setUser] = useState<any>(null)
+  const { t, i18n } = useTranslation()
+  const locale = i18n.language
+
+  // i18n
+  useEffect(() => {
+    if (i18n.changeLanguage) {
+      i18n.changeLanguage(locale);
+    }
+  }, [locale, i18n]);
 
   const handleConnectClick = () => {
     router.push('/login')
@@ -135,13 +146,13 @@ export default function Home() {
       </Box>
     )
   }
-console.log('currentPlayer', currentPlayer) 
+
   return (
     <>
       {user != null ? (
         <>
           <Header />
-          <Container>
+          <Container className="table">
             <Grid
               container
               spacing={3}
@@ -163,7 +174,7 @@ console.log('currentPlayer', currentPlayer)
                   xpThresholdForLevel(currentPlayer.level + 1) &&
                 !currentPlayer.levelingUp ? (
                   <Button onClick={handleLevelUp} sx={{ fontSize: '2rem' }}>
-                    Level Up
+                    {t("Niveau supérieur")}
                   </Button>
                 ) : currentPlayer &&
                   currentPlayer.levelingUp &&
@@ -219,17 +230,18 @@ console.log('currentPlayer', currentPlayer)
                       marginBottom: '50px'
                     }}
                   >
-                    Logs
+                    {t("Logs")}
                   </Typography>
                 </Box>
               </Box>
             </Box>
           </Container>
+          <Footer/>
           <Dialog onClose={handleClose} open={open}>
             <DialogTitle
               sx={{ textAlign: 'center', backgroundColor: '#f2cb9a' }}
             >
-              Fight Logs
+              {t("Historique de combat")}
             </DialogTitle>
             <DialogContent
               sx={{
@@ -316,19 +328,19 @@ console.log('currentPlayer', currentPlayer)
                   fontSize: { xs: '1rem', sm: '1rem', md: '1rem' }
                 }}
               >
-                Rentre dans l'aventure, terrasse des monstres, monte en
-                puissance et montre aux autres joueurs qui est le plus fort !{' '}
+                {t("Rejoins l'aventure, terrasse des monstres, monte en puissance et montre aux autres joueurs qui est le plus fort !")}{' '}
                 <Link
                   href="/login"
                   onClick={handleConnectClick}
                   color="primary"
                 >
-                  Connectes-toi
+                 {t("Connectes-toi")}
                 </Link>{' '}
-                pour commencer à jouer !
+                {t("pour commencer à jouer !")}
               </Typography>
             </Box>
           </Container>
+          <Footer />
         </>
       )}
     </>

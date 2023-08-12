@@ -25,6 +25,7 @@ import PlayerContext from 'src/utils/PlayerContext'
 import Tooltip from '@mui/material/Tooltip'
 import MuiAlert from '@mui/material/Alert'
 import CloseIcon from '@mui/icons-material/Close'
+import { useTranslation } from "react-i18next";
 
 export default function Duel() {
   const [players, setPlayers] = useState<Player[]>([])
@@ -33,6 +34,7 @@ export default function Duel() {
   const [user, setUser] = useState<any>(null)
   const { setCurrentPlayer, setChallengingPlayer } = useContext(PlayerContext)
   const [open, setOpen] = useState<boolean>(false)
+  const { t, i18n } = useTranslation()
 
   useEffect(() => {
     const currentUser = localStorage.getItem('user')
@@ -110,10 +112,10 @@ export default function Duel() {
       <Container>
         <Box className="boxTitleStyles" display="flex" flexDirection="column">
           <Typography variant="h4" gutterBottom>
-            Choose your opponent
+            {t("Choisis ton adversaire")}
           </Typography>
           <Typography variant="body1">
-            (One Fight cost 4 Actions Points)
+            {t("(Un combat coûte 4 Points d'Actions)")}
           </Typography>
         </Box>
         <Grid container spacing={3}>
@@ -134,10 +136,10 @@ export default function Duel() {
                   {player.username.toUpperCase()}
                 </Typography>
                 <Typography color="teal" fontFamily="fantasy" variant="h5">
-                  Level : {player.level}
+                  {t("Niveau")} : {player.level}
                 </Typography>
                 <Box display="flex" alignItems="center">
-                  <Tooltip title="Health" placement="top">
+                  <Tooltip title={t("Vie")} placement="top">
                     <Box position="relative" width={100} height={100}>
                       <Image
                         priority
@@ -175,7 +177,7 @@ export default function Duel() {
                 </Box>
                 <Box display="flex" flexDirection="row" marginBottom="8px" justifyContent="space-evenly" width="100%">
                 <Box display="flex" alignItems="center">
-                  <Tooltip title="Strength" placement="top">
+                  <Tooltip title={t("Force")} placement="top">
                     <Box position="relative" width={100} height={100}>
                       <Image
                         priority
@@ -212,7 +214,7 @@ export default function Duel() {
                   </Tooltip>
                 </Box>
                 <Box display="flex" alignItems="center">
-                  <Tooltip title="Dexterity" placement="top">
+                  <Tooltip title={t("Dextérité")} placement="top">
                     <Box position="relative" width={100} height={100}>
                       <Image
                         priority
@@ -249,7 +251,7 @@ export default function Duel() {
                   </Tooltip>
                 </Box>
                 <Box display="flex" alignItems="center">
-                  <Tooltip title="Speed" placement="top">
+                  <Tooltip title={t("Vitesse")} placement="top">
                     <Box position="relative" width={100} height={100}>
                       <Image
                         priority
@@ -324,7 +326,7 @@ export default function Duel() {
                     }
                   }}
                 >
-                  Fight
+                  {t("Combat")}
                 </Button>
               </Box>
             </Grid>
@@ -356,7 +358,7 @@ export default function Duel() {
           }
           sx={{ mb: 2 }}
         >
-          Not enough PA
+          {t("Pas assez de Points d'Actions")}
         </MuiAlert>
       </Snackbar>
     </>

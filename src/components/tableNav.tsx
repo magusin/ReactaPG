@@ -4,9 +4,11 @@ import tableWood from '#/public/tableWood.png'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useTranslation } from "react-i18next"
 
 const TableNav = () => {
   const router = useRouter()
+  const { t, i18n } = useTranslation()
 
   const handleLogout = async (e : React.MouseEvent) => {
     await localStorage.removeItem('user')
@@ -68,7 +70,7 @@ const TableNav = () => {
           color: '#674106'
         }}
       >
-        <Link href="/">Adventure</Link>
+        <Link href="/">{t("Aventure")}</Link>
       </Typography>
 
       <Typography
@@ -92,7 +94,7 @@ const TableNav = () => {
           color: '#674106'
         }}
       >
-        <Link href="/duel">Duel</Link>
+        <Link href="/duel">{t("Duel")}</Link>
       </Typography>
 
       <Typography
@@ -116,7 +118,7 @@ const TableNav = () => {
           color: '#674106'
         }}
       >
-        <Link href="/">Arêne</Link>
+        <Link href="/">{t("Arêne")}</Link>
       </Typography>
       <Typography
         variant="h4"
@@ -139,7 +141,7 @@ const TableNav = () => {
         }}
       >
         <Link href="/" onClick={handleLogout}>
-          LogOut
+          {t("Déconnexion")}
         </Link>
       </Typography>
     </Container>
