@@ -1,9 +1,10 @@
 import { Ability } from 'src/types/Ability'
 import { Fight } from 'src/types/Fight'
 import { Capacity } from 'src/types/Capacity'
-import { Spell } from 'src/types/Spell'
+import { Skill } from 'src/types/Skill'
 import { AbilityChoice } from 'src/types/AbilityChoice'
 import { CapacityChoice } from 'src/types/CapacityChoice'
+import { SkillChoice } from 'src/types/SkillChoice'
 
 export interface Player {
   id: number;
@@ -29,9 +30,10 @@ export interface Player {
   abilityChoices: AbilityChoice[];
   abilityRequired: boolean;
   capacitiesRequired: boolean;
-  spellsRequired: boolean;
+  skillsRequired: boolean;
   capacities: Capacity[];
   capacityChoices: CapacityChoice[];
-  spells: Spell[];
+  skills: Skill[];
+  skillChoices : SkillChoice[];
   levelingUp: boolean;
 }

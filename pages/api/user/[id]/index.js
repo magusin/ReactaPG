@@ -85,7 +85,7 @@ const updatePlayer = async (req, res) => {
 
     if (
       !Boolean(updateData.capacitiesRequired) &&
-      !Boolean(updateData.spellsRequired) &&
+      !Boolean(updateData.skillsRequired) &&
       !Boolean(updateData.abilityRequired) &&
       Boolean(updateData.levelingUp)
     ) {
@@ -112,7 +112,13 @@ const updatePlayer = async (req, res) => {
             capacity: true
           }
         },
+        skillChoices: {
+          include: {
+            skill: true
+          }
+        },
         capacities: true,
+        skills: true
       }
     })
 
