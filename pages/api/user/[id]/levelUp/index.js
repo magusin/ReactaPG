@@ -70,6 +70,9 @@ const levelUp = async (req, res) => {
       2, 5, 7, 10, 12, 15, 17, 20, 22, 25, 27, 30, 32, 35, 37, 40, 42, 45, 47,
       50
     ])
+    const levelSkillSet = new Set([
+      2, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50
+    ])
     const allAbilities = await prisma.ability.findMany()
     let abilities = []
 

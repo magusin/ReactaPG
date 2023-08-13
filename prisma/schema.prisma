@@ -31,10 +31,11 @@ model Player {
   abilityChoices     AbilityChoice[]  @relation("PlayerToAbilityChoice")
   abilityRequired    Boolean    @default(false)
   capacitiesRequired Boolean    @default(false)
-  spellsRequired     Boolean    @default(false)
+  skillsRequired     Boolean    @default(false)
   capacities         Capacity[] @relation("PlayerToCapacity")
   capacityChoices    CapacityChoice[] @relation("PlayerToCapacityChoice")
-  spells             Spell[]    @relation("PlayerToSpell")
+  skills             Skill[]    @relation("PlayerToSkill")
+  skillChoices       SkillChoice[] @relation("PlayerToSkillChoice")
   levelingUp         Boolean    @default(false)
 }
 
@@ -54,6 +55,14 @@ model AbilityChoice {
   player            Player   @relation("PlayerToAbilityChoice", fields: [playerId], references: [id])
   abilityId         Int
   ability           Ability  @relation("AbilityToAbilityChoice", fields: [abilityId], references: [id])
+}
+
+model SkillChoice {
+  id      Int    @id @default(autoincrement())
+  player  Player @relation("PlayerToSkillChoice", fields: [playerId], references: [id])
+  skill   Skill  @relation("SkillToSkillChoice", fields: [skillId], references: [id])
+  playerId Int
+  skillId Int
 }
 
 model Capacity {
@@ -102,9 +111,10 @@ model FightEvent {
   Fight     Fight    @relation(fields: [fight_id], references: [uuid])
 }
 
-model Spell {
+model Skill {
   id          Int      @id @default(autoincrement())
   name        String
   description String
-  players     Player[] @relation("PlayerToSpell")
+  players     Player[] @relation("PlayerToSkill")
+  skillChoices SkillChoice[] @relation("SkillToSkillChoice")
 }
