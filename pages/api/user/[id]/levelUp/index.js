@@ -52,7 +52,13 @@ const levelUp = async (req, res) => {
             capacity: true
           }
         },
-        capacities: true
+        skillChoices: {
+          include: {
+            skill: true
+          }
+        },
+        capacities: true,
+        skills: true
       }
     })
 
@@ -70,9 +76,7 @@ const levelUp = async (req, res) => {
       2, 5, 7, 10, 12, 15, 17, 20, 22, 25, 27, 30, 32, 35, 37, 40, 42, 45, 47,
       50
     ])
-    const levelSkillSet = new Set([
-      2, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50
-    ])
+    const levelSkillSet = new Set([2, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50])
     const allAbilities = await prisma.ability.findMany()
     let abilities = []
 
@@ -85,6 +89,7 @@ const levelUp = async (req, res) => {
         abilities.push(randomAbility)
       }
     }
+    console.log('abilities', abilities)
 
     // Pour les Capacity
     let capacitiesChoices = []
@@ -113,29 +118,32 @@ const levelUp = async (req, res) => {
         }
       }
     }
-
-    let SkillChoices = []
+    console.log('capacitiesChoices', capacitiesChoices)
+    console.log('Player object:', player)
+    console.log("Player's skills:", player.skills)
+    let skillChoices = []
     if (levelSkillSet.has(player.level + 1)) {
-      const allSkills = await prisma.Skill.findMany({
+      const allSkills = await prisma.skill.findMany({
         where: {
           NOT: {
             id: {
-              in: player.Skills.map((Skill) => Skill.id) // Assurez-vous que 'Skills' est une relation dans votre modèle Prisma
+              in: player.skills.map((skill) => skill.id) // Assurez-vous que 'Skills' est une relation dans votre modèle Prisma
             }
           }
         }
       })
-
-      while (SkillChoices.length < 3) {
+      console.log('allSkills', allSkills)
+      while (skillChoices.length < 3) {
         const randomSkill =
           allSkills[Math.floor(Math.random() * allSkills.length)]
 
         // Vérifiez que le sort n'est pas déjà dans le tableau
-        if (!SkillChoices.find((Skill) => Skill.id === randomSkill.id)) {
-          SkillChoices.push(randomSkill)
+        if (!skillChoices.find((skill) => skill.id === randomSkill.id)) {
+          skillChoices.push(randomSkill)
         }
       }
     }
+    console.log('skillChoices', skillChoices)
 
     const updatedPlayer = await prisma.player.update({
       where: { id: playerId },
@@ -152,8 +160,8 @@ const levelUp = async (req, res) => {
         },
         skillChoices: {
           create: skillChoices.map((skill) => ({
-            skillId: skill.id,
-          })),
+            skillId: skill.id
+          }))
         },
         abilityRequired: true,
         capacitiesRequired: levelSet.has(player.level + 1),
@@ -173,7 +181,7 @@ const levelUp = async (req, res) => {
         },
         skillChoices: {
           include: {
-            skill: true,
+            skill: true
           }
         }
       }

@@ -31,7 +31,7 @@ const LevelUpAbilityChoices = () => {
           levelingUp: currentPlayer.levelingUp,
           abilityRequired: false,
           capacitiesRequired: currentPlayer.capacitiesRequired,
-          spellsRequired: currentPlayer.spellsRequired,
+          skillsRequired: currentPlayer.skillsRequired,
           xp: currentPlayer.xp
         }
 

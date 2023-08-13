@@ -63,7 +63,13 @@ const getPlayer = async (req, res) => {
             capacity: true
           }
         },
+        skillChoices: {
+          include: {
+            skill: true
+          }
+        },
         capacities: true,
+        skills: true
       }
     })
     if (player) {
