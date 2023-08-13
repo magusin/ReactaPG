@@ -26,7 +26,7 @@ export default async function handler(req, res) {
     switch (req.method) {
       case 'DELETE':
         if (req.query.id) {
-          return await deleteCapacities(req, res)
+          return await deleteSkills(req, res)
         }
         break
       default:
@@ -37,11 +37,11 @@ export default async function handler(req, res) {
   }
 }
 
-const deleteCapacities = async (req, res) => {
+const deleteSkills = async (req, res) => {
   try {
     const playerId = parseInt(req.query.id)
 
-    const capacities = await prisma.capacityChoice.deleteMany({
+    const capacities = await prisma.skillChoice.deleteMany({
       where: {
         playerId: playerId
       }

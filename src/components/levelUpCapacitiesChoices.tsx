@@ -38,6 +38,9 @@ const LevelUpCapacitiesChoices = () => {
           abilityRequired: currentPlayer.abilityRequired,
           skillsRequired: currentPlayer.skillsRequired,
           capacitiesRequired: false,
+          pa: currentPlayer.pa,
+          paMax: currentPlayer.paMax,
+          init: currentPlayer.init,
           xp: currentPlayer.xp,
           capacities: { connect: { id: selectedCapacity.id } }
         }
