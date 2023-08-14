@@ -104,7 +104,9 @@ const levelUp = async (req, res) => {
         }
       })
 
-      while (capacitiesChoices.length < 3) {
+      const maxChoicesCapacities = Math.min(3, allCapacities.length);
+
+      while (capacitiesChoices.length < maxChoicesCapacities) {
         const randomCapacity =
           allCapacities[Math.floor(Math.random() * allCapacities.length)]
 
@@ -118,9 +120,7 @@ const levelUp = async (req, res) => {
         }
       }
     }
-    console.log('capacitiesChoices', capacitiesChoices)
-    console.log('Player object:', player)
-    console.log("Player's skills:", player.skills)
+
     let skillChoices = []
     if (levelSkillSet.has(player.level + 1)) {
       const allSkills = await prisma.skill.findMany({
@@ -132,8 +132,10 @@ const levelUp = async (req, res) => {
           }
         }
       })
-      console.log('allSkills', allSkills)
-      while (skillChoices.length < 3) {
+   
+      const maxChoicesSkills = Math.min(3, allSkills.length);
+
+      while (skillChoices.length < maxChoicesSkills) {
         const randomSkill =
           allSkills[Math.floor(Math.random() * allSkills.length)]
 
