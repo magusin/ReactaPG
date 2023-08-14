@@ -106,10 +106,14 @@ export default function DuelFight() {
     setMessage(newMessage)
     setOpen(true)
   }
+  console.log('currentPlayer', currentPlayer)
+console.log('challengingPlayer', challengingPlayer)
   const { i18n } = useTranslation();
 // translation current language
 const currentLanguage = i18n.language;
-console.log('currentLanguage', currentLanguage)
+// set skills
+const [currentPlayerUsedSkills, setCurrentPlayerUsedSkills] = useState(new Set())
+const [challengingPlayerUsedSkills, setChallengingPlayerUsedSkills] = useState(new Set())
 
   useEffect(() => {
     if (!currentPlayer || !challengingPlayer) {
@@ -121,6 +125,15 @@ console.log('currentLanguage', currentLanguage)
       }
       const fightInterval = setInterval(() => {
         if (currentHp1 <= 0 || currentHp2 <= 0) {
+          if (currentHp1 <= 0 && currentPlayer.skills.some(skill => skill.id === 1) && !currentPlayerUsedSkills.has(1)) {
+            setCurrentHp1(currentPlayer.hpMax / 10)
+            setCurrentPlayerUsedSkills(prev => new Set(prev).add(1))
+            openSnackbar('You used your skill "Renaissance"')
+          } else if (currentHp2 <= 0 && challengingPlayer.skills.some(skill => skill.id === 1) && !challengingPlayerUsedSkills.has(1)) {
+            setCurrentHp2(challengingPlayer.hpMax / 10)
+            setChallengingPlayerUsedSkills(prev => new Set(prev).add(1))
+            openSnackbar('You used your skill "Renaissance"')
+          } else {
           // The battle is over, display the result only once
           const result =
             currentHp1 <= 0
@@ -191,7 +204,8 @@ console.log('currentLanguage', currentLanguage)
           }
           // call function
           performSaving()
-        } else {
+        }
+      } else {
           const player = order.shift()
           if (order.length === 0) {
             setOrder(
