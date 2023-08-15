@@ -35,7 +35,7 @@ const LevelUpSkillsChoice = () => {
           capacitiesRequired: false,
           abilityRequired: false
         }
-        console.log("updatedPlayer", updatedPlayer)
+        console.log('updatedPlayer', updatedPlayer)
         const response = await fetch(`/api/user/${currentPlayer.id}`, {
           method: 'PUT',
           headers: {
@@ -67,24 +67,24 @@ const LevelUpSkillsChoice = () => {
     }
   }
 
-
-return (
+  return (
     <Container
-    sx={{
-      alignItems: 'center',
-      width: '100%',
-      height: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'space-around'
-    }}
-  >
-    <Typography
+      sx={{
+        alignItems: 'center',
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-around'
+      }}
+    >
+      <Typography
         variant="h4"
         sx={{ margin: '12px', fontFamily: 'fantasy', textAlign: 'center' }}
       >
         Choisissez votre compétence pour le level up
       </Typography>
+
       <Grid
         container
         justifyContent="center"
@@ -92,193 +92,58 @@ return (
         spacing={2}
         style={{ width: 'auto' }}
       >
-        <Grid
-          item
-          xs={12}
-          sm={6}
-          sx={{ display: 'flex', justifyContent: 'center' }}
-        >
-          {currentPlayer &&
-            currentPlayer.skillChoices &&
-            currentPlayer.skillChoices[0].skill && (
-              <Box
-                sx={{
-                  width: '200px',
-                  height: 'auto',
-                  cursor: 'pointer',
-                  marginBottom: 2,
-                  backgroundColor:
-                    selectedSkill === currentPlayer.skillChoices[0].skill
-                      ? '#9ac3ed'
-                      : '#d9d6b6',
-                  boxShadow: '0 3px 5px 2px rgba(0, 0, 0, .3)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  padding: '1rem',
-                  borderRadius: '30px'
-                }}
-                onClick={() => {
-                  if (
-                    currentPlayer &&
-                    currentPlayer.skillChoices &&
-                    currentPlayer.skillChoices[0].skill
-                  ) {
-                    handleSelect(currentPlayer.skillChoices[0].skill)
-                  }
-                }}
-              >
-                <Typography variant="h5">
-                  {currentPlayer.skillChoices[0].skill.name}
-                </Typography>
-                
-                
-                {currentPlayer &&
-                  currentPlayer.skillChoices[0].skill &&
-                  currentPlayer.skillChoices[0].skill.description && (
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        margin: '8px'
-                      }}
-                    >
-                   
-                      <Typography
-                        sx={{ marginLeft: '10px' }}
-                      >{`${currentPlayer.skillChoices[0].skill.description}`}</Typography>
-                    </Box>
-                  )}
-              </Box>
-            )}
-        </Grid>
-        <Grid
-          item
-          xs={12}
-          sm={6}
-          sx={{ display: 'flex', justifyContent: 'center' }}
-        >
-          {currentPlayer &&
-            currentPlayer.skillChoices &&
-            currentPlayer.skillChoices[1].skill && (
-              <Box
-                sx={{
-                  width: '200px',
-                  height: 'auto',
-                  cursor: 'pointer',
-                  marginBottom: 2,
-                  backgroundColor:
-                    selectedSkill === currentPlayer.skillChoices[1].skill
-                      ? '#9ac3ed'
-                      : '#d9d6b6',
-                  boxShadow: '0 3px 5px 2px rgba(0, 0, 0, .3)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  padding: '1rem',
-                  borderRadius: '30px'
-                }}
-                onClick={() => {
-                  if (
-                    currentPlayer &&
-                    currentPlayer.skillChoices &&
-                    currentPlayer.skillChoices[1].skill
-                  ) {
-                    handleSelect(currentPlayer.skillChoices[1].skill)
-                  }
-                }}
-              >
-                <Typography variant="h5">
-                  {currentPlayer.skillChoices[1].skill.name}
-                </Typography>
-                
-                
-                {currentPlayer &&
-                  currentPlayer.skillChoices[1].skill &&
-                  currentPlayer.skillChoices[1].skill.description && (
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        margin: '8px'
-                      }}
-                    >
-                   
-                      <Typography
-                        sx={{ marginLeft: '10px' }}
-                      >{`${currentPlayer.skillChoices[1].skill.description}`}</Typography>
-                    </Box>
-                  )}
-              </Box>
-            )}
-        </Grid>
-        <Grid
-          item
-          xs={12}
-          sm={6}
-          sx={{ display: 'flex', justifyContent: 'center' }}
-        >
-          {currentPlayer &&
-            currentPlayer.skillChoices &&
-            currentPlayer.skillChoices[2].skill && (
-              <Box
-                sx={{
-                  width: '200px',
-                  height: 'auto',
-                  cursor: 'pointer',
-                  marginBottom: 2,
-                  backgroundColor:
-                    selectedSkill === currentPlayer.skillChoices[2].skill
-                      ? '#9ac3ed'
-                      : '#d9d6b6',
-                  boxShadow: '0 3px 5px 2px rgba(0, 0, 0, .3)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  padding: '1rem',
-                  borderRadius: '30px'
-                }}
-                onClick={() => {
-                  if (
-                    currentPlayer &&
-                    currentPlayer.skillChoices &&
-                    currentPlayer.skillChoices[2].skill
-                  ) {
-                    handleSelect(currentPlayer.skillChoices[2].skill)
-                  }
-                }}
-              >
-                <Typography variant="h5">
-                  {currentPlayer.skillChoices[2].skill.name}
-                </Typography>
-                
-                
-                {currentPlayer &&
-                  currentPlayer.skillChoices[2].skill &&
-                  currentPlayer.skillChoices[2].skill.description && (
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        margin: '8px'
-                      }}
-                    >
-                   
-                      <Typography
-                        sx={{ marginLeft: '10px' }}
-                      >{`${currentPlayer.skillChoices[2].skill.description}`}</Typography>
-                    </Box>
-                  )}
-              </Box>
-            )}
-        </Grid>
-        </Grid>
+        {currentPlayer &&
+          currentPlayer.skillChoices &&
+          currentPlayer.skillChoices.map(
+            (choice, index) =>
+              choice.skill && (
+                <Grid
+                  item
+                  xs={12}
+                  sm={6}
+                  sx={{ display: 'flex', justifyContent: 'center' }}
+                  key={index}
+                >
+                  <Box
+                    sx={{
+                      width: '200px',
+                      height: 'auto',
+                      cursor: 'pointer',
+                      marginBottom: 2,
+                      backgroundColor:
+                        selectedSkill === choice.skill ? '#9ac3ed' : '#d9d6b6',
+                      boxShadow: '0 3px 5px 2px rgba(0, 0, 0, .3)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      padding: '1rem',
+                      borderRadius: '30px'
+                    }}
+                    onClick={() => handleSelect(choice.skill)}
+                  >
+                    <Typography variant="h5">{choice.skill.name}</Typography>
+
+                    {choice.skill.description && (
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          margin: '8px'
+                        }}
+                      >
+                        <Typography sx={{ marginLeft: '10px' }}>
+                          {choice.skill.description}
+                        </Typography>
+                      </Box>
+                    )}
+                  </Box>
+                </Grid>
+              )
+          )}
+      </Grid>
+
       <Button
         variant="contained"
         color="primary"
