@@ -106,7 +106,7 @@ const LevelUpCapacitiesChoices = () => {
           cursor: 'pointer',
           marginBottom: 2,
           backgroundColor:
-            selectedCapacity === currentPlayer.capacityChoices.capacity
+            selectedCapacity === capacityChoice.capacity
               ? '#9ac3ed'
               : '#d9d6b6',
           boxShadow: '0 3px 5px 2px rgba(0, 0, 0, .3)',
@@ -119,11 +119,10 @@ const LevelUpCapacitiesChoices = () => {
         }}
         onClick={() => {
           if (
-            currentPlayer &&
-            currentPlayer.capacityChoices &&
-            currentPlayer.capacityChoices.capacity
+            capacityChoice &&
+            capacityChoice.capacity
           ) {
-            handleSelect(currentPlayer.capacityChoices.capacity)
+            handleSelect(capacityChoice.capacity)
           }
         }}
       >
@@ -176,7 +175,7 @@ const LevelUpCapacitiesChoices = () => {
         variant="h4"
         sx={{ margin: '12px', fontFamily: 'fantasy', textAlign: 'center' }}
       >
-        Choisissez votre capacité pour le level up
+        Choisissez votre capacité
       </Typography>
       <Grid
         container
