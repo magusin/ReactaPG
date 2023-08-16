@@ -36,13 +36,12 @@ const messagesEchec = [
   export default function GenerateMessage(attacker, defender, damage, currentLanguage, rebirth) {
     let messages;
     if (rebirth) {
-        messages = currentLanguage === 'fr' ? messagesRenaissance : rebirthMessages;
-    }
-    if (damage === 0 && !rebirth) {
-        messages = currentLanguage === 'fr' ? messagesEchec : failMessages;
-    } else {
-        messages = currentLanguage === 'fr' ? messagesRéussite : successMessages;
-    }
+      messages = currentLanguage === 'fr' ? messagesRenaissance : rebirthMessages;
+  } else if (damage === 0) {
+      messages = currentLanguage === 'fr' ? messagesEchec : failMessages;
+  } else {
+      messages = currentLanguage === 'fr' ? messagesRéussite : successMessages;
+  }
      const index = Math.floor(Math.random() * messages.length);
      const generateMessage = messages[index];
      return generateMessage(attacker, defender, damage);

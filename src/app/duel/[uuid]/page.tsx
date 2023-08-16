@@ -106,8 +106,7 @@ export default function DuelFight() {
     setMessage(newMessage)
     setOpen(true)
   }
-  console.log('currentPlayer', currentPlayer)
-console.log('challengingPlayer', challengingPlayer)
+
   const { i18n } = useTranslation();
 // translation current language
 const currentLanguage = i18n.language;
@@ -130,18 +129,27 @@ const [challengingPlayerUsedSkills, setChallengingPlayerUsedSkills] = useState(n
             setCurrentHp1(hpWin)
             setCurrentPlayerUsedSkills(prev => new Set(prev).add(1))
             openSnackbar('Vous avez utilisé votre compétence "Renaissance"')
+           
             const message = GenerateMessage(
               currentPlayer,
               challengingPlayer,
               hpWin,
               currentLanguage,
-              rebirth
+              true
             )
             setBattleHistory((oldArray) => [...oldArray, message])
           } else if (currentHp2 <= 0 && challengingPlayer.skills.some(skill => skill.id === 1) && !challengingPlayerUsedSkills.has(1)) {
             setCurrentHp2(challengingPlayer.hpMax / 10)
             setChallengingPlayerUsedSkills(prev => new Set(prev).add(1))
             openSnackbar('You used your skill "Renaissance"')
+            const message = GenerateMessage(
+              currentPlayer,
+              challengingPlayer,
+              hpWin,
+              currentLanguage,
+              true
+            )
+            setBattleHistory((oldArray) => [...oldArray, message])
           } else {
           // The battle is over, display the result only once
           const result =
@@ -229,7 +237,8 @@ const [challengingPlayerUsedSkills, setChallengingPlayerUsedSkills] = useState(n
               currentPlayer,
               challengingPlayer,
               damage,
-              currentLanguage 
+              currentLanguage,
+              false 
             )
             setBattleHistory((oldArray) => [...oldArray, message])
             setHpHistory((oldArray) => [
@@ -244,7 +253,8 @@ const [challengingPlayerUsedSkills, setChallengingPlayerUsedSkills] = useState(n
               challengingPlayer,
               currentPlayer,
               damage,
-              currentLanguage 
+              currentLanguage,
+              false
             )
             setBattleHistory((oldArray) => [...oldArray, message])
             setHpHistory((oldArray) => [
