@@ -126,9 +126,18 @@ const [challengingPlayerUsedSkills, setChallengingPlayerUsedSkills] = useState(n
       const fightInterval = setInterval(() => {
         if (currentHp1 <= 0 || currentHp2 <= 0) {
           if (currentHp1 <= 0 && currentPlayer.skills.some(skill => skill.id === 1) && !currentPlayerUsedSkills.has(1)) {
-            setCurrentHp1(currentPlayer.hpMax / 10)
+            const hpWin = Math.floor(challengingPlayer.hpMax / 10)
+            setCurrentHp1(hpWin)
             setCurrentPlayerUsedSkills(prev => new Set(prev).add(1))
-            openSnackbar('You used your skill "Renaissance"')
+            openSnackbar('Vous avez utilisé votre compétence "Renaissance"')
+            const message = GenerateMessage(
+              currentPlayer,
+              challengingPlayer,
+              hpWin,
+              currentLanguage,
+              rebirth
+            )
+            setBattleHistory((oldArray) => [...oldArray, message])
           } else if (currentHp2 <= 0 && challengingPlayer.skills.some(skill => skill.id === 1) && !challengingPlayerUsedSkills.has(1)) {
             setCurrentHp2(challengingPlayer.hpMax / 10)
             setChallengingPlayerUsedSkills(prev => new Set(prev).add(1))

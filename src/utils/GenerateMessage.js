@@ -27,10 +27,18 @@ const messagesEchec = [
     (attacker, defender, damage) => `${attacker.username} bondit et blesse ${defender.username} de [${damage}] points de dégat`,
     (attacker, defender, damage) => `${attacker.username} assène un coup infligeant [${damage}] points de dégat à ${defender.username}`
   ];
+
+  const messagesRenaissance = [
+    (attacker, defender, damage) => `${attacker.username} se relève et regagne [${damage}] points de vies`,
+    (attacker, defender, damage) => `${attacker.username} n'abandonne pas et récupère [${damage}] points de vies`
+  ];
   
-  export default function GenerateMessage(attacker, defender, damage, currentLanguage) {
+  export default function GenerateMessage(attacker, defender, damage, currentLanguage, rebirth) {
     let messages;
-    if (damage === 0) {
+    if (rebirth) {
+        messages = currentLanguage === 'fr' ? messagesRenaissance : rebirthMessages;
+    }
+    if (damage === 0 && !rebirth) {
         messages = currentLanguage === 'fr' ? messagesEchec : failMessages;
     } else {
         messages = currentLanguage === 'fr' ? messagesRéussite : successMessages;

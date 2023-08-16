@@ -93,8 +93,7 @@ const LevelUpCapacitiesChoices = () => {
       { key: 'dexterityIncrease', name: 'dexterity' },
       { key: 'healthIncrease', name: 'health' },
       { key: 'speedIncrease', name: 'speed' },
-      { key: 'dmgMinIncrease', name: 'damage' },
-      { key: 'dmgMaxIncrease', name: 'damage' },
+      { key: ['dmgMinIncrease', 'dmgMaxIncrease'], name: 'damage', isRange: true },
       { key: 'defIncrease', name: 'defense' }
     ]
 
@@ -130,32 +129,60 @@ const LevelUpCapacitiesChoices = () => {
           {capacityChoice.capacity.name}
         </Typography>
         {attributes.map((attr, index) => {
-          if (capacityChoice.capacity[attr.key] > 0) {
-            return (
-              <Box
-              key={index}
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  margin: '8px'
-                }}
-              >
-                <Image
-                  priority
-                  src={icons[attr.name]}
-                  alt={attr.name}
-                  width={50}
-                  height={50}
-                />
-                <Typography sx={{ marginLeft: '10px' }}>{`+ ${
-                  capacityChoice.capacity[attr.key]
-                }`}</Typography>
-              </Box>
-            )
-          }
-          return null
-        })}
+  if (attr.isRange) {
+    if (
+      capacityChoice.capacity[attr.key[0]] > 0 || 
+      capacityChoice.capacity[attr.key[1]] > 0
+    ) {
+      return (
+        <Box
+          key={index}
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            margin: '8px'
+          }}
+        >
+          <Image
+            priority
+            src={icons[attr.name]}
+            alt={attr.name}
+            width={50}
+            height={50}
+          />
+          <Typography sx={{ marginLeft: '10px' }}>
+            {`+ ${capacityChoice.capacity[attr.key[0]]} - ${capacityChoice.capacity[attr.key[1]]}`}
+          </Typography>
+        </Box>
+      )
+    }
+  } else if (capacityChoice.capacity[attr.key] > 0) {
+    return (
+      <Box
+        key={index}
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          margin: '8px'
+        }}
+      >
+        <Image
+          priority
+          src={icons[attr.name]}
+          alt={attr.name}
+          width={50}
+          height={50}
+        />
+        <Typography sx={{ marginLeft: '10px' }}>
+          {`+ ${capacityChoice.capacity[attr.key]}`}
+        </Typography>
+      </Box>
+    )
+  }
+  return null;
+})}
       </Box>
     )
   }
@@ -211,7 +238,7 @@ const LevelUpCapacitiesChoices = () => {
         disabled={!selectedCapacity}
         onClick={handleSubmit}
       >
-        Validate
+        Valider
       </Button>
     </Container>
   );
