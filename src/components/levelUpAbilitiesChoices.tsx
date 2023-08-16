@@ -71,8 +71,8 @@ const LevelUpAbilityChoices = () => {
     }
   }
 
-  function RenderAbilityChoice({ abilityChoice }) {
-    const icons = {
+  function RenderAbilityChoice({ abilityChoice } : any) {
+    const icons: { [key: string]: string } = {
       strength: str.src,
       dexterity: dex.src,
       health: hp.src,
