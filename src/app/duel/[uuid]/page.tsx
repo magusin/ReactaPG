@@ -33,7 +33,7 @@ import axios from 'axios'
 import PlayerInfo from 'src/components/playerInfo'
 import AnimatedText from 'src/components/AnimatedText'
 // translation
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from 'next-i18next'
 
 // types
 interface Letter {
@@ -73,7 +73,6 @@ const titleVariants = {
   exit: { opacity: 0, transition: { ease: 'easeInOut' } }
 }
 
-
 // DuelFight component
 export default function DuelFight() {
   const {
@@ -98,8 +97,11 @@ export default function DuelFight() {
   )
   const [isBattleFinished, setIsBattleFinished] = useState<boolean>(false)
   const lastMessageRef = useRef<HTMLDivElement>(null)
+  // alert
   const [message, setMessage] = useState<string>('')
+  const [messageOpponent, setMessageOpponent] = useState<string>('')
   const [open, setOpen] = useState<boolean>(false)
+  const [openOpponent, setOpenOpponent] = useState<boolean>(false)
   const uuid = pathname ? pathname.split('/').pop() : ''
   // Function to open the snackbar with a specific message
   const openSnackbar = (newMessage: string) => {
@@ -107,12 +109,72 @@ export default function DuelFight() {
     setOpen(true)
   }
 
-  const { i18n } = useTranslation();
-// translation current language
-const currentLanguage = i18n.language;
-// set skills
-const [currentPlayerUsedSkills, setCurrentPlayerUsedSkills] = useState(new Set())
-const [challengingPlayerUsedSkills, setChallengingPlayerUsedSkills] = useState(new Set())
+  const openSnackbar2 = (newMessage: string) => {
+    setMessageOpponent(newMessage)
+    setOpenOpponent(true)
+  }
+
+  const { i18n } = useTranslation()
+  // translation current language
+  const currentLanguage = i18n.language
+  // set skills
+  const [currentPlayerUsedSkills, setCurrentPlayerUsedSkills] = useState(
+    new Set()
+  )
+  const [challengingPlayerUsedSkills, setChallengingPlayerUsedSkills] =
+    useState(new Set())
+
+  const saveFight = async () => {
+    try {
+      const response = await axios.post('/api/fight', {
+        uuid: uuid,
+        player1_id: currentPlayer.id,
+        player2_id: challengingPlayer.id,
+        winner_id: currentHp1 <= 0 ? challengingPlayer.id : currentPlayer.id,
+        player1HP: currentPlayer.hpMax,
+        player2HP: challengingPlayer.hpMax
+      })
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  const saveFightEvent = async (
+    message: string,
+    fightId: string,
+    position: number,
+    hpPlayer1: number,
+    hpPlayer2: number
+  ) => {
+    try {
+      const response = await axios.post('/api/fightEvent', {
+        fight_id: fightId,
+        message: message,
+        position: position,
+        hpPlayer1: hpPlayer1,
+        hpPlayer2: hpPlayer2
+      })
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  const performSaving = async () => {
+    await saveFight()
+    if (uuid) {
+      for (let index = 0; index < battleHistory.length; index++) {
+        const message = battleHistory[index]
+        const hpData = hpHistory[index]
+        await saveFightEvent(
+          message,
+          uuid,
+          index,
+          hpData.player1Hp,
+          hpData.player2Hp
+        )
+      }
+    }
+  }
 
   useEffect(() => {
     if (!currentPlayer || !challengingPlayer) {
@@ -124,105 +186,77 @@ const [challengingPlayerUsedSkills, setChallengingPlayerUsedSkills] = useState(n
       }
       const fightInterval = setInterval(() => {
         if (currentHp1 <= 0 || currentHp2 <= 0) {
-          if (currentHp1 <= 0 && currentPlayer.skills.some(skill => skill.id === 1) && !currentPlayerUsedSkills.has(1)) {
-            const hpWin = Math.floor(challengingPlayer.hpMax / 10)
+          if (
+            currentHp1 <= 0 &&
+            currentPlayer.skills.some((skill) => skill.id === 1) &&
+            !currentPlayerUsedSkills.has(1)
+          ) {
+            const hpWin = Math.floor(currentPlayer.hpMax / 10)
             setCurrentHp1(hpWin)
-            setCurrentPlayerUsedSkills(prev => new Set(prev).add(1))
+            setCurrentPlayerUsedSkills((prev) => new Set(prev).add(1))
             openSnackbar('Vous avez utilisé votre compétence "Renaissance"')
-           
-            const message = GenerateMessage(
-              currentPlayer,
-              challengingPlayer,
-              hpWin,
-              currentLanguage,
-              true
-            )
-            setBattleHistory((oldArray) => [...oldArray, message])
-          } else if (currentHp2 <= 0 && challengingPlayer.skills.some(skill => skill.id === 1) && !challengingPlayerUsedSkills.has(1)) {
-            setCurrentHp2(challengingPlayer.hpMax / 10)
-            setChallengingPlayerUsedSkills(prev => new Set(prev).add(1))
-            openSnackbar('You used your skill "Renaissance"')
-            const message = GenerateMessage(
-              currentPlayer,
-              challengingPlayer,
-              hpWin,
-              currentLanguage,
-              true
-            )
-            setBattleHistory((oldArray) => [...oldArray, message])
-          } else {
-          // The battle is over, display the result only once
-          const result =
-            currentHp1 <= 0
-              ? `${challengingPlayer.username} a gagné`
-              : `${currentPlayer.username} a gagné`
-          setBattleHistory((oldArray) => [...oldArray, result])
-          setIsBattleFinished(true)
-          clearInterval(fightInterval)
-          if (currentHp1 <= 0) {
-            updatePlayerXP(currentPlayer.id, currentPlayer.xp + 1)
-            openSnackbar('You win 1 XP')
-          } else {
-            updatePlayerXP(currentPlayer.id, currentPlayer.xp + 2)
-            openSnackbar('You win 2 XP')
-          }
-          const saveFight = async () => {
-            try {
-              const response = await axios.post('/api/fight', {
-                uuid: uuid,
-                player1_id: currentPlayer.id,
-                player2_id: challengingPlayer.id,
-                winner_id:
-                  currentHp1 <= 0 ? challengingPlayer.id : currentPlayer.id,
-                  player1HP: currentPlayer.hpMax,
-                  player2HP: challengingPlayer.hpMax
-              })
-            } catch (err) {
-              console.error(err)
-            }
-          }
 
-          const saveFightEvent = async (
-            message: string,
-            fightId: string,
-            position: number, 
-            hpPlayer1: number, 
-            hpPlayer2: number
-          ) => {
-            try {
-              const response = await axios.post('/api/fightEvent', {
-                fight_id: fightId,
-                message: message,
-                position: position,
-                hpPlayer1: hpPlayer1,
-                hpPlayer2: hpPlayer2
-              })
-            } catch (err) {
-              console.error(err)
+            const message = GenerateMessage(
+              currentPlayer,
+              challengingPlayer,
+              hpWin,
+              currentLanguage,
+              true
+            )
+            setBattleHistory((oldArray) => [...oldArray, message])
+            saveFightEvent(
+              message,
+              uuid,
+              battleHistory.length,
+              hpWin,
+              currentHp2
+            )
+          } else if (
+            currentHp2 <= 0 &&
+            challengingPlayer.skills.some((skill) => skill.id === 1) &&
+            !challengingPlayerUsedSkills.has(1)
+          ) {
+            const hpWinOpponent = Math.floor(challengingPlayer.hpMax / 10)
+            setCurrentHp2(hpWinOpponent)
+            setChallengingPlayerUsedSkills((prev) => new Set(prev).add(1))
+            openSnackbar2(
+              `${challengingPlayer.username} a utilisé sa compétence "Renaissance"`
+            )
+            const message = GenerateMessage(
+              currentPlayer,
+              challengingPlayer,
+              hpWinOpponent,
+              currentLanguage,
+              true
+            )
+            setBattleHistory((oldArray) => [...oldArray, message])
+            saveFightEvent(
+              message,
+              uuid,
+              battleHistory.length,
+              hpWinOpponent,
+              challengingPlayer.hpMax / 10
+            )
+          } else {
+            // The battle is over, display the result only once
+            const result =
+              currentHp1 <= 0
+                ? `${challengingPlayer.username} a gagné`
+                : `${currentPlayer.username} a gagné`
+            setBattleHistory((oldArray) => [...oldArray, result])
+            setIsBattleFinished(true)
+            clearInterval(fightInterval)
+            if (currentHp1 <= 0) {
+              updatePlayerXP(currentPlayer.id, currentPlayer.xp + 1)
+              openSnackbar('You win 1 XP')
+            } else {
+              updatePlayerXP(currentPlayer.id, currentPlayer.xp + 2)
+              openSnackbar('You win 2 XP')
             }
+            // Call saveFightEvent for each message in battleHistory
+            performSaving()
           }
-          // Call saveFightEvent for each message in battleHistory
-          const performSaving = async () => {
-            await saveFight()
-            if (uuid) {
-              // vérifier si uuid est défini
-              for (let index = 0; index < battleHistory.length; index++) {
-                const message = battleHistory[index]
-                const hpData = hpHistory[index]
-                await saveFightEvent(
-                  message,
-                  uuid,
-                  index,
-                  hpData.player1Hp,
-                  hpData.player2Hp
-                )
-              }
-            }
-          }
-          // call function
-          performSaving()
-        }
-      } else {
+        } else {
           const player = order.shift()
           if (order.length === 0) {
             setOrder(
@@ -238,7 +272,7 @@ const [challengingPlayerUsedSkills, setChallengingPlayerUsedSkills] = useState(n
               challengingPlayer,
               damage,
               currentLanguage,
-              false 
+              false
             )
             setBattleHistory((oldArray) => [...oldArray, message])
             setHpHistory((oldArray) => [
@@ -267,7 +301,18 @@ const [challengingPlayerUsedSkills, setChallengingPlayerUsedSkills] = useState(n
 
       return () => clearInterval(fightInterval) // Clean up on unmount
     }
-  }, [currentPlayer, challengingPlayer, isBattleFinished, router, battleHistory, currentHp1, currentHp2, uuid, order, hpHistory])
+  }, [
+    currentPlayer,
+    challengingPlayer,
+    isBattleFinished,
+    router,
+    battleHistory,
+    currentHp1,
+    currentHp2,
+    uuid,
+    order,
+    hpHistory
+  ])
   // Scroll to bottom of the historic
   useEffect(() => {
     if (lastMessageRef.current) {
@@ -331,23 +376,21 @@ const [challengingPlayerUsedSkills, setChallengingPlayerUsedSkills] = useState(n
               sm={6}
               className="boxHistoryFightStyles"
               sx={{
-                display:"flex",
-                flexDirection:"column",
-                justifyContent:"flex-start",
-                alignItems:"center",
-                minHeight:"200px",
-                maxHeight:"500px",
-                width:"100%",
-                mx:"auto",
-                fontSize:"1.5rem",
-              fontWeight:"normal",
-              height:"100%",
-              marginLeft:"10px",
-              marginRight:"10px"
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+                minHeight: '200px',
+                maxHeight: '500px',
+                width: '100%',
+                mx: 'auto',
+                fontSize: '1.5rem',
+                fontWeight: 'normal',
+                height: '100%',
+                marginLeft: '10px',
+                marginRight: '10px'
               }}
-              
               p={2}
-              
             >
               <AnimatePresence initial={false}>
                 {battleHistory.map((event, index) => {
@@ -419,6 +462,34 @@ const [challengingPlayerUsedSkills, setChallengingPlayerUsedSkills] = useState(n
           )}
         </Grid>
       ) : null}
+      <Snackbar
+        open={openOpponent}
+        autoHideDuration={3000}
+        onClose={() => {
+          setOpen(false)
+        }}
+      >
+        <MuiAlert
+          severity="success"
+          elevation={6}
+          variant="filled"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={() => {
+                setOpen(false)
+              }}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {message}
+        </MuiAlert>
+      </Snackbar>
       <Snackbar
         open={open}
         autoHideDuration={3000}
