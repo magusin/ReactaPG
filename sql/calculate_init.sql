@@ -1,0 +1,9 @@
+DELIMITER //
+CREATE TRIGGER calculate_init
+BEFORE INSERT ON players
+FOR EACH ROW
+BEGIN
+    SET NEW.init = FLOOR((NEW.str + NEW.dex) / 3);
+END;
+//
+DELIMITER ;
