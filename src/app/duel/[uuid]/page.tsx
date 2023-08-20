@@ -125,6 +125,7 @@ export default function DuelFight() {
     useState(new Set())
 
   const saveFight = async () => {
+    if (currentPlayer && challengingPlayer) {
     try {
       const response = await axios.post('/api/fight', {
         uuid: uuid,
@@ -137,6 +138,7 @@ export default function DuelFight() {
     } catch (err) {
       console.error(err)
     }
+  }
   }
 
   const saveFightEvent = async (
@@ -179,6 +181,7 @@ export default function DuelFight() {
   useEffect(() => {
     if (!currentPlayer || !challengingPlayer) {
       router.push('/') // Redirects user to home page
+      return
     }
     if (currentPlayer && challengingPlayer && !isBattleFinished) {
       if (!order.length) {
@@ -204,13 +207,14 @@ export default function DuelFight() {
               true
             )
             setBattleHistory((oldArray) => [...oldArray, message])
+            if (uuid) {
             saveFightEvent(
               message,
               uuid,
               battleHistory.length,
               hpWin,
               currentHp2
-            )
+            )}
           } else if (
             currentHp2 <= 0 &&
             challengingPlayer.skills.some((skill) => skill.id === 1) &&
@@ -230,6 +234,7 @@ export default function DuelFight() {
               true
             )
             setBattleHistory((oldArray) => [...oldArray, message])
+            if (uuid) {
             saveFightEvent(
               message,
               uuid,
@@ -237,6 +242,7 @@ export default function DuelFight() {
               hpWinOpponent,
               challengingPlayer.hpMax / 10
             )
+            }
           } else {
             // The battle is over, display the result only once
             const result =

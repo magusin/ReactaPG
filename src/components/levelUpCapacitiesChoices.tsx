@@ -157,7 +157,7 @@ const LevelUpCapacitiesChoices = () => {
         </Box>
       )
     }
-  } else if (capacityChoice.capacity[attr.key] > 0) {
+  } if (typeof attr.key === 'string' && capacityChoice.capacity[attr.key] > 0) {
     return (
       <Box
         key={index}
