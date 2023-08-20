@@ -57,8 +57,9 @@ const getPlayers = async (req, res) => {
         str: true,
         type: true,
         xp: true,
-        speed: true
-      }
+        speed: true,
+        skills: true
+      },
     })
 
     return res.status(200).json(players)

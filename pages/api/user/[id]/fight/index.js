@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client'
 
 // Initialiser le middleware CORS
 let cors = Cors({
-  methods: ['DELETE', 'HEAD']
+  methods: ['DELETE', 'GET', 'HEAD']
 })
 
 const prisma = new PrismaClient()

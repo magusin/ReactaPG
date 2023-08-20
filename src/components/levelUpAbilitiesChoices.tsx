@@ -31,7 +31,7 @@ const LevelUpAbilityChoices = () => {
           levelingUp: currentPlayer.levelingUp,
           abilityRequired: false,
           capacitiesRequired: currentPlayer.capacitiesRequired,
-          spellsRequired: currentPlayer.spellsRequired,
+          skillsRequired: currentPlayer.skillsRequired,
           xp: currentPlayer.xp
         }
 
@@ -71,7 +71,83 @@ const LevelUpAbilityChoices = () => {
     }
   }
 
-  console.log('selectedAbility: ', selectedAbility)
+  function RenderAbilityChoice({ abilityChoice } : any) {
+    const icons: { [key: string]: string } = {
+      strength: str.src,
+      dexterity: dex.src,
+      health: hp.src,
+      speed: speed.src
+    }
+
+    const attributes = [
+      { key: 'strengthIncrease', name: 'strength' },
+      { key: 'dexterityIncrease', name: 'dexterity' },
+      { key: 'healthIncrease', name: 'health' },
+      { key: 'speedIncrease', name: 'speed' }
+    ]
+
+    return (
+      <Box
+        sx={{
+          width: '200px',
+          height: 'auto',
+          cursor: 'pointer',
+          marginBottom: 2,
+          backgroundColor:
+            selectedAbility === abilityChoice.ability
+              ? '#9ac3ed'
+              : '#d9d6b6',
+          boxShadow: '0 3px 5px 2px rgba(0, 0, 0, .3)',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: '1rem',
+          borderRadius: '30px'
+        }}
+        onClick={() => {
+          if (
+            abilityChoice &&
+            abilityChoice.ability
+          ) {
+            handleSelect(abilityChoice.ability)
+          }
+        }}
+      >
+        <Typography variant="h5">
+          {abilityChoice.ability.name}
+        </Typography>
+        {attributes.map((attr, index) => {
+          if (abilityChoice.ability[attr.key] > 0) {
+            return (
+              <Box
+              key={index}
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  margin: '8px'
+                }}
+              >
+                <Image
+                  priority
+                  src={icons[attr.name]}
+                  alt={attr.name}
+                  width={50}
+                  height={50}
+                />
+                <Typography sx={{ marginLeft: '10px' }}>{`+ ${
+                  abilityChoice.ability[attr.key]
+                }`}</Typography>
+              </Box>
+            )
+          }
+          return null
+        })}
+      </Box>
+    )
+  } 
+
   return (
     <Container
       sx={{
@@ -87,7 +163,7 @@ const LevelUpAbilityChoices = () => {
         variant="h4"
         sx={{ margin: '12px', fontFamily: 'fantasy', textAlign: 'center' }}
       >
-        Choisissez votre habileté pour le level up
+        Choisissez votre abilité
       </Typography>
       <Grid
         container
@@ -96,394 +172,27 @@ const LevelUpAbilityChoices = () => {
         spacing={2}
         style={{ width: 'auto' }}
       >
-        <Grid
-          item
-          xs={12}
-          sm={6}
-          sx={{ display: 'flex', justifyContent: 'center' }}
-        >
-          {currentPlayer && currentPlayer.abilityChoices && currentPlayer.abilityChoices[0].ability && (
-            <Box
-              sx={{
-                width: '160px',
-                height: '160px',
-                cursor: 'pointer',
-                marginBottom: 2,
-                backgroundColor:
-                  selectedAbility === currentPlayer.abilityChoices[0].ability
-                    ? '#9ac3ed'
-                    : '#d9d6b6',
-                boxShadow: '0 3px 5px 2px rgba(0, 0, 0, .3)',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                padding: '1rem',
-                borderRadius: '30px'
-              }}
-              onClick={() => {
-                if (currentPlayer && currentPlayer.abilityChoices && currentPlayer.abilityChoices[0].ability) {
-                  handleSelect(currentPlayer.abilityChoices[0].ability)
-              }              
-              }}
-            >
-              <Typography variant="h5">
-                {currentPlayer.abilityChoices[0].ability.name}
-              </Typography>
-              {currentPlayer &&
-                currentPlayer.abilityChoices[0].ability &&
-                currentPlayer.abilityChoices[0].ability.strengthIncrease > 0 && (
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      margin: '8px'
-                    }}
-                  >
-                    <Image
-                      priority
-                      src={str.src}
-                      alt="strong"
-                      width={50}
-                      height={50}
-                    />
-                    <Typography
-                      sx={{ marginLeft: '10px' }}
-                    >{`+ ${currentPlayer.abilityChoices[0].ability.strengthIncrease}`}</Typography>
-                  </Box>
-                )}
-              {currentPlayer &&
-                currentPlayer.abilityChoices[0].ability &&
-                currentPlayer.abilityChoices[0].ability.dexterityIncrease > 0 && (
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      margin: '8px'
-                    }}
-                  >
-                    <Image
-                      priority
-                      src={dex.src}
-                      alt="dexterity"
-                      width={50}
-                      height={50}
-                    />
-                    <Typography
-                      sx={{ marginLeft: '10px' }}
-                    >{`+ ${currentPlayer.abilityChoices[0].ability.dexterityIncrease}`}</Typography>
-                  </Box>
-                )}
-              {currentPlayer &&
-                currentPlayer.abilityChoices[0].ability &&
-                currentPlayer.abilityChoices[0].ability.healthIncrease > 0 && (
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      margin: '8px'
-                    }}
-                  >
-                    <Image
-                      priority
-                      src={hp.src}
-                      alt="health"
-                      width={50}
-                      height={50}
-                    />
-                    <Typography
-                      sx={{ marginLeft: '10px' }}
-                    >{`+ ${currentPlayer.abilityChoices[0].ability.healthIncrease}`}</Typography>
-                  </Box>
-                )}
-              {currentPlayer &&
-                currentPlayer.abilityChoices[0].ability &&
-                currentPlayer.abilityChoices[0].ability.speedIncrease > 0 && (
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      margin: '8px'
-                    }}
-                  >
-                    <Image
-                      priority
-                      src={speed.src}
-                      alt="speed"
-                      width={50}
-                      height={50}
-                    />
-                    <Typography
-                      sx={{ marginLeft: '10px' }}
-                    >{`+ ${currentPlayer.abilityChoices[0].ability.speedIncrease}`}</Typography>
-                  </Box>
-                )}
-            </Box>
-          )}
-        </Grid>
-        <Grid
-          item
-          xs={12}
-          sm={6}
-          sx={{ display: 'flex', justifyContent: 'center' }}
-        >
-          {currentPlayer && currentPlayer.abilityChoices && currentPlayer.abilityChoices[1].ability && (
-            <Box
-              sx={{
-                width: '160px',
-                height: '160px',
-                cursor: 'pointer',
-                marginBottom: 2,
-                backgroundColor:
-                  selectedAbility === currentPlayer.abilityChoices[1].ability
-                    ? '#9ac3ed'
-                    : '#d9d6b6',
-                boxShadow: '0 3px 5px 2px rgba(0, 0, 0, .3)',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                padding: '1rem',
-                borderRadius: '30px'
-              }}
-              onClick={() => {
-                if (currentPlayer && currentPlayer.abilityChoices && currentPlayer.abilityChoices[1].ability) {
-                  handleSelect(currentPlayer.abilityChoices[1].ability)
-                }
-              }}
-            >
-              <Typography variant="h5">
-                {currentPlayer.abilityChoices[1].ability.name}
-              </Typography>
-              {currentPlayer &&
-                currentPlayer.abilityChoices[1].ability &&
-                currentPlayer.abilityChoices[1].ability.strengthIncrease > 0 && (
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      margin: '8px'
-                    }}
-                  >
-                    <Image
-                      priority
-                      src={str.src}
-                      alt="strong"
-                      width={50}
-                      height={50}
-                    />
-                    <Typography
-                      sx={{ marginLeft: '10px' }}
-                    >{`+ ${currentPlayer.abilityChoices[1].ability.strengthIncrease}`}</Typography>
-                  </Box>
-                )}
-              {currentPlayer &&
-                currentPlayer.abilityChoices[1].ability &&
-                currentPlayer.abilityChoices[1].ability.dexterityIncrease > 0 && (
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      margin: '8px'
-                    }}
-                  >
-                    <Image
-                      priority
-                      src={dex.src}
-                      alt="dexterity"
-                      width={50}
-                      height={50}
-                    />
-                    <Typography
-                      sx={{ marginLeft: '10px' }}
-                    >{`+ ${currentPlayer.abilityChoices[1].ability.dexterityIncrease}`}</Typography>
-                  </Box>
-                )}
-              {currentPlayer &&
-                currentPlayer.abilityChoices[1].ability &&
-                currentPlayer.abilityChoices[1].ability.healthIncrease > 0 && (
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      margin: '8px'
-                    }}
-                  >
-                    <Image
-                      priority
-                      src={hp.src}
-                      alt="health"
-                      width={50}
-                      height={50}
-                    />
-                    <Typography
-                      sx={{ marginLeft: '10px' }}
-                    >{`+ ${currentPlayer.abilityChoices[1].ability.healthIncrease}`}</Typography>
-                  </Box>
-                )}
-              {currentPlayer &&
-                currentPlayer.abilityChoices[1].ability &&
-                currentPlayer.abilityChoices[1].ability.speedIncrease > 0 && (
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      margin: '8px'
-                    }}
-                  >
-                    <Image
-                      priority
-                      src={speed.src}
-                      alt="speed"
-                      width={50}
-                      height={50}
-                    />
-                    <Typography
-                      sx={{ marginLeft: '10px' }}
-                    >{`+ ${currentPlayer.abilityChoices[1].ability.speedIncrease}`}</Typography>
-                  </Box>
-                )}
-            </Box>
-          )}
-        </Grid>
-        <Grid
-          item
-          xs={12}
-          sm={6}
-          sx={{ display: 'flex', justifyContent: 'center' }}
-        >
-          {currentPlayer && currentPlayer.abilityChoices && currentPlayer.abilityChoices[2].ability && (
-            <Box
-              sx={{
-                width: '160px',
-                height: '160px',
-                cursor: 'pointer',
-                marginBottom: 2,
-                backgroundColor:
-                  selectedAbility === currentPlayer.abilityChoices[2].ability
-                    ? '#9ac3ed'
-                    : '#d9d6b6',
-                boxShadow: '0 3px 5px 2px rgba(0, 0, 0, .3)',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                padding: '1rem',
-                borderRadius: '30px'
-              }}
-              onClick={() => {
-                if (currentPlayer && currentPlayer.abilityChoices && currentPlayer.abilityChoices[2].ability) {
-                  handleSelect(currentPlayer.abilityChoices[2].ability)
-                }
-              }}
-            >
-              <Typography variant="h5">
-                {currentPlayer.abilityChoices[2].ability.name}
-              </Typography>
-              {currentPlayer &&
-                currentPlayer.abilityChoices[2].ability &&
-                currentPlayer.abilityChoices[2].ability.strengthIncrease > 0 && (
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      margin: '8px'
-                    }}
-                  >
-                    <Image
-                      priority
-                      src={str.src}
-                      alt="strong"
-                      width={50}
-                      height={50}
-                    />
-                    <Typography
-                      sx={{ marginLeft: '10px' }}
-                    >{`+ ${currentPlayer.abilityChoices[2].ability.strengthIncrease}`}</Typography>
-                  </Box>
-                )}
-              {currentPlayer &&
-                currentPlayer.abilityChoices[2].ability &&
-                currentPlayer.abilityChoices[2].ability.dexterityIncrease > 0 && (
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      margin: '8px'
-                    }}
-                  >
-                    <Image
-                      priority
-                      src={dex.src}
-                      alt="dexterity"
-                      width={50}
-                      height={50}
-                    />
-                    <Typography
-                      sx={{ marginLeft: '10px' }}
-                    >{`+ ${currentPlayer.abilityChoices[2].ability.dexterityIncrease}`}</Typography>
-                  </Box>
-                )}
-              {currentPlayer &&
-                currentPlayer.abilityChoices[2].ability &&
-                currentPlayer.abilityChoices[2].ability.healthIncrease > 0 && (
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      margin: '8px'
-                    }}
-                  >
-                    <Image
-                      priority
-                      src={hp.src}
-                      alt="health"
-                      width={50}
-                      height={50}
-                    />
-                    <Typography
-                      sx={{ marginLeft: '10px' }}
-                    >{`+ ${currentPlayer.abilityChoices[2].ability.healthIncrease}`}</Typography>
-                  </Box>
-                )}
-              {currentPlayer &&
-                currentPlayer.abilityChoices[2].ability &&
-                currentPlayer.abilityChoices[2].ability.speedIncrease > 0 && (
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      margin: '8px'
-                    }}
-                  >
-                    <Image
-                      priority
-                      src={speed.src}
-                      alt="speed"
-                      width={50}
-                      height={50}
-                    />
-                    <Typography
-                      sx={{ marginLeft: '10px' }}
-                    >{`+ ${currentPlayer.abilityChoices[2].ability.speedIncrease}`}</Typography>
-                  </Box>
-                )}
-            </Box>
-          )}
-        </Grid>
+        {currentPlayer && currentPlayer.abilityChoices && 
+          currentPlayer.abilityChoices.map((choice, index) => (
+            choice.ability && (
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                sx={{ display: 'flex', justifyContent: 'center' }}
+                key={index}
+              >
+                <RenderAbilityChoice
+                  abilityChoice={choice}
+                  handleSelect={handleSelect}
+                  selectedAbility={selectedAbility}
+                />
+              </Grid>
+            )
+          ))
+        }
       </Grid>
+
       <Button
         variant="contained"
         color="primary"
@@ -493,7 +202,7 @@ const LevelUpAbilityChoices = () => {
         Validate
       </Button>
     </Container>
-  )
+  );
 }
 
 export default LevelUpAbilityChoices

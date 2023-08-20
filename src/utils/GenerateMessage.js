@@ -27,14 +27,26 @@ const messagesEchec = [
     (attacker, defender, damage) => `${attacker.username} bondit et blesse ${defender.username} de [${damage}] points de dégat`,
     (attacker, defender, damage) => `${attacker.username} assène un coup infligeant [${damage}] points de dégat à ${defender.username}`
   ];
+
+  const messagesRenaissance = [
+    (attacker, defender, damage) => `${attacker.username} se relève et regagne [${damage}] points de vies`,
+    (attacker, defender, damage) => `${attacker.username} n'abandonne pas et récupère [${damage}] points de vies`
+  ];
+
+  const rebirthMessages = [
+    (attacker, defender, damage) => `${attacker.username} gets back up and regains [${damage}] life points`,
+    (attacker, defender, damage) => `${attacker.username} does not give up and recovers [${damage}] life points`
+  ];
   
-  export default function GenerateMessage(attacker, defender, damage, currentLanguage) {
+  export default function GenerateMessage(attacker, defender, damage, currentLanguage, rebirth) {
     let messages;
-    if (damage === 0) {
-        messages = currentLanguage === 'fr' ? messagesEchec : failMessages;
-    } else {
-        messages = currentLanguage === 'fr' ? messagesRéussite : successMessages;
-    }
+    if (rebirth) {
+      messages = currentLanguage === 'fr' ? messagesRenaissance : rebirthMessages;
+  } else if (damage === 0) {
+      messages = currentLanguage === 'fr' ? messagesEchec : failMessages;
+  } else {
+      messages = currentLanguage === 'fr' ? messagesRéussite : successMessages;
+  }
      const index = Math.floor(Math.random() * messages.length);
      const generateMessage = messages[index];
      return generateMessage(attacker, defender, damage);

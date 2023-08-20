@@ -31,10 +31,12 @@ import StatsCard from 'src/components/statsCard'
 import TableNav from 'src/components/tableNav'
 import LevelUpAbilitiesChoices from 'src/components/levelUpAbilitiesChoices'
 import LevelUpCapacitiesChoices from 'src/components/levelUpCapacitiesChoices'
+import LevelUpSkillsChoices from 'src/components/levelUpSkillsChoices'
 import Footer from 'src/components/footer'
 import axios from 'axios'
 import xpThresholdForLevel from 'src/utils/levelFunction'
 import PlayerContext from 'src/utils/PlayerContext'
+// translation
 import { useTranslation } from "react-i18next"
 
 export default function Home() {
@@ -131,7 +133,7 @@ export default function Home() {
       setIsLoading(false)
     }
   }, [router, setCurrentPlayer])
-
+console.log(currentPlayer)
   if (isLoading) {
     return (
       <Box
@@ -184,6 +186,8 @@ export default function Home() {
                 currentPlayer.levelingUp &&
                 currentPlayer.capacitiesRequired && !currentPlayer.abilityRequired ? (
                 <LevelUpCapacitiesChoices />
+              ) : currentPlayer && currentPlayer.levelingUp && currentPlayer.skillsRequired && !currentPlayer.abilityRequired && !currentPlayer.capacitiesRequired ? (
+                <LevelUpSkillsChoices />
               ) : (
                   <TableNav />
                 )}

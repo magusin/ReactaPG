@@ -36,8 +36,11 @@ const LevelUpCapacitiesChoices = () => {
           level: currentPlayer.level,
           levelingUp: currentPlayer.levelingUp,
           abilityRequired: currentPlayer.abilityRequired,
-          spellsRequired: currentPlayer.spellsRequired,
+          skillsRequired: currentPlayer.skillsRequired,
           capacitiesRequired: false,
+          pa: currentPlayer.pa,
+          paMax: currentPlayer.paMax,
+          init: currentPlayer.init,
           xp: currentPlayer.xp,
           capacities: { connect: { id: selectedCapacity.id } }
         }
@@ -50,7 +53,6 @@ const LevelUpCapacitiesChoices = () => {
           body: JSON.stringify(updatedPlayer)
         })
         if (response.status === 200) {
-
           const deleteResponse = await fetch(
             `/api/user/${currentPlayer.id}/capacities`,
             {
@@ -76,6 +78,115 @@ const LevelUpCapacitiesChoices = () => {
     }
   }
 
+  function RenderCapacityChoice({ capacityChoice } : any) {
+    const icons: { [key: string]: string } = {
+      strength: str.src,
+      dexterity: dex.src,
+      health: hp.src,
+      speed: speed.src,
+      damage: damage.src,
+      defense: def.src
+    }
+
+    const attributes = [
+      { key: 'strengthIncrease', name: 'strength' },
+      { key: 'dexterityIncrease', name: 'dexterity' },
+      { key: 'healthIncrease', name: 'health' },
+      { key: 'speedIncrease', name: 'speed' },
+      { key: ['dmgMinIncrease', 'dmgMaxIncrease'], name: 'damage', isRange: true },
+      { key: 'defIncrease', name: 'defense' }
+    ]
+
+    return (
+      <Box
+        sx={{
+          width: '200px',
+          height: 'auto',
+          cursor: 'pointer',
+          marginBottom: 2,
+          backgroundColor:
+            selectedCapacity === capacityChoice.capacity
+              ? '#9ac3ed'
+              : '#d9d6b6',
+          boxShadow: '0 3px 5px 2px rgba(0, 0, 0, .3)',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: '1rem',
+          borderRadius: '30px'
+        }}
+        onClick={() => {
+          if (
+            capacityChoice &&
+            capacityChoice.capacity
+          ) {
+            handleSelect(capacityChoice.capacity)
+          }
+        }}
+      >
+        <Typography variant="h5">
+          {capacityChoice.capacity.name}
+        </Typography>
+        {attributes.map((attr, index) => {
+  if (attr.isRange) {
+    if (
+      capacityChoice.capacity[attr.key[0]] > 0 || 
+      capacityChoice.capacity[attr.key[1]] > 0
+    ) {
+      return (
+        <Box
+          key={index}
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            margin: '8px'
+          }}
+        >
+          <Image
+            priority
+            src={icons[attr.name]}
+            alt={attr.name}
+            width={50}
+            height={50}
+          />
+          <Typography sx={{ marginLeft: '10px' }}>
+            {`+ ${capacityChoice.capacity[attr.key[0]]} - ${capacityChoice.capacity[attr.key[1]]}`}
+          </Typography>
+        </Box>
+      )
+    }
+  } if (typeof attr.key === 'string' && capacityChoice.capacity[attr.key] > 0) {
+    return (
+      <Box
+        key={index}
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          margin: '8px'
+        }}
+      >
+        <Image
+          priority
+          src={icons[attr.name]}
+          alt={attr.name}
+          width={50}
+          height={50}
+        />
+        <Typography sx={{ marginLeft: '10px' }}>
+          {`+ ${capacityChoice.capacity[attr.key]}`}
+        </Typography>
+      </Box>
+    )
+  }
+  return null;
+})}
+      </Box>
+    )
+  }
+
   return (
     <Container
       sx={{
@@ -91,7 +202,7 @@ const LevelUpCapacitiesChoices = () => {
         variant="h4"
         sx={{ margin: '12px', fontFamily: 'fantasy', textAlign: 'center' }}
       >
-        Choisissez votre capacité pour le level up
+        Choisissez votre capacité
       </Typography>
       <Grid
         container
@@ -100,563 +211,37 @@ const LevelUpCapacitiesChoices = () => {
         spacing={2}
         style={{ width: 'auto' }}
       >
-        <Grid
-          item
-          xs={12}
-          sm={6}
-          sx={{ display: 'flex', justifyContent: 'center' }}
-        >
-          {currentPlayer &&
-            currentPlayer.capacityChoices &&
-            currentPlayer.capacityChoices[0].capacity && (
-              <Box
-                sx={{
-                  width: '200px',
-                  height: 'auto',
-                  cursor: 'pointer',
-                  marginBottom: 2,
-                  backgroundColor:
-                    selectedCapacity === currentPlayer.capacityChoices[0].capacity
-                      ? '#9ac3ed'
-                      : '#d9d6b6',
-                  boxShadow: '0 3px 5px 2px rgba(0, 0, 0, .3)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  padding: '1rem',
-                  borderRadius: '30px'
-                }}
-                onClick={() => {
-                  if (
-                    currentPlayer &&
-                    currentPlayer.capacityChoices &&
-                    currentPlayer.capacityChoices[0].capacity
-                  ) {
-                    handleSelect(currentPlayer.capacityChoices[0].capacity)
-                  }
-                }}
+        {currentPlayer && currentPlayer.capacityChoices && 
+          currentPlayer.capacityChoices.map((choice, index) => (
+            choice.capacity && (
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                sx={{ display: 'flex', justifyContent: 'center' }}
+                key={index}
               >
-                <Typography variant="h5">
-                  {currentPlayer.capacityChoices[0].capacity.name}
-                </Typography>
-                {currentPlayer &&
-                  currentPlayer.capacityChoices[0].capacity &&
-                  currentPlayer.capacityChoices[0].capacity.strengthIncrease > 0 && (
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        margin: '8px'
-                      }}
-                    >
-                      <Image
-                        priority
-                        src={str.src}
-                        alt="strong"
-                        width={50}
-                        height={50}
-                      />
-                      <Typography
-                        sx={{ marginLeft: '10px' }}
-                      >{`+ ${currentPlayer.capacityChoices[0].capacity.strengthIncrease}`}</Typography>
-                    </Box>
-                  )}
-                {currentPlayer &&
-                  currentPlayer.capacityChoices[0].capacity &&
-                  currentPlayer.capacityChoices[0].capacity.dexterityIncrease > 0 && (
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        margin: '8px'
-                      }}
-                    >
-                      <Image
-                        priority
-                        src={dex.src}
-                        alt="dexterity"
-                        width={50}
-                        height={50}
-                      />
-                      <Typography
-                        sx={{ marginLeft: '10px' }}
-                      >{`+ ${currentPlayer.capacityChoices[0].capacity.dexterityIncrease}`}</Typography>
-                    </Box>
-                  )}
-                {currentPlayer &&
-                  currentPlayer.capacityChoices[0].capacity &&
-                  currentPlayer.capacityChoices[0].capacity.healthIncrease > 0 && (
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        margin: '8px'
-                      }}
-                    >
-                      <Image
-                        priority
-                        src={hp.src}
-                        alt="health"
-                        width={50}
-                        height={50}
-                      />
-                      <Typography
-                        sx={{ marginLeft: '10px' }}
-                      >{`+ ${currentPlayer.capacityChoices[0].capacity.healthIncrease}`}</Typography>
-                    </Box>
-                  )}
-                {currentPlayer &&
-                  currentPlayer.capacityChoices[0].capacity &&
-                  currentPlayer.capacityChoices[0].capacity.speedIncrease > 0 && (
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        margin: '8px'
-                      }}
-                    >
-                      <Image
-                        priority
-                        src={speed.src}
-                        alt="speed"
-                        width={50}
-                        height={50}
-                      />
-                      <Typography
-                        sx={{ marginLeft: '10px' }}
-                      >{`+ ${currentPlayer.capacityChoices[0].capacity.speedIncrease}`}</Typography>
-                    </Box>
-                  )}
-                {currentPlayer &&
-                  currentPlayer.capacityChoices[0].capacity &&
-                  (currentPlayer.capacityChoices[0].capacity.dmgMinIncrease > 0 ||
-                  currentPlayer.capacityChoices[0].capacity.dmgMaxIncrease > 0) && (
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        margin: '8px'
-                      }}
-                    >
-                      <Image
-                        priority
-                        src={damage.src}
-                        alt="damage"
-                        width={50}
-                        height={50}
-                      />
-                      <Typography
-                        sx={{ marginLeft: '10px' }}
-                      >{`+ ${currentPlayer.capacityChoices[0].capacity.dmgMinIncrease} - ${currentPlayer.capacityChoices[0].capacity.dmgMaxIncrease}`}</Typography>
-                    </Box>
-                  )}
-                {currentPlayer &&
-                  currentPlayer.capacityChoices[0].capacity &&
-                  currentPlayer.capacityChoices[0].capacity.defIncrease > 0 && (
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        margin: '8px'
-                      }}
-                    >
-                      <Image
-                        priority
-                        src={def.src}
-                        alt="health"
-                        width={50}
-                        height={50}
-                      />
-                      <Typography
-                        sx={{ marginLeft: '10px' }}
-                      >{`+ ${currentPlayer.capacityChoices[0].capacity.defIncrease}`}</Typography>
-                    </Box>
-                  )}
-              </Box>
-            )}
-        </Grid>
-        <Grid
-          item
-          xs={12}
-          sm={6}
-          sx={{ display: 'flex', justifyContent: 'center' }}
-        >
-          {currentPlayer &&
-            currentPlayer.capacityChoices &&
-            currentPlayer.capacityChoices[1].capacity && (
-              <Box
-                sx={{
-                  width: '200px',
-                  height: 'auto',
-                  cursor: 'pointer',
-                  marginBottom: 2,
-                  backgroundColor:
-                    selectedCapacity === currentPlayer.capacityChoices[1].capacity
-                      ? '#9ac3ed'
-                      : '#d9d6b6',
-                  boxShadow: '0 3px 5px 2px rgba(0, 0, 0, .3)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  padding: '1rem',
-                  borderRadius: '30px'
-                }}
-                onClick={() => {
-                  if (
-                    currentPlayer &&
-                    currentPlayer.capacityChoices &&
-                    currentPlayer.capacityChoices[1].capacity
-                  ) {
-                    handleSelect(currentPlayer.capacityChoices[1].capacity)
-                  }
-                }}
-              >
-                <Typography variant="h5">
-                  {currentPlayer.capacityChoices[1].capacity.name}
-                </Typography>
-                {currentPlayer &&
-                  currentPlayer.capacityChoices[1].capacity &&
-                  currentPlayer.capacityChoices[1].capacity.strengthIncrease > 0 && (
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        margin: '8px'
-                      }}
-                    >
-                      <Image
-                        priority
-                        src={str.src}
-                        alt="strong"
-                        width={50}
-                        height={50}
-                      />
-                      <Typography
-                        sx={{ marginLeft: '10px' }}
-                      >{`+ ${currentPlayer.capacityChoices[1].capacity.strengthIncrease}`}</Typography>
-                    </Box>
-                  )}
-                {currentPlayer &&
-                  currentPlayer.capacityChoices[1].capacity &&
-                  currentPlayer.capacityChoices[1].capacity.dexterityIncrease > 0 && (
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        margin: '8px'
-                      }}
-                    >
-                      <Image
-                        priority
-                        src={dex.src}
-                        alt="dexterity"
-                        width={50}
-                        height={50}
-                      />
-                      <Typography
-                        sx={{ marginLeft: '10px' }}
-                      >{`+ ${currentPlayer.capacityChoices[1].capacity.dexterityIncrease}`}</Typography>
-                    </Box>
-                  )}
-                {currentPlayer &&
-                  currentPlayer.capacityChoices[1].capacity &&
-                  currentPlayer.capacityChoices[1].capacity.healthIncrease > 0 && (
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        margin: '8px'
-                      }}
-                    >
-                      <Image
-                        priority
-                        src={hp.src}
-                        alt="health"
-                        width={50}
-                        height={50}
-                      />
-                      <Typography
-                        sx={{ marginLeft: '10px' }}
-                      >{`+ ${currentPlayer.capacityChoices[1].capacity.healthIncrease}`}</Typography>
-                    </Box>
-                  )}
-                {currentPlayer &&
-                  currentPlayer.capacityChoices[1].capacity &&
-                  currentPlayer.capacityChoices[1].capacity.speedIncrease > 0 && (
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        margin: '8px'
-                      }}
-                    >
-                      <Image
-                        priority
-                        src={speed.src}
-                        alt="speed"
-                        width={50}
-                        height={50}
-                      />
-                      <Typography
-                        sx={{ marginLeft: '10px' }}
-                      >{`+ ${currentPlayer.capacityChoices[1].capacity.speedIncrease}`}</Typography>
-                    </Box>
-                  )}
-              {currentPlayer &&
-                  currentPlayer.capacityChoices[1].capacity &&
-                  (currentPlayer.capacityChoices[1].capacity.dmgMinIncrease > 0 ||
-                  currentPlayer.capacityChoices[1].capacity.dmgMaxIncrease > 0) && (
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        margin: '8px'
-                      }}
-                    >
-                      <Image
-                        priority
-                        src={damage.src}
-                        alt="damage"
-                        width={50}
-                        height={50}
-                      />
-                      <Typography
-                        sx={{ marginLeft: '10px' }}
-                      >{`+ ${currentPlayer.capacityChoices[1].capacity.dmgMinIncrease} - ${currentPlayer.capacityChoices[1].capacity.dmgMaxIncrease}`}</Typography>
-                    </Box>
-                  )}
-                {currentPlayer &&
-                  currentPlayer.capacityChoices[1].capacity &&
-                  currentPlayer.capacityChoices[1].capacity.defIncrease > 0 && (
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        margin: '8px'
-                      }}
-                    >
-                      <Image
-                        priority
-                        src={def.src}
-                        alt="health"
-                        width={50}
-                        height={50}
-                      />
-                      <Typography
-                        sx={{ marginLeft: '10px' }}
-                      >{`+ ${currentPlayer.capacityChoices[1].capacity.defIncrease}`}</Typography>
-                    </Box>
-                  )}
-              </Box>
-            )}
-        </Grid>
-        <Grid
-          item
-          xs={12}
-          sm={6}
-          sx={{ display: 'flex', justifyContent: 'center' }}
-        >
-          {currentPlayer &&
-            currentPlayer.capacityChoices &&
-            currentPlayer.capacityChoices[2].capacity && (
-              <Box
-                sx={{
-                  width: '200px',
-                  height: 'auto',
-                  cursor: 'pointer',
-                  marginBottom: 2,
-                  backgroundColor:
-                    selectedCapacity === currentPlayer.capacityChoices[2].capacity
-                      ? '#9ac3ed'
-                      : '#d9d6b6',
-                  boxShadow: '0 3px 5px 2px rgba(0, 0, 0, .3)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  padding: '1rem',
-                  borderRadius: '30px'
-                }}
-                onClick={() => {
-                  if (
-                    currentPlayer &&
-                    currentPlayer.capacityChoices &&
-                    currentPlayer.capacityChoices[2].capacity
-                  ) {
-                    handleSelect(currentPlayer.capacityChoices[2].capacity)
-                  }
-                }}
-              >
-                <Typography variant="h5">
-                  {currentPlayer.capacityChoices[2].capacity.name}
-                </Typography>
-                {currentPlayer &&
-                  currentPlayer.capacityChoices[2].capacity &&
-                  currentPlayer.capacityChoices[2].capacity.strengthIncrease > 0 && (
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        margin: '8px'
-                      }}
-                    >
-                      <Image
-                        priority
-                        src={str.src}
-                        alt="strong"
-                        width={50}
-                        height={50}
-                      />
-                      <Typography
-                        sx={{ marginLeft: '10px' }}
-                      >{`+ ${currentPlayer.capacityChoices[2].capacity.strengthIncrease}`}</Typography>
-                    </Box>
-                  )}
-                {currentPlayer &&
-                  currentPlayer.capacityChoices[2].capacity &&
-                  currentPlayer.capacityChoices[2].capacity.dexterityIncrease > 0 && (
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        margin: '8px'
-                      }}
-                    >
-                      <Image
-                        priority
-                        src={dex.src}
-                        alt="dexterity"
-                        width={50}
-                        height={50}
-                      />
-                      <Typography
-                        sx={{ marginLeft: '10px' }}
-                      >{`+ ${currentPlayer.capacityChoices[2].capacity.dexterityIncrease}`}</Typography>
-                    </Box>
-                  )}
-                {currentPlayer &&
-                  currentPlayer.capacityChoices[2].capacity &&
-                  currentPlayer.capacityChoices[2].capacity.healthIncrease > 0 && (
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        margin: '8px'
-                      }}
-                    >
-                      <Image
-                        priority
-                        src={hp.src}
-                        alt="health"
-                        width={50}
-                        height={50}
-                      />
-                      <Typography
-                        sx={{ marginLeft: '10px' }}
-                      >{`+ ${currentPlayer.capacityChoices[2].capacity.healthIncrease}`}</Typography>
-                    </Box>
-                  )}
-                {currentPlayer &&
-                  currentPlayer.capacityChoices[2].capacity &&
-                  currentPlayer.capacityChoices[2].capacity.speedIncrease > 0 && (
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        margin: '8px'
-                      }}
-                    >
-                      <Image
-                        priority
-                        src={speed.src}
-                        alt="speed"
-                        width={50}
-                        height={50}
-                      />
-                      <Typography
-                        sx={{ marginLeft: '10px' }}
-                      >{`+ ${currentPlayer.capacityChoices[2].capacity.speedIncrease}`}</Typography>
-                    </Box>
-                  )}
-              {currentPlayer &&
-                  currentPlayer.capacityChoices[2].capacity &&
-                  (currentPlayer.capacityChoices[2].capacity.dmgMinIncrease > 0 ||
-                  currentPlayer.capacityChoices[2].capacity.dmgMaxIncrease > 0) && (
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        margin: '8px'
-                      }}
-                    >
-                      <Image
-                        priority
-                        src={damage.src}
-                        alt="damage"
-                        width={50}
-                        height={50}
-                      />
-                      <Typography
-                        sx={{ marginLeft: '10px' }}
-                      >{`+ ${currentPlayer.capacityChoices[2].capacity.dmgMinIncrease} - ${currentPlayer.capacityChoices[2].capacity.dmgMaxIncrease}`}</Typography>
-                    </Box>
-                  )}
-                {currentPlayer &&
-                  currentPlayer.capacityChoices[2].capacity &&
-                  currentPlayer.capacityChoices[2].capacity.defIncrease > 0 && (
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        margin: '8px'
-                      }}
-                    >
-                      <Image
-                        priority
-                        src={def.src}
-                        alt="health"
-                        width={50}
-                        height={50}
-                      />
-                      <Typography
-                        sx={{ marginLeft: '10px' }}
-                      >{`+ ${currentPlayer.capacityChoices[2].capacity.defIncrease}`}</Typography>
-                    </Box>
-                  )}
-              </Box>
-            )}
-        </Grid>
+                <RenderCapacityChoice
+                  capacityChoice={choice}
+                  handleSelect={handleSelect}
+                  selectedCapacity={selectedCapacity}
+                />
+              </Grid>
+            )
+          ))
+        }
       </Grid>
+
       <Button
         variant="contained"
         color="primary"
         disabled={!selectedCapacity}
         onClick={handleSubmit}
       >
-        Validate
+        Valider
       </Button>
     </Container>
-  )
+  );
 }
 
 export default LevelUpCapacitiesChoices
