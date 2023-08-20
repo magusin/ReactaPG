@@ -22,16 +22,23 @@ function runMiddleware(req, res, fn) {
 
 export default async function handler(req, res) {
     try {
-      await runMiddleware(req, res, cors)
-      switch (req.method) {
-        case 'PUT':
-            return await updatePa(req, res)
-          break
-        default:
-          return res.status(400).json({ message: 'bad request' })
+        const { username, password } = req.body;
+        console.log(req.body)
+      // Vérifiez le nom d'utilisateur et le mot de passe
+      if (username === process.env.API_USERNAME && password === process.env.API_PASSWORD) {        
+        await runMiddleware(req, res, cors);
+  
+        switch (req.method) {
+          case 'PUT':
+            return await updatePa(req, res);
+          default:
+            return res.status(400).json({ message: 'Bad request' });
+        }
+      } else {
+        return res.status(401).json({ message: 'Unauthorized' });
       }
     } finally {
-      await prisma.$disconnect()
+      await prisma.$disconnect();
     }
   }
 

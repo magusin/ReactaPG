@@ -41,3 +41,7 @@ npx prisma generate
 npx prisma db pull
 npx prisma migrate dev --name <name>
 
+## SCHEDULE
+
+cron-job.org/
+
