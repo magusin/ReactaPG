@@ -22,8 +22,8 @@ function runMiddleware(req, res, fn) {
 
 export default async function handler(req, res) {
     try {
-        const { username, password } = req.body;
-        console.log(req.body)
+        const username = req.headers['username'];
+        const password = req.headers['password'];
       // Vérifiez le nom d'utilisateur et le mot de passe
       if (username === process.env.API_USERNAME && password === process.env.API_PASSWORD) {        
         await runMiddleware(req, res, cors);
